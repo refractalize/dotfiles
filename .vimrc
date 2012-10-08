@@ -8,8 +8,8 @@ call vundle#rc()
 " required! 
 Bundle 'gmarik/vundle'
 
-Bundle 'vim-scripts/FuzzyFinder'
-Bundle 'vim-scripts/L9'
+Bundle 'FuzzyFinder'
+Bundle 'L9'
 Bundle 'tomasr/molokai'
 Bundle 'scrooloose/nerdtree'
 Bundle 'kchmck/vim-coffee-script'
@@ -20,6 +20,8 @@ Bundle 'tpope/vim-markdown'
 Bundle 'featurist/vim-pogoscript'
 Bundle 'tpope/vim-rails'
 Bundle 'mattn/zencoding-vim'
+Bundle 'tpope/vim-surround'
+Bundle 'dbext.vim'
 
 set hidden
 set shiftwidth=4
@@ -42,3 +44,5 @@ set smartcase
 
 nnoremap <Leader>f :FufCoverageFile<CR>
 nnoremap <Leader>b :FufBuffer<CR>
+
+let g:dbext_default_SQLITE_bin='sqlite3'

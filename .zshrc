@@ -6,7 +6,12 @@ export PATH=/usr/local/bin:$PATH
 export PATH=~/bin:$PATH
 # NPM
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
-export NODE_PATH=/usr/local/lib/node_modules
+export NODE_PATH=/usr/local/share/node_modules
+export PATH=/usr/local/share/npm/bin:$PATH
+
+# Java
+export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/bin:$PATH
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home
 
 # RVM
 [[ -s "/Users/tim/.rvm/scripts/rvm" ]] && source "/Users/tim/.rvm/scripts/rvm"
