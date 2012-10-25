@@ -1,0 +1,14 @@
+#!/usr/bin/env pogo
+
+express = require 'express'
+argv = require 'optimist'.default 'p' '4000'.alias 'p' 'port'.argv
+
+serve directory (dir) =
+    app = express.create server ()
+    app.use (express.logger ())
+    app.use (express.static (dir))
+    app.listen (parse int (argv.p))
+
+dir = process.cwd ()
+serve directory (dir)
+console.log "serving #(dir) at http://localhost:#(argv.p)/"
