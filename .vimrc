@@ -22,6 +22,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'mattn/zencoding-vim'
 Bundle 'tpope/vim-surround'
 Bundle 'dbext.vim'
+Bundle 'VimClojure'
 
 set hidden
 set shiftwidth=4
