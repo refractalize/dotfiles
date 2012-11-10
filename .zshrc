@@ -6,7 +6,7 @@ export PATH=/usr/local/bin:$PATH
 export PATH=~/bin:$PATH
 # NPM
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
-export NODE_PATH=/usr/local/share/node_modules
+export NODE_PATH=/usr/local/share/npm/lib/node_modules
 export PATH=/usr/local/share/npm/bin:$PATH
 
 # Java
