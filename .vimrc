@@ -43,7 +43,11 @@ set scrolloff=3
 set ignorecase
 set smartcase
 silent! set guifont="Source Code Pro:h11"
+silent! set guifont=Source_Code_Pro:h10:cANSI
 set backspace=2
+set guioptions-=r
+set guioptions-=m
+set guioptions-=T
 
 nnoremap <Leader>f :FufCoverageFile<CR>
 nnoremap <Leader>b :FufBuffer<CR>
