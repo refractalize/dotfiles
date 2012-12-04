@@ -21,8 +21,8 @@ Bundle 'featurist/vim-pogoscript'
 Bundle 'tpope/vim-rails'
 Bundle 'mattn/zencoding-vim'
 Bundle 'tpope/vim-surround'
-Bundle 'dbext.vim'
 Bundle 'VimClojure'
+Bundle 'sjl/gundo.vim'
 
 set hidden
 set shiftwidth=4
@@ -49,7 +49,11 @@ set guioptions-=r
 set guioptions-=m
 set guioptions-=T
 
+autocmd FileType pogo set shiftwidth=4
+autocmd FileType html set shiftwidth=2
+autocmd FileType css set shiftwidth=2
+autocmd FileType javascript set shiftwidth=2
+autocmd FileType less set shiftwidth=2
+
 nnoremap <Leader>f :FufCoverageFile<CR>
 nnoremap <Leader>b :FufBuffer<CR>
-
-let g:dbext_default_SQLITE_bin='sqlite3'
