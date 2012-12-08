@@ -42,6 +42,7 @@ set laststatus=2
 set scrolloff=3
 set ignorecase
 set smartcase
+set cursorline
 silent! set guifont="Source Code Pro:h11"
 silent! set guifont=Source_Code_Pro:h10:cANSI
 set backspace=2
