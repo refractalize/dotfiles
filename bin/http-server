@@ -9,10 +9,10 @@ serve directory (dir) =
     app.use (express.logger ())
     app.use (compiler {
         enabled [ 'less', 'pogo' ]
-        dest 'cache'
+        dest '.cache'
     })
     app.use (express.static (dir))
-    app.use (express.static ("#(dir)/cache"))
+    app.use (express.static ("#(dir)/.cache"))
     app.listen (parse int (argv.p))
 
 dir = process.cwd ()
