@@ -1,13 +1,11 @@
 # RubyGems
 export PATH=/usr/local/Cellar/ruby/1.9.3-p194/bin:$PATH
 # Brew
-export PATH=/usr/local/bin:$PATH
+export PATH=/usr/local/sbin:/usr/local/bin:$PATH
 # Home
 export PATH=~/bin:$PATH
 # NPM
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
-export NODE_PATH=/usr/local/share/npm/lib/node_modules
-export PATH=/usr/local/share/npm/bin:$PATH
 
 # Java
 export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/bin:$PATH
