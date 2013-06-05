@@ -22,6 +22,13 @@ Bundle 'tpope/vim-surround'
 Bundle 'VimClojure'
 Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
+Bundle 'tpope/vim-cucumber'
+Bundle 'godlygeek/tabular'
+
+" Ag
+Bundle 'rking/ag.vim'
+nnoremap <Leader>* *:AgFromSearch<CR>
+
 
 set hidden
 set shiftwidth=4
@@ -50,6 +57,11 @@ set guioptions-=m
 set guioptions-=T
 set shell=bash
 
+" ctrl-p
+set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,node_modules/*
+nnoremap <Leader>b :CtrlPBuffer<CR>
+nnoremap <Leader>f :CtrlP<CR>
+
 autocmd FileType pogo set shiftwidth=4
 autocmd FileType html set shiftwidth=2
 autocmd FileType css set shiftwidth=2
@@ -74,3 +86,10 @@ function! ShowSpecIndex()
 endfunction
 
 nnoremap <Leader>si :call ShowSpecIndex()<cr>
+
+" CTags
+"
+" $PATH appears different to vim for some reason and hence wrong ctags gets picked
+" until then, you need to manually override ctags in /usr/bin/ with those from homebrew
+" TODO fix vim path
+map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
