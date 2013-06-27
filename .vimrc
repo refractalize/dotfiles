@@ -55,12 +55,16 @@ set backspace=2
 set guioptions-=r
 set guioptions-=m
 set guioptions-=T
-set shell=bash
+
+if !has("win32")
+    set shell=bash
+endif
 
 " ctrl-p
 set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,node_modules/*
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
+let g:ctrlp_working_path_mode = 0
 
 autocmd FileType pogo set shiftwidth=4
 autocmd FileType html set shiftwidth=2
