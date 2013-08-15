@@ -1,0 +1,18 @@
+{
+  "name": "bin",
+  "version": "0.0.0",
+  "description": "tools and stuff",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD",
+  "dependencies": {
+    "optimist": "~0.6.0",
+    "less": "~1.4.2",
+    "connect-compiler": "~0.1.3",
+    "express": "~3.3.5",
+    "request": "~2.26.0",
+    "pogo": "~0.4.3"
+  }
+}
