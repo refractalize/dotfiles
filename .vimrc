@@ -56,7 +56,9 @@ set guioptions-=r
 set guioptions-=m
 set guioptions-=T
 
-if !has("win32")
+if has("win32") || has("win64")
+    set directory=$TMP
+else
     set shell=bash
 endif
 
