@@ -9,7 +9,7 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 Bundle 'tomasr/molokai'
-Bundle 'scrooloose/nerdtree'
+Bundle 'tpope/vim-vinegar'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'tpope/vim-fugitive'
@@ -17,18 +17,27 @@ Bundle 'groenewege/vim-less'
 Bundle 'tpope/vim-markdown'
 Bundle 'featurist/vim-pogoscript'
 Bundle 'tpope/vim-rails'
-Bundle 'mattn/zencoding-vim'
+Bundle 'mattn/emmet-vim'
 Bundle 'tpope/vim-surround'
 Bundle 'VimClojure'
 Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-cucumber'
 Bundle 'godlygeek/tabular'
+Bundle 'maksimr/vim-jsbeautify'
+Bundle 'einars/js-beautify'
 
 " Ag
 Bundle 'rking/ag.vim'
 nnoremap <Leader>* *:AgFromSearch<CR>
 
+map <c-f> :call JsBeautify()<cr>
+  " or
+autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
+" for html
+autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+" for css or scss
+autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 set hidden
 set shiftwidth=4

@@ -18,3 +18,5 @@
 [core]
 	editor = vim
 	trustctime = false
+[mergetool "tortoise"]
+    cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
