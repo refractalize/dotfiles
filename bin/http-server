@@ -3,14 +3,12 @@
 express = require 'express'
 argv = require 'optimist'.default 'p' '4000'.alias 'p' 'port'.argv
 compiler = require 'connect-compiler'
+browserify = require 'browserify-middleware'
 
 serve directory (dir) =
     app = express ()
     app.use (express.logger ())
-    app.use (compiler {
-        enabled [ 'less', 'pogo' ]
-        dest '.cache'
-    })
+    app.use ('/app.js', browserify ("#(process.cwd ())/app.pogo", {transform = ['pogoify'], extensions = ['.pogo']}))
     app.use (express.static (dir))
     app.use (express.static ("#(dir)/.cache"))
     app.listen (parse int (argv.p))
