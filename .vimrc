@@ -24,19 +24,14 @@ Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-cucumber'
 Bundle 'godlygeek/tabular'
-Bundle 'maksimr/vim-jsbeautify'
-Bundle 'einars/js-beautify'
 
 " Ag
 Bundle 'rking/ag.vim'
 nnoremap <Leader>* *:AgFromSearch<CR>
 
-map <c-f> :call JsBeautify()<cr>
-  " or
+Bundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-" for html
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-" for css or scss
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 set hidden
