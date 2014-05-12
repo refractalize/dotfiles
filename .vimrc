@@ -24,15 +24,24 @@ Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-cucumber'
 Bundle 'godlygeek/tabular'
+Bundle 'junegunn/goyo.vim'
+Bundle 'airblade/vim-gitgutter'
+Bundle 'michaeljsmith/vim-indent-object'
+Bundle 'terryma/vim-expand-region'
+Bundle 'jelera/vim-javascript-syntax'
 
 " Ag
 Bundle 'rking/ag.vim'
 nnoremap <Leader>* *:AgFromSearch<CR>
+let g:agprg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
 
 Bundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+
+Bundle 'bling/vim-airline'
+let g:airline_powerline_fonts = 1
 
 set hidden
 set shiftwidth=4
@@ -47,7 +56,7 @@ set path+=**     " allow searching all files and subdirectories in current direc
 set number
 set ruler
 set background=dark
-colorscheme solarized
+colorscheme default
 set laststatus=2
 set scrolloff=3
 set ignorecase
@@ -67,12 +76,12 @@ else
 endif
 
 " ctrl-p
-set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,node_modules/*
+set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,bower_components/*,node_modules/*
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
 let g:ctrlp_working_path_mode = 0
 
-autocmd FileType pogo set shiftwidth=4
+autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
 autocmd FileType css set shiftwidth=2
 autocmd FileType javascript set shiftwidth=2
@@ -97,9 +106,48 @@ endfunction
 
 nnoremap <Leader>si :call ShowSpecIndex()<cr>
 
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
+    set ttymouse=xterm2
+endif
+
+" remap 'increase number' since C-a is captured by tmux/screen
+" Easier increment/decrement
+nnoremap + <C-a>
+nnoremap - <C-x>
+
 " CTags
 "
 " $PATH appears different to vim for some reason and hence wrong ctags gets picked
 " until then, you need to manually override ctags in /usr/bin/ with those from homebrew
 " TODO fix vim path
 map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+
+function! Camel()
+  let [lnum, start] = searchpos("[$_a-zA-Z][$_a-zA-Z0-9 ]*[$_a-zA-Z0-9]", "bn")
+  let [lnum, end] = searchpos("[$_a-zA-Z][$_a-zA-Z0-9 ]*[$_a-zA-Z0-9]", "ne")
+  let line = getline(".")
+  let identifier = line[start - 1 : end - 1]
+  if start > 1
+      let firstPart = line[0 : start - 2]
+  else
+      let firstPart = ""
+  endif
+
+  let lastPart = line[end :]
+
+  let camel = substitute(identifier, "\\([a-zA-Z$_]\\)\\s\\+\\([a-zA-Z$_]\\)", "\\1\\u\\2", "g")
+
+  let newLine = firstPart . camel . lastPart
+
+  call setline(".", newLine)
+endfunction
+
+func! SynStack()
+    if !exists("*synstack")
+        return
+    endif
+    echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+nnoremap <Leader>c :call Camel()<cr>

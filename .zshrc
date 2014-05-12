@@ -16,6 +16,8 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home
 # Nice stuff
 alias ls="ls -Gh"
 
+export TERM=xterm-256color
+
 PROMPT="%F{yellow}%m%f %F{blue}%c λ%f "
 
 # Proper Emacs key bindings
@@ -34,3 +36,7 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 
 autoload -Uz compinit
 compinit
+
+export HISTSIZE=1000
+export SAVEHIST=1000
+export HISTFILE=~/.zsh-history
