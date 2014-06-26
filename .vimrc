@@ -5,9 +5,8 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
-
 Bundle 'tomasr/molokai'
 Bundle 'tpope/vim-vinegar'
 Bundle 'kchmck/vim-coffee-script'
@@ -27,8 +26,9 @@ Bundle 'godlygeek/tabular'
 Bundle 'junegunn/goyo.vim'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'terryma/vim-expand-region'
 Bundle 'jelera/vim-javascript-syntax'
+Bundle 'vim-scripts/summerfruit256.vim'
+Bundle 'leafgarland/typescript-vim'
 
 " Ag
 Bundle 'rking/ag.vim'
@@ -56,7 +56,7 @@ set path+=**     " allow searching all files and subdirectories in current direc
 set number
 set ruler
 set background=dark
-colorscheme default
+colorscheme molokai
 set laststatus=2
 set scrolloff=3
 set ignorecase
@@ -76,10 +76,11 @@ else
 endif
 
 " ctrl-p
-set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,bower_components/*,node_modules/*
+" set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,bower_components/*,node_modules/*
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
 let g:ctrlp_working_path_mode = 0
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 
 autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
@@ -114,7 +115,7 @@ endif
 " remap 'increase number' since C-a is captured by tmux/screen
 " Easier increment/decrement
 nnoremap + <C-a>
-nnoremap - <C-x>
+nnoremap _ <C-x>
 
 " CTags
 "
