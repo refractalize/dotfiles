@@ -1,46 +1,49 @@
 set nocompatible               " be iMproved
 filetype off                   " required!
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 " let Vundle manage Vundle
 " required!
-Bundle 'gmarik/vundle'
-Bundle 'tomasr/molokai'
-Bundle 'tpope/vim-vinegar'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'tpope/vim-fugitive'
-Bundle 'groenewege/vim-less'
-Bundle 'tpope/vim-markdown'
-Bundle 'featurist/vim-pogoscript'
-Bundle 'tpope/vim-rails'
-Bundle 'mattn/emmet-vim'
-Bundle 'tpope/vim-surround'
-Bundle 'VimClojure'
-Bundle 'sjl/gundo.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-cucumber'
-Bundle 'godlygeek/tabular'
-Bundle 'junegunn/goyo.vim'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'jelera/vim-javascript-syntax'
-Bundle 'vim-scripts/summerfruit256.vim'
-Bundle 'leafgarland/typescript-vim'
+Plugin 'gmarik/Vundle'
+Plugin 'tomasr/molokai'
+Plugin 'tpope/vim-vinegar'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'tpope/vim-fugitive'
+Plugin 'groenewege/vim-less'
+Plugin 'tpope/vim-markdown'
+Plugin 'featurist/vim-pogoscript'
+Plugin 'tpope/vim-rails'
+Plugin 'mattn/emmet-vim'
+Plugin 'tpope/vim-surround'
+Plugin 'VimClojure'
+Plugin 'sjl/gundo.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-cucumber'
+Plugin 'godlygeek/tabular'
+Plugin 'junegunn/goyo.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'michaeljsmith/vim-indent-object'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'vim-scripts/summerfruit256.vim'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'rking/ag.vim'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'bling/vim-airline'
+
+call vundle#end()
+filetype plugin indent on
 
 " Ag
-Bundle 'rking/ag.vim'
 nnoremap <Leader>* *:AgFromSearch<CR>
 let g:agprg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
 
-Bundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
-Bundle 'bling/vim-airline'
 let g:airline_powerline_fonts = 1
 
 set hidden
@@ -49,8 +52,6 @@ set tabstop=4
 set expandtab
 set smarttab
 set hlsearch
-filetype plugin on
-filetype indent on
 syntax on
 set path+=**     " allow searching all files and subdirectories in current directory
 set number
@@ -152,3 +153,4 @@ func! SynStack()
 endfunc
 
 nnoremap <Leader>c :call Camel()<cr>
+
