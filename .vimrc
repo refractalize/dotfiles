@@ -145,12 +145,24 @@ function! Camel()
   call setline(".", newLine)
 endfunction
 
+nnoremap <Leader>c :call Camel()<cr>
+
+function! MochaOnly()
+  let line = getline(".")
+  if match(line, "\\<\\(it\\|context\\|describe\\)\\.only\\>") > 0
+    let newline = substitute(line, "\\<\\(it\\|context\\|describe\\)\\.only\\>", "\\1", "")
+    call setline(".", newline)
+  else
+    let newline = substitute(line, "\\<\\(it\\|context\\|describe\\)\\>", "\\1.only", "")
+    call setline(".", newline)
+  endif
+endfunction
+
+nnoremap <Leader>o :call MochaOnly()<cr>
+
 func! SynStack()
     if !exists("*synstack")
         return
     endif
     echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-
-nnoremap <Leader>c :call Camel()<cr>
-
