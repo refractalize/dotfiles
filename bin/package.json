@@ -8,8 +8,10 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
+    "bluebird": "^2.3.4",
     "browserify-middleware": "^3.0.0",
     "express": "~3.3.5",
-    "optimist": "~0.6.0"
+    "optimist": "~0.6.0",
+    "pogo": "^0.9.5"
   }
 }

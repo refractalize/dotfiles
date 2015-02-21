@@ -9,6 +9,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle'
 Plugin 'tomasr/molokai'
 Plugin 'tpope/vim-vinegar'
+Plugin 'tpope/vim-abolish'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tpope/vim-fugitive'
@@ -32,19 +33,29 @@ Plugin 'leafgarland/typescript-vim'
 Plugin 'rking/ag.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'bling/vim-airline'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+Plugin 'AndrewRadev/sideways.vim'
 
 call vundle#end()
 filetype plugin indent on
 
-" Ag
+" ag.vim
 nnoremap <Leader>* *:AgFromSearch<CR>
 let g:agprg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
 
+" vim-jsbeautify
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
+" vim-airline
 let g:airline_powerline_fonts = 1
+
+" sideways.vim
+nnoremap <c-h> :SidewaysLeft<cr>
+nnoremap <c-l> :SidewaysRight<cr>
 
 set hidden
 set shiftwidth=4
@@ -77,11 +88,9 @@ else
 endif
 
 " ctrl-p
-" set wildignore+=*.o,*.obj,.git*,*.rbc,*.class,.svn,vendor/gems/*,*/tmp/*,*.so,*.swp,*.zip,*/images/*,*/cache/*,scrapers/products/*,bower_components/*,node_modules/*
+set wildignore+=.git*,*.sw?,bower_components/*,node_modules/*
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 
 autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
@@ -124,6 +133,10 @@ nnoremap _ <C-x>
 " until then, you need to manually override ctags in /usr/bin/ with those from homebrew
 " TODO fix vim path
 map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+
+" visual select last pasted text
+" http://vim.wikia.com/wiki/Selecting_your_pasted_text
+nnoremap gp `[v`]
 
 function! Camel()
   let [lnum, start] = searchpos("[$_a-zA-Z][$_a-zA-Z0-9 ]*[$_a-zA-Z0-9]", "bn")

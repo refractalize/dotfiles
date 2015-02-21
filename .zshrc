@@ -16,11 +16,14 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home
 # Nice stuff
 alias ls="ls -Gh"
 
+export EDITOR=vim
+
 export TERM=xterm-256color
 
 PROMPT="%F{yellow}%m%f %F{blue}%c λ%f "
 
 # Proper Emacs key bindings
+bindkey -e
 bindkey "^[F" emacs-forward-word
 bindkey "^[f" emacs-forward-word
 
@@ -40,3 +43,6 @@ compinit
 export HISTSIZE=1000
 export SAVEHIST=1000
 export HISTFILE=~/.zsh-history
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
