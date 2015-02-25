@@ -88,9 +88,9 @@ else
 endif
 
 " ctrl-p
-set wildignore+=.git*,*.sw?,bower_components/*,node_modules/*
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
+let g:ctrlp_custom_ignore = { 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules)$' }
 
 autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
