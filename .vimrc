@@ -37,6 +37,7 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'AndrewRadev/sideways.vim'
+Plugin 'ludovicchabant/vim-lawrencium'
 
 call vundle#end()
 filetype plugin indent on
@@ -56,6 +57,11 @@ let g:airline_powerline_fonts = 1
 " sideways.vim
 nnoremap <c-h> :SidewaysLeft<cr>
 nnoremap <c-l> :SidewaysRight<cr>
+
+omap aa <Plug>SidewaysArgumentTextobjA
+xmap aa <Plug>SidewaysArgumentTextobjA
+omap ia <Plug>SidewaysArgumentTextobjI
+xmap ia <Plug>SidewaysArgumentTextobjI
 
 set hidden
 set shiftwidth=4
@@ -91,6 +97,7 @@ endif
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
 let g:ctrlp_custom_ignore = { 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules)$' }
+let g:ctrlp_working_path_mode = 'a'
 
 autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
