@@ -27,7 +27,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'junegunn/goyo.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'michaeljsmith/vim-indent-object'
-Plugin 'jelera/vim-javascript-syntax'
+Plugin 'pangloss/vim-javascript'
 Plugin 'vim-scripts/summerfruit256.vim'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'rking/ag.vim'
@@ -36,15 +36,35 @@ Plugin 'bling/vim-airline'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
+Bundle 'honza/vim-snippets'
 Plugin 'AndrewRadev/sideways.vim'
 Plugin 'ludovicchabant/vim-lawrencium'
+Plugin 'mxw/vim-jsx'
+Plugin 'AndrewVos/vim-git-navigator'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tpope/vim-eunuch'
+Plugin 'tpope/vim-jdaddy'
+Plugin 'gregsexton/gitv'
+Plugin 'tpope/vim-commentary'
+Plugin 'jiangmiao/auto-pairs'
 
 call vundle#end()
 filetype plugin indent on
 
+" emmet
+let g:user_emmet_settings = {
+  \  'html' : {
+  \    'empty_element_suffix': ' />'
+  \  },
+  \  'jsx' : {
+  \    'extends': 'html',
+  \    'attribute_name': {'class': 'class'},
+  \  }
+  \}
+
 " ag.vim
 nnoremap <Leader>* *:AgFromSearch<CR>
-let g:agprg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
+let g:ag_prg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
 
 " vim-jsbeautify
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
@@ -133,7 +153,6 @@ endif
 " Easier increment/decrement
 nnoremap + <C-a>
 nnoremap _ <C-x>
-
 " CTags
 "
 " $PATH appears different to vim for some reason and hence wrong ctags gets picked
@@ -144,28 +163,6 @@ map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
 nnoremap gp `[v`]
-
-function! Camel()
-  let [lnum, start] = searchpos("[$_a-zA-Z][$_a-zA-Z0-9 ]*[$_a-zA-Z0-9]", "bn")
-  let [lnum, end] = searchpos("[$_a-zA-Z][$_a-zA-Z0-9 ]*[$_a-zA-Z0-9]", "ne")
-  let line = getline(".")
-  let identifier = line[start - 1 : end - 1]
-  if start > 1
-      let firstPart = line[0 : start - 2]
-  else
-      let firstPart = ""
-  endif
-
-  let lastPart = line[end :]
-
-  let camel = substitute(identifier, "\\([a-zA-Z$_]\\)\\s\\+\\([a-zA-Z$_]\\)", "\\1\\u\\2", "g")
-
-  let newLine = firstPart . camel . lastPart
-
-  call setline(".", newLine)
-endfunction
-
-nnoremap <Leader>c :call Camel()<cr>
 
 function! MochaOnly()
   let line = getline(".")
@@ -179,10 +176,3 @@ function! MochaOnly()
 endfunction
 
 nnoremap <Leader>o :call MochaOnly()<cr>
-
-func! SynStack()
-    if !exists("*synstack")
-        return
-    endif
-    echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc

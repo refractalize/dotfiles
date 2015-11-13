@@ -9,6 +9,9 @@
     br = branch
     l = log -1
     sm = submodule update --init --recursive
+	local = log @{u}..
+	unpushed = log @{u}..
+    unreleased = log $(git describe --abbrev=0)..
 [credential]
     helper = osxkeychain
 [push]
