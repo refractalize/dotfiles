@@ -10,7 +10,6 @@ export PATH=~/bin:$PATH
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
 
 # Java
-export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/bin:$PATH
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home
 
 # Nice stuff

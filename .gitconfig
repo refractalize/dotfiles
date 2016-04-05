@@ -27,3 +27,5 @@
     ff = only
 [hub]
 	protocol = https
+[mergetool]
+	keepBackup = false

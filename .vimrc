@@ -6,7 +6,8 @@ call vundle#begin()
 
 " let Vundle manage Vundle
 " required!
-Plugin 'gmarik/Vundle'
+Plugin 'VundleVim/Vundle.vim'
+
 Plugin 'tomasr/molokai'
 Plugin 'tpope/vim-vinegar'
 Plugin 'tpope/vim-abolish'
@@ -21,7 +22,7 @@ Plugin 'mattn/emmet-vim'
 Plugin 'tpope/vim-surround'
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim'
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-cucumber'
 Plugin 'godlygeek/tabular'
 Plugin 'junegunn/goyo.vim'
@@ -32,7 +33,8 @@ Plugin 'vim-scripts/summerfruit256.vim'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'rking/ag.vim'
 Plugin 'maksimr/vim-jsbeautify'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
@@ -46,7 +48,9 @@ Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-jdaddy'
 Plugin 'gregsexton/gitv'
 Plugin 'tpope/vim-commentary'
-Plugin 'jiangmiao/auto-pairs'
+Plugin 'scrooloose/syntastic'
+Plugin 'dbext.vim'
+Plugin 'moll/vim-node'
 
 call vundle#end()
 filetype plugin indent on
@@ -73,6 +77,7 @@ autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 " vim-airline
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#syntastic#enabled = 1
 
 " sideways.vim
 nnoremap <c-h> :SidewaysLeft<cr>
@@ -82,6 +87,23 @@ omap aa <Plug>SidewaysArgumentTextobjA
 xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
+
+" syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:solarized_termcolors= 256
+let g:solarized_termtrans = 1
+
+let g:solarized_bold = 1
+let g:solarized_underline = 1
+let g:solarized_italic = 1
+" let g:solarized_contrast = "high"
+" let g:solarized_visibility= "high"
+
+set exrc   " enable per-directory .vimrc files
+set secure " disable unsafe commands in local .vimrc files
 
 set hidden
 set shiftwidth=4
@@ -112,6 +134,20 @@ if has("win32") || has("win64")
 else
     set shell=bash
 endif
+
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_style_error_symbol = '✠'
+let g:syntastic_warning_symbol = '∆'
+let g:syntastic_style_warning_symbol = '≈'
+highlight SyntasticErrorSign ctermfg=196 guifg=#ff0000
+highlight SyntasticWarningSign ctermfg=226 guifg=#ffff00
+
+let g:syntastic_javascript_checkers = ['eslint']
 
 " ctrl-p
 nnoremap <Leader>b :CtrlPBuffer<CR>
@@ -149,6 +185,8 @@ if &term =~ '^screen'
     set ttymouse=xterm2
 endif
 
+noremap <S-+> <C-w> +
+
 " remap 'increase number' since C-a is captured by tmux/screen
 " Easier increment/decrement
 nnoremap + <C-a>
@@ -176,3 +214,5 @@ function! MochaOnly()
 endfunction
 
 nnoremap <Leader>o :call MochaOnly()<cr>
+
+command! Requires execute "Ag -s \"require\\(\\s*['\\\\\\\"][^'\\\\\\\"]*" . expand('%:t:r') . "[^'\\\\\\\"]*['\\\\\\\"]\\s*\\)\""
