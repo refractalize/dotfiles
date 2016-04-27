@@ -1,19 +1,19 @@
 [user]
-    name = Tim Macfarlane
-    email = timmacfarlane@gmail.com
+	name = Tim Macfarlane
+	email = timmacfarlane@gmail.com
 [color]
-    ui = true
+	ui = true
 [alias]
-    co = checkout
-    st = status
-    br = branch
-    l = log -1
-    sm = submodule update --init --recursive
+	co = checkout
+	st = status
+	br = branch
+	l = log -1
+	sm = submodule update --init --recursive
 	local = log @{u}..
 	unpushed = log @{u}..
-    unreleased = log $(git describe --abbrev=0)..
+	unreleased = log $(git describe --abbrev=0)..
 [credential]
-    helper = osxkeychain
+	helper = osxkeychain
 [push]
 	default = simple
 [merge]
@@ -22,15 +22,15 @@
 	editor = vim
 	trustctime = false
 [mergetool "tortoise"]
-    cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
+	cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
 [pull]
-    ff = only
+	ff = only
 [hub]
 	protocol = https
 [mergetool]
 	keepBackup = false
 [diff "gzip"]
-  binary = true
-  textconv = gzcat
+	binary = true
+	textconv = gzcat
 [core]
-  attributesFile = ~/.gitattributes
+	attributesFile = ~/.gitattributes
