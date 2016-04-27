@@ -15,8 +15,10 @@
   "globals": {
     "serverRequire": true
   },
-  "ecmaFeatures": {
-    "jsx": true
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "env": {
     "browser": true,

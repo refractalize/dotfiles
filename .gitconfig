@@ -29,3 +29,8 @@
 	protocol = https
 [mergetool]
 	keepBackup = false
+[diff "gzip"]
+  binary = true
+  textconv = gzcat
+[core]
+  attributesFile = ~/.gitattributes

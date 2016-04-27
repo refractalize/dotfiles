@@ -10,7 +10,7 @@ export PATH=~/bin:$PATH
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
 
 # Java
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home
 
 # Nice stuff
 alias ls="ls -Gh"
@@ -19,7 +19,7 @@ export EDITOR=vim
 
 export TERM=xterm-256color
 
-PROMPT="%F{yellow}%m%f %F{blue}%c λ%f "
+PROMPT="%F{yellow}%m%f %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
 
 # Proper Emacs key bindings
 bindkey -e
@@ -46,7 +46,5 @@ export HISTFILE=~/.zsh-history
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 
-export FZF_DEFAULT_COMMAND='ag -l -g ""'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export NVM_DIR="/Users/tim/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
