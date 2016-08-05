@@ -1,6 +1,7 @@
 {
   "plugins": [
-    "react"
+    "react",
+    "babel"
   ],
   "settings": {
     "react": {
@@ -10,7 +11,8 @@
   "extends": "eslint:recommended",
   "rules": {
     "no-unused-vars": 1,
-    "no-console": 0
+    "no-console": 0,
+    "comma-dangle": [2, "only-multiline"]
   },
   "globals": {
     "serverRequire": true

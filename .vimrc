@@ -48,9 +48,15 @@ Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-jdaddy'
 Plugin 'gregsexton/gitv'
 Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-repeat'
 Plugin 'scrooloose/syntastic'
 Plugin 'dbext.vim'
 Plugin 'moll/vim-node'
+Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && make && cd -
+Plugin 'Shougo/unite.vim'
+Plugin 'Shougo/neomru.vim'
+Plugin 'FooSoft/vim-argwrap'
+Plugin 'sjl/splice.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -149,11 +155,34 @@ highlight SyntasticWarningSign ctermfg=226 guifg=#ffff00
 
 let g:syntastic_javascript_checkers = ['eslint']
 
+" Unite
+" custom command: ag --follow --nocolor --nogroup --hidden -g ""
+let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
+nnoremap <Leader><Leader> :Unite -start-insert buffer file_mru<cr>
+nnoremap <Leader>f :Unite -start-insert buffer file_mru file_rec/async<cr>
+" nnoremap <Leader>f :Unite -buffer-name=files -start-insert file_rec/async<cr>
+" nnoremap <Leader>F :Unite -buffer-name=scoped_files -start-insert -path=`expand("%:p:h")` file_rec/async:!<cr>
+" nnoremap <Leader>b :Unite -buffer-name=buffer -start-insert buffer<cr>
+" nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<cr>
+" au FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+  inoremap <silent><buffer><expr> <Leader>f :Unite -start-insert file_rec/async<cr>
+  inoremap <silent><buffer><expr> <C-b> :Unite -start-insert buffer<cr>
+  inoremap <silent><buffer><expr> <C-m> :Unite -start-insert file_mru<cr>
+  imap <silent><buffer><expr> <C-s>     unite#do_action('split')
+  " imap <silent><buffer><expr> <C-s> unite#do_action('split')
+  " nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+  " nmap <silent><buffer><expr> <C-s> unite#do_action('split')
+endfunction
+
 " ctrl-p
-nnoremap <Leader>b :CtrlPBuffer<CR>
-nnoremap <Leader>f :CtrlP<CR>
-let g:ctrlp_custom_ignore = { 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules)$' }
-let g:ctrlp_working_path_mode = 'a'
+" nnoremap <Leader>b :CtrlPBuffer<CR>
+" nnoremap <Leader>f :CtrlP<CR>
+" let g:ctrlp_custom_ignore = { 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules)$' }
+" let g:ctrlp_working_path_mode = 'a'
+
+nnoremap <silent> <leader>a :ArgWrap<CR>
 
 autocmd FileType pogo set shiftwidth=2
 autocmd FileType html set shiftwidth=2
@@ -204,11 +233,11 @@ nnoremap gp `[v`]
 
 function! MochaOnly()
   let line = getline(".")
-  if match(line, "\\<\\(it\\|context\\|describe\\)\\.only\\>") > 0
-    let newline = substitute(line, "\\<\\(it\\|context\\|describe\\)\\.only\\>", "\\1", "")
+  if match(line, "\\<\\(\\i\\+\\)\\.only\\>") >= 0
+    let newline = substitute(line, "\\<\\(\\i\\+\\)\\.only\\>", "\\1", "")
     call setline(".", newline)
   else
-    let newline = substitute(line, "\\<\\(it\\|context\\|describe\\)\\>", "\\1.only", "")
+    let newline = substitute(line, "\\<\\(\\i\\+\\)\\>", "\\1.only", "")
     call setline(".", newline)
   endif
 endfunction
