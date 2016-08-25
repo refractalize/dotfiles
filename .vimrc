@@ -1,3 +1,6 @@
+nnoremap <space> <Nop>
+let mapleader=" "
+
 set nocompatible               " be iMproved
 filetype off                   " required!
 
@@ -159,21 +162,18 @@ let g:syntastic_javascript_checkers = ['eslint']
 " custom command: ag --follow --nocolor --nogroup --hidden -g ""
 let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
 nnoremap <Leader><Leader> :Unite -start-insert buffer file_mru<cr>
-nnoremap <Leader>f :Unite -start-insert buffer file_mru file_rec/async<cr>
+nnoremap <Leader>f :Unite -start-insert file_rec/async<cr>
 " nnoremap <Leader>f :Unite -buffer-name=files -start-insert file_rec/async<cr>
 " nnoremap <Leader>F :Unite -buffer-name=scoped_files -start-insert -path=`expand("%:p:h")` file_rec/async:!<cr>
 " nnoremap <Leader>b :Unite -buffer-name=buffer -start-insert buffer<cr>
 " nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<cr>
-" au FileType unite call s:unite_my_settings()
+au FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
   " Overwrite settings.
-  inoremap <silent><buffer><expr> <Leader>f :Unite -start-insert file_rec/async<cr>
-  inoremap <silent><buffer><expr> <C-b> :Unite -start-insert buffer<cr>
-  inoremap <silent><buffer><expr> <C-m> :Unite -start-insert file_mru<cr>
-  imap <silent><buffer><expr> <C-s>     unite#do_action('split')
-  " imap <silent><buffer><expr> <C-s> unite#do_action('split')
-  " nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  " nmap <silent><buffer><expr> <C-s> unite#do_action('split')
+  inoremap <silent><buffer> <C-b> <esc>:Unite -start-insert buffer file_mru<cr>
+  inoremap <silent><buffer> <C-f> <esc>:Unite -start-insert file_rec/async<cr>
+  imap <silent><buffer><expr> <C-s> unite#do_action('split')
+  nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
 endfunction
 
 " ctrl-p
@@ -245,3 +245,13 @@ endfunction
 nnoremap <Leader>o :call MochaOnly()<cr>
 
 command! Requires execute "Ag -s \"require\\(\\s*['\\\\\\\"][^'\\\\\\\"]*" . expand('%:t:r') . "[^'\\\\\\\"]*['\\\\\\\"]\\s*\\)\""
+
+nnoremap <silent> <Leader>d :call DiffToggle()<CR>
+
+function! DiffToggle()
+    if &diff
+        diffoff
+    else
+        diffthis
+    endif
+:endfunction
