@@ -1,11 +1,18 @@
 To setup on a new machine:
 
-    cd ~    
-    git init
-    git remote add origin https://github.com/refractalize/dotfiles.git
-    git fetch
-    git reset origin/master
+```sh
+cd ~    
+git init
+git remote add origin https://github.com/refractalize/dotfiles.git
+git fetch
+git reset origin/master
+```
 
 And checkout as necessary:
 
-    git co .vimrc
+```sh
+git checkout .vimrc
+git checkout .gitconfig
+```
+
+You'll most likely need to install [Vundle](https://github.com/VundleVim/Vundle.vim#quick-start).
