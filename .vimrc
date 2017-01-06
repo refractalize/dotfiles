@@ -25,7 +25,6 @@ Plugin 'mattn/emmet-vim'
 Plugin 'tpope/vim-surround'
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-cucumber'
 Plugin 'godlygeek/tabular'
 Plugin 'junegunn/goyo.vim'
@@ -147,7 +146,7 @@ endif
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
+let g:syntastic_check_on_wq = 0
 
 let g:syntastic_error_symbol = '✗'
 let g:syntastic_style_error_symbol = '✠'
@@ -157,6 +156,7 @@ highlight SyntasticErrorSign ctermfg=196 guifg=#ff0000
 highlight SyntasticWarningSign ctermfg=226 guifg=#ffff00
 
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exec = 'eslint_d'
 
 " Unite
 " custom command: ag --follow --nocolor --nogroup --hidden -g ""
@@ -172,15 +172,9 @@ function! s:unite_my_settings()
   " Overwrite settings.
   inoremap <silent><buffer> <C-b> <esc>:Unite -start-insert buffer file_mru<cr>
   inoremap <silent><buffer> <C-f> <esc>:Unite -start-insert file_rec/async<cr>
-  imap <silent><buffer><expr> <C-s> unite#do_action('split')
-  nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+  inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+  inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
 endfunction
-
-" ctrl-p
-" nnoremap <Leader>b :CtrlPBuffer<CR>
-" nnoremap <Leader>f :CtrlP<CR>
-" let g:ctrlp_custom_ignore = { 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules)$' }
-" let g:ctrlp_working_path_mode = 'a'
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
 

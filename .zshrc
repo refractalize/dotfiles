@@ -6,8 +6,6 @@ export PATH=/usr/local/sbin:/usr/local/bin:$PATH
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # Home
 export PATH=~/bin:$PATH
-# NPM
-export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
 
 # Java
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home
@@ -19,7 +17,7 @@ export EDITOR=vim
 
 export TERM=xterm-256color
 
-PROMPT="%F{yellow}%m%f %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+PROMPT="%F{yellow}%m%f %F{06}%*%F{default} %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
 
 # Proper Emacs key bindings
 bindkey -e
@@ -48,3 +46,9 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 export NVM_DIR="/Users/tim/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s ~/.env ] && . ~/.env
+
+# NPM
+export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
+
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

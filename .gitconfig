@@ -17,7 +17,8 @@
 [push]
 	default = simple
 [merge]
-	tool = opendiff
+	conflictstyle = diff3
+	tool = vimdiff
 [core]
 	editor = vim
 	trustctime = false
@@ -29,6 +30,7 @@
 	protocol = https
 [mergetool]
 	keepBackup = false
+	prompt = false
 [diff "gzip"]
 	binary = true
 	textconv = gzcat
