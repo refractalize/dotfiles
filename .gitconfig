@@ -25,7 +25,7 @@
 [mergetool "tortoise"]
 	cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
 [pull]
-	ff = only
+    ff = only
 [hub]
 	protocol = https
 [mergetool]

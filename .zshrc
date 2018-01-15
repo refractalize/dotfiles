@@ -1,5 +1,3 @@
-# RubyGems
-export PATH=/usr/local/Cellar/ruby/2.0.0-p247/bin:$PATH
 # Brew
 export PATH=/usr/local/sbin:/usr/local/bin:$PATH
 # rbenv
@@ -7,8 +5,9 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # Home
 export PATH=~/bin:$PATH
 
-# Java
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home
+# Oracle
+export OCI_LIB_DIR=$(brew --prefix)/lib
+export OCI_INC_DIR=$(brew --prefix)/lib/sdk/include
 
 # Nice stuff
 alias ls="ls -Gh"
@@ -17,7 +16,7 @@ export EDITOR=vim
 
 export TERM=xterm-256color
 
-PROMPT="%F{yellow}%m%f %F{06}%*%F{default} %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+PROMPT="%F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
 
 # Proper Emacs key bindings
 bindkey -e
@@ -27,9 +26,28 @@ bindkey "^[f" emacs-forward-word
 # Proper emacs word boundaries
 WORDCHARS=''
 
-# for Terminal current directory support
-precmd () {print -Pn "\e]2; %~/ \a"}
-preexec () {print -Pn "\e]2; %~/ \a"}
+preexec() {
+  # for Terminal current directory support
+  print -Pn "\e]2; %~/ \a"
+
+  # for timing commands
+  timer=${timer:-$SECONDS}
+}
+
+precmd() {
+  # for Terminal current directory support
+  print -Pn "\e]2; %~/ \a"
+
+  # for timing commands
+  if [ $timer ]; then
+    timer_show=$(($SECONDS - $timer))
+    export PROMPT="%F{blue}%c %F{06}(${timer_show}s) %F{red}%(?..[%?] )%F{blue}λ%f "
+    unset timer_show
+    unset timer
+  else
+    export PROMPT="%F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+  fi
+}
 
 # completions
 fpath=(/usr/local/share/zsh-completions $fpath)
@@ -51,4 +69,9 @@ export NVM_DIR="/Users/tim/.nvm"
 # NPM
 export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
 
+# Composer (PHP package manager)
+export PATH=~/.composer/vendor/bin:$PATH
+
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+eval "$(direnv hook zsh)"

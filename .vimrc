@@ -51,14 +51,16 @@ Plugin 'tpope/vim-jdaddy'
 Plugin 'gregsexton/gitv'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-repeat'
-Plugin 'scrooloose/syntastic'
 Plugin 'dbext.vim'
 Plugin 'moll/vim-node'
 Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && make && cd -
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
 Plugin 'FooSoft/vim-argwrap'
-Plugin 'sjl/splice.vim'
+Plugin 'artemave/vigun'
+Plugin 'w0rp/ale'
+Plugin 'will133/vim-dirdiff'
+Plugin 'nightsense/wonka'
 
 call vundle#end()
 filetype plugin indent on
@@ -85,7 +87,6 @@ autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 " vim-airline
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#syntastic#enabled = 1
 
 " sideways.vim
 nnoremap <c-h> :SidewaysLeft<cr>
@@ -95,11 +96,6 @@ omap aa <Plug>SidewaysArgumentTextobjA
 xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
-
-" syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
 
 let g:solarized_termcolors= 256
 let g:solarized_termtrans = 1
@@ -143,22 +139,21 @@ else
     set shell=bash
 endif
 
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+let g:ale_sign_column_always = 1
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '∆'
+highlight ALEErrorSign ctermfg=196 guifg=#ff0000
+highlight ALEWarningSign ctermfg=226 guifg=#ffff00
 
-if !(has("win32") || has("win64"))
-    let g:syntastic_error_symbol = '✗'
-    let g:syntastic_style_error_symbol = '✠'
-    let g:syntastic_warning_symbol = '∆'
-    let g:syntastic_style_warning_symbol = '≈'
-endif
-highlight SyntasticErrorSign ctermfg=196 guifg=#ff0000
-highlight SyntasticWarningSign ctermfg=226 guifg=#ffff00
-
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_javascript_eslint_exec = 'eslint_d'
+function! FixJsFormatting()
+  let command = 'eslint'
+  if executable('standard')
+    let command = 'standard'
+  endif
+  silent let f = system(command.' --fix '.expand('%'))
+  checktime
+endfunction
+autocmd FileType {javascript,javascript.jsx} nnoremap <Leader>p :call FixJsFormatting()<cr>
 
 " Unite
 " custom command: ag --follow --nocolor --nogroup --hidden -g ""
@@ -226,19 +221,6 @@ map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
 nnoremap gp `[v`]
-
-function! MochaOnly()
-  let line = getline(".")
-  if match(line, "\\<\\(\\i\\+\\)\\.only\\>") >= 0
-    let newline = substitute(line, "\\<\\(\\i\\+\\)\\.only\\>", "\\1", "")
-    call setline(".", newline)
-  else
-    let newline = substitute(line, "\\<\\(\\i\\+\\)\\>", "\\1.only", "")
-    call setline(".", newline)
-  endif
-endfunction
-
-nnoremap <Leader>o :call MochaOnly()<cr>
 
 command! Requires execute "Ag -s \"require\\(\\s*['\\\\\\\"][^'\\\\\\\"]*" . expand('%:t:r') . "[^'\\\\\\\"]*['\\\\\\\"]\\s*\\)\""
 
