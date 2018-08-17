@@ -17,6 +17,7 @@ Plugin 'tpope/vim-abolish'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rhubarb'
 Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-markdown'
 Plugin 'featurist/vim-pogoscript'
@@ -57,7 +58,10 @@ Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && mak
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
 Plugin 'FooSoft/vim-argwrap'
+
 Plugin 'artemave/vigun'
+au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
+
 Plugin 'w0rp/ale'
 Plugin 'will133/vim-dirdiff'
 Plugin 'nightsense/wonka'
@@ -142,6 +146,7 @@ endif
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '∆'
+let g:ale_lint_delay = 1000
 highlight ALEErrorSign ctermfg=196 guifg=#ff0000
 highlight ALEWarningSign ctermfg=226 guifg=#ffff00
 
@@ -232,4 +237,83 @@ function! DiffToggle()
     else
         diffthis
     endif
-:endfunction
+endfunction
+
+if executable('ag')
+  set grepprg=ag\ --vimgrep
+  set grepformat=%f:%l:%c:%m
+endif
+
+function! JsRequires()
+  let grep_term = "require(.*)"
+  execute 'silent grep!' "'".grep_term."'"
+  redraw!
+
+  let results = getqflist()
+  call setqflist([])
+
+  for require in results
+    let match = matchlist(require.text, "'".'\(\.\.\?\/.*\)'."'")
+    if len(match) > 0
+      let module_path = match[1]
+      let module_path_with_explicit_index = ''
+
+      if match(module_path, '\.$') != -1
+        let module_path = module_path . '/index'
+      elseif match(module_path, '\/$') != -1
+        let module_path = module_path . 'index'
+      elseif match(module_path, 'index\(\.jsx\?\)\?$') == -1
+        let module_path_with_explicit_index = module_path . '/index'
+      endif
+
+      let module_base = fnamemodify(bufname(require.bufnr), ':p:h')
+
+      let current_file_full_path = expand('%:p:r')
+      let module_full_path = fnamemodify(module_base . '/' . module_path, ':p:r')
+      let module_full_path_with_explicit_index = fnamemodify(module_base . '/' . module_path_with_explicit_index, ':p:r')
+
+      if module_full_path == current_file_full_path || module_full_path_with_explicit_index == current_file_full_path
+        caddexpr bufname(require.bufnr) . ':' . require.lnum . ':' .require.text
+      endif
+    endif
+  endfor
+  copen
+endfunction
+autocmd FileType {javascript,javascript.jsx} nnoremap <leader>R :call JsRequires()<cr>
+
+fun! JsRequireComplete(findstart, base)
+  if a:findstart
+    " locate the start of the word
+    let line = getline('.')
+    let end = col('.') - 1
+    let start = end
+    while start > 0 && line[start - 1] =~ "[^'\"]"
+      let start -= 1
+    endwhile
+
+    let base = substitute(line[start : end - 1], '^[./]*', '', '')
+    let cmd = 'ag --nogroup --nocolor --hidden -i -g "'.base.'"'
+
+    let g:js_require_complete_matches = map(
+          \ systemlist(cmd),
+          \ {i, val -> substitute(val, '\(index\)\?.jsx\?$', '', '')}
+          \ )
+
+    return start
+  else
+    " find files matching with "a:base"
+    let res = []
+    let search_path = substitute(expand('%:h'), '[^/.]\+', '..', 'g')
+    for m in g:js_require_complete_matches
+      if m =~ substitute(a:base, '^[./]*', '', '')
+        if search_path != ''
+          call add(res, search_path.'/'.m)
+        else
+          call add(res, m)
+        endif
+      endif
+    endfor
+    return res
+  endif
+endfun
+autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete

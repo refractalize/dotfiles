@@ -1,3 +1,9 @@
+if [ -d $HOME/.zsh ]; then
+  for file in $HOME/.zsh/*; do
+    source $file
+  done
+fi
+
 # Brew
 export PATH=/usr/local/sbin:/usr/local/bin:$PATH
 # rbenv
@@ -66,12 +72,14 @@ export NVM_DIR="/Users/tim/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s ~/.env ] && . ~/.env
 
-# NPM
-export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:../../../node_modules/.bin:$PATH
-
 # Composer (PHP package manager)
 export PATH=~/.composer/vendor/bin:$PATH
+
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 eval "$(direnv hook zsh)"
+
+source ~/google-cloud-sdk/path.zsh.inc
+source ~/google-cloud-sdk/completion.zsh.inc
