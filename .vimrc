@@ -136,6 +136,7 @@ set backspace=2
 set guioptions-=r
 set guioptions-=m
 set guioptions-=T
+set complete-=i
 
 if has("win32") || has("win64")
     set directory=$TMP
