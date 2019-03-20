@@ -12,8 +12,8 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' stagedstr ' %F{green}+'
 zstyle ':vcs_info:*' unstagedstr ' %F{yellow}#'
-zstyle ':vcs_info:*' formats '%b%u%c'
-zstyle ':vcs_info:*' actionformats '%b %F{red}%a%u%c'
+zstyle ':vcs_info:*' formats ' %F{blue}{%b%u%c%F{blue}}'
+zstyle ':vcs_info:*' actionformats ' %F{blue}{%b %F{red}%a%u%cF{blue}}'
 
 setopt prompt_subst
 
@@ -26,10 +26,10 @@ precmd() {
   # for timing commands
   if [ $timer ]; then
     timer_show=$(($SECONDS - $timer))
-    export PROMPT="%F{blue}%c {${vcs_info_msg_0_}%F{blue}} %F{06}(${timer_show}s) %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="%F{blue}%c${vcs_info_msg_0_} %F{06}(${timer_show}s) %F{red}%(?..[%?] )%F{blue}λ%f "
     unset timer_show
     unset timer
   else
-    export PROMPT="%F{blue}%c {${vcs_info_msg_0_}%F{blue}} %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="%F{blue}%c${vcs_info_msg_0_} %F{red}%(?..[%?] )%F{blue}λ%f "
   fi
 }

@@ -22,14 +22,12 @@ Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-markdown'
 Plugin 'featurist/vim-pogoscript'
 Plugin 'tpope/vim-rails'
-Plugin 'mattn/emmet-vim'
 Plugin 'tpope/vim-surround'
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim'
 Plugin 'tpope/vim-cucumber'
 Plugin 'godlygeek/tabular'
 Plugin 'junegunn/goyo.vim'
-Plugin 'airblade/vim-gitgutter'
 Plugin 'michaeljsmith/vim-indent-object'
 Plugin 'pangloss/vim-javascript'
 Plugin 'vim-scripts/summerfruit256.vim'
@@ -69,7 +67,7 @@ Plugin 'nightsense/wonka'
 call vundle#end()
 filetype plugin indent on
 
-" emmet
+Plugin 'mattn/emmet-vim'
 let g:user_emmet_settings = {
   \  'html' : {
   \    'empty_element_suffix': ' />'
@@ -88,6 +86,11 @@ let g:ag_prg="ag --column --ignore-dir=bower_components --ignore-dir=common/js -
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+
+Plugin 'airblade/vim-gitgutter'
+nmap <Leader>ha <Plug>GitGutterStageHunk
+nmap <Leader>hr <Plug>GitGutterUndoHunk
+nmap <Leader>hv <Plug>GitGutterPreviewHunk
 
 " vim-airline
 let g:airline_powerline_fonts = 1
@@ -148,6 +151,7 @@ let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '∆'
 let g:ale_lint_delay = 1000
+let g:ale_linters_explicit = 1
 highlight ALEErrorSign ctermfg=196 guifg=#ff0000
 highlight ALEWarningSign ctermfg=226 guifg=#ffff00
 
