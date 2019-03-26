@@ -12,8 +12,8 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' stagedstr ' %F{green}+'
 zstyle ':vcs_info:*' unstagedstr ' %F{yellow}#'
-zstyle ':vcs_info:*' formats ' %F{blue}{%F{cyan}%b%u%c%F{blue}}'
-zstyle ':vcs_info:*' actionformats ' %F{blue}{%F{cyan}%b %F{red}%a%u%cF{blue}}'
+zstyle ':vcs_info:*' formats ' %F{blue}(%F{cyan}%b%u%c%F{blue})'
+zstyle ':vcs_info:*' actionformats ' %F{blue}(%F{cyan}%b %F{red}%a%u%c%F{blue})'
 
 setopt prompt_subst
 
