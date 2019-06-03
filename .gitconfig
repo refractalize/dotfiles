@@ -36,3 +36,4 @@
 	textconv = gzcat
 [core]
 	attributesFile = ~/.gitattributes
+	pager = less -XFSRi

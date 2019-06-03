@@ -8,6 +8,7 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/git
   zgen oh-my-zsh plugins/nvm
   zgen load joshuarubin/zsh-direnv
+  zgen load zdharma/history-search-multi-word
 
   zgen load ~/.zsh
   zgen load ~/.zsh/prompt

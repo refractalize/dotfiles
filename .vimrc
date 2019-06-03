@@ -12,10 +12,11 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'tomasr/molokai'
+Plugin 'sickill/vim-monokai'
 Plugin 'tpope/vim-vinegar'
-Plugin 'tpope/vim-abolish'
-Plugin 'kchmck/vim-coffee-script'
+Plugin 'justinmk/vim-dirvish'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'lifepillar/vim-solarized8'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-rhubarb'
 Plugin 'groenewege/vim-less'
@@ -34,12 +35,14 @@ Plugin 'vim-scripts/summerfruit256.vim'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'rking/ag.vim'
 Plugin 'maksimr/vim-jsbeautify'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Bundle 'honza/vim-snippets'
+Plugin 'SirVer/ultisnips'
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
 Plugin 'AndrewRadev/sideways.vim'
 Plugin 'ludovicchabant/vim-lawrencium'
 Plugin 'mxw/vim-jsx'
@@ -56,6 +59,11 @@ Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && mak
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
 Plugin 'FooSoft/vim-argwrap'
+Plugin 'google/vim-jsonnet'
+
+Plugin 'neoclide/coc.nvim'
+
+autocmd FileType unite let b:coc_suggest_disable = 1
 
 Plugin 'artemave/vigun'
 au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
@@ -63,9 +71,6 @@ au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
 Plugin 'w0rp/ale'
 Plugin 'will133/vim-dirdiff'
 Plugin 'nightsense/wonka'
-
-call vundle#end()
-filetype plugin indent on
 
 Plugin 'mattn/emmet-vim'
 let g:user_emmet_settings = {
@@ -92,9 +97,6 @@ nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nmap <Leader>hv <Plug>GitGutterPreviewHunk
 
-" vim-airline
-let g:airline_powerline_fonts = 1
-
 " sideways.vim
 nnoremap <c-h> :SidewaysLeft<cr>
 nnoremap <c-l> :SidewaysRight<cr>
@@ -104,20 +106,18 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-let g:solarized_termcolors= 256
 let g:solarized_termtrans = 1
+let g:solarized_old_cursor_style=1
 
-let g:solarized_bold = 1
-let g:solarized_underline = 1
-let g:solarized_italic = 1
-" let g:solarized_contrast = "high"
-" let g:solarized_visibility= "high"
+call vundle#end()
+
+filetype plugin indent on
 
 set exrc   " enable per-directory .vimrc files
 set secure " disable unsafe commands in local .vimrc files
 
 set hidden
-set shiftwidth=4
+set shiftwidth=2
 set tabstop=4
 set expandtab
 set smarttab
@@ -127,7 +127,12 @@ set path+=**     " allow searching all files and subdirectories in current direc
 set number
 set ruler
 set background=dark
+highlight clear CursorLine
 colorscheme molokai
+let g:rehash256 = 1
+highlight CursorLine ctermbg=235
+highlight clear MatchParen
+highlight MatchParen cterm=bold,underline gui=bold,underline
 set laststatus=2
 set scrolloff=3
 set ignorecase
@@ -147,13 +152,25 @@ else
     set shell=bash
 endif
 
+" guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block
+
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\e[5 q\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\e[2 q\<Esc>\\"
+else
+  let &t_SI = "\e[5 q"
+  let &t_EI = "\e[2 q"
+endif
+
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '∆'
 let g:ale_lint_delay = 1000
-let g:ale_linters_explicit = 1
+let g:ale_linters_explicit = 0
 highlight ALEErrorSign ctermfg=196 guifg=#ff0000
 highlight ALEWarningSign ctermfg=226 guifg=#ffff00
+let g:ale_history_log_output = 1
+let g:ale_fixers = {'javascript': ['prettier', 'eslint']}
 
 function! FixJsFormatting()
   let command = 'eslint'
@@ -167,10 +184,10 @@ autocmd FileType {javascript,javascript.jsx} nnoremap <Leader>p :call FixJsForma
 
 " Unite
 " custom command: ag --follow --nocolor --nogroup --hidden -g ""
-let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
+let g:unite_source_rec_async_command = ['ag', '--nocolor', '--nogroup', '-g', '']
 nnoremap <Leader><Leader> :Unite -start-insert buffer file_mru<cr>
-nnoremap <Leader>f :Unite -start-insert file_rec/async<cr>
-" nnoremap <Leader>f :Unite -buffer-name=files -start-insert file_rec/async<cr>
+" nnoremap <Leader>f :Unite -start-insert file_rec/async<cr>
+nnoremap <Leader>f :Unite -buffer-name=files -start-insert file_rec/async<cr>
 " nnoremap <Leader>F :Unite -buffer-name=scoped_files -start-insert -path=`expand("%:p:h")` file_rec/async:!<cr>
 " nnoremap <Leader>b :Unite -buffer-name=buffer -start-insert buffer<cr>
 " nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<cr>
@@ -184,12 +201,6 @@ function! s:unite_my_settings()
 endfunction
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
-
-autocmd FileType pogo set shiftwidth=2
-autocmd FileType html set shiftwidth=2
-autocmd FileType css set shiftwidth=2
-autocmd FileType javascript set shiftwidth=2
-autocmd FileType less set shiftwidth=2
 
 function! ShowSpecIndex()
   call setloclist(0, [])
