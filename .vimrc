@@ -61,9 +61,11 @@ Plugin 'Shougo/neomru.vim'
 Plugin 'FooSoft/vim-argwrap'
 Plugin 'google/vim-jsonnet'
 
-Plugin 'neoclide/coc.nvim'
+" Plugin 'neoclide/coc.nvim'
 
-autocmd FileType unite let b:coc_suggest_disable = 1
+" autocmd FileType unite let b:coc_suggest_disable = 1
+" inoremap <silent><expr> <c-n> coc#refresh()
+" set updatetime=140
 
 Plugin 'artemave/vigun'
 au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
@@ -82,6 +84,9 @@ let g:user_emmet_settings = {
   \    'attribute_name': {'class': 'class'},
   \  }
   \}
+
+Plugin '907th/vim-auto-save'
+let g:auto_save = 1
 
 " ag.vim
 nnoremap <Leader>* *:AgFromSearch<CR>
@@ -145,6 +150,12 @@ set guioptions-=r
 set guioptions-=m
 set guioptions-=T
 set complete-=i
+
+" navigate long, wrapping lines
+nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+vnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 
 if has("win32") || has("win64")
     set directory=$TMP
@@ -246,13 +257,21 @@ nnoremap gp `[v`]
 command! Requires execute "Ag -s \"require\\(\\s*['\\\\\\\"][^'\\\\\\\"]*" . expand('%:t:r') . "[^'\\\\\\\"]*['\\\\\\\"]\\s*\\)\""
 
 nnoremap <silent> <Leader>d :call DiffToggle()<CR>
-
 function! DiffToggle()
     if &diff
         diffoff
     else
         diffthis
     endif
+endfunction
+
+nnoremap <silent> <Leader>s :call DiffIgnoreWhitespaceToggle()<CR>
+function! DiffIgnoreWhitespaceToggle()
+   if &diffopt =~ 'iwhite'
+       set diffopt-=iwhite
+   else
+       set diffopt+=iwhite
+   endif
 endfunction
 
 if executable('ag')
