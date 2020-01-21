@@ -14,26 +14,25 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tomasr/molokai'
 Plugin 'sickill/vim-monokai'
 Plugin 'tpope/vim-vinegar'
-Plugin 'justinmk/vim-dirvish'
+" Plugin 'justinmk/vim-dirvish'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'lifepillar/vim-solarized8'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-rhubarb'
+Plugin 'tpope/vim-fugitive' " git commands
+Plugin 'tpope/vim-rhubarb' " github helpers for vim-fugitive
 Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-markdown'
 Plugin 'featurist/vim-pogoscript'
 Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-surround' " add/remove/change quotes, parens
 Plugin 'VimClojure'
-Plugin 'sjl/gundo.vim'
+Plugin 'sjl/gundo.vim' " super undo
 Plugin 'tpope/vim-cucumber'
-Plugin 'godlygeek/tabular'
-Plugin 'junegunn/goyo.vim'
-Plugin 'michaeljsmith/vim-indent-object'
+Plugin 'godlygeek/tabular' " format tables of data
+Plugin 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
+Plugin 'maxmellon/vim-jsx-pretty'
 Plugin 'pangloss/vim-javascript'
 Plugin 'vim-scripts/summerfruit256.vim'
 Plugin 'leafgarland/typescript-vim'
-Plugin 'rking/ag.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
@@ -43,23 +42,46 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
-Plugin 'AndrewRadev/sideways.vim'
-Plugin 'ludovicchabant/vim-lawrencium'
-Plugin 'mxw/vim-jsx'
-Plugin 'AndrewVos/vim-git-navigator'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'tpope/vim-eunuch'
-Plugin 'tpope/vim-jdaddy'
-Plugin 'gregsexton/gitv'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-repeat'
-Plugin 'dbext.vim'
+Plugin 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
+Plugin 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
+Plugin 'tpope/vim-jdaddy' " JSON manipulation
+Plugin 'tpope/vim-commentary' " make lines comments or not
+Plugin 'tpope/vim-repeat' " repeat complex commands with .
 Plugin 'moll/vim-node'
-Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && make && cd -
-Plugin 'Shougo/unite.vim'
-Plugin 'Shougo/neomru.vim'
-Plugin 'FooSoft/vim-argwrap'
-Plugin 'google/vim-jsonnet'
+" Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && make && cd -
+" Plugin 'Shougo/unite.vim'
+Plugin 'Shougo/neomru.vim' " for fzf mru
+Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
+Plugin 'google/vim-jsonnet' " jsonnet language support
+
+" fzf
+set rtp+=/usr/local/opt/fzf
+Plugin 'junegunn/fzf.vim'
+let $FZF_DEFAULT_OPTS .= ' --exact'
+
+nnoremap <silent> <Leader><Leader> :call fzf#run(fzf#wrap('mru', {
+  \ 'source': '(sed "1d" $HOME/.cache/neomru/file \| sed s:' . getcwd() . '/:: && rg --files) \| awk ''!cnts[$0]++''',
+  \ 'options': '--no-sort --prompt "mru> "'
+  \ }))<CR>
+
+let g:fzf_history_dir = '~/.fzf-history'
+
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit'
+  \ }
+
+imap <c-x><c-k> <plug>(fzf-complete-word)
+
+nnoremap <silent> <Leader>* :execute 'Rg' "\\b" . expand('<cword>') . "\\b"<CR>
+nnoremap <Leader>g :Rg 
 
 " Plugin 'neoclide/coc.nvim'
 
@@ -88,10 +110,6 @@ let g:user_emmet_settings = {
 Plugin '907th/vim-auto-save'
 let g:auto_save = 1
 
-" ag.vim
-nnoremap <Leader>* *:AgFromSearch<CR>
-let g:ag_prg="ag --column --ignore-dir=bower_components --ignore-dir=common/js --ignore-dir=imd_system --ignore-dir=quack_template"
-
 " vim-jsbeautify
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
@@ -102,7 +120,7 @@ nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nmap <Leader>hv <Plug>GitGutterPreviewHunk
 
-" sideways.vim
+Plugin 'AndrewRadev/sideways.vim' " move arguments left and right
 nnoremap <c-h> :SidewaysLeft<cr>
 nnoremap <c-l> :SidewaysRight<cr>
 
@@ -150,6 +168,7 @@ set guioptions-=r
 set guioptions-=m
 set guioptions-=T
 set complete-=i
+set nofileignorecase " make sure we use exact case on macos
 
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -192,24 +211,6 @@ function! FixJsFormatting()
   checktime
 endfunction
 autocmd FileType {javascript,javascript.jsx} nnoremap <Leader>p :call FixJsFormatting()<cr>
-
-" Unite
-" custom command: ag --follow --nocolor --nogroup --hidden -g ""
-let g:unite_source_rec_async_command = ['ag', '--nocolor', '--nogroup', '-g', '']
-nnoremap <Leader><Leader> :Unite -start-insert buffer file_mru<cr>
-" nnoremap <Leader>f :Unite -start-insert file_rec/async<cr>
-nnoremap <Leader>f :Unite -buffer-name=files -start-insert file_rec/async<cr>
-" nnoremap <Leader>F :Unite -buffer-name=scoped_files -start-insert -path=`expand("%:p:h")` file_rec/async:!<cr>
-" nnoremap <Leader>b :Unite -buffer-name=buffer -start-insert buffer<cr>
-" nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<cr>
-au FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-  " Overwrite settings.
-  inoremap <silent><buffer> <C-b> <esc>:Unite -start-insert buffer file_mru<cr>
-  inoremap <silent><buffer> <C-f> <esc>:Unite -start-insert file_rec/async<cr>
-  inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-  inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-endfunction
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
 
