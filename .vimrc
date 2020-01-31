@@ -23,24 +23,27 @@ Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-markdown'
 Plugin 'featurist/vim-pogoscript'
 Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-surround' " add/remove/change quotes, parens
+Plugin 'machakann/vim-sandwich'
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim' " super undo
 Plugin 'tpope/vim-cucumber'
 Plugin 'godlygeek/tabular' " format tables of data
 Plugin 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
+Plugin 'leafgarland/typescript-vim'
 Plugin 'maxmellon/vim-jsx-pretty'
 Plugin 'pangloss/vim-javascript'
 Plugin 'vim-scripts/summerfruit256.vim'
-Plugin 'leafgarland/typescript-vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
-Plugin 'SirVer/ultisnips'
 
+Plugin 'SirVer/ultisnips'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+autocmd FileType typescript UltiSnipsAddFiletypes javascript
+autocmd FileType typescriptreact UltiSnipsAddFiletypes javascript
 
 Plugin 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
 Plugin 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
@@ -48,40 +51,77 @@ Plugin 'tpope/vim-jdaddy' " JSON manipulation
 Plugin 'tpope/vim-commentary' " make lines comments or not
 Plugin 'tpope/vim-repeat' " repeat complex commands with .
 Plugin 'moll/vim-node'
-" Plugin 'Shougo/vimproc.vim' " after install: cd ~/.vim/bundle/vimproc.vim && make && cd -
-" Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim' " for fzf mru
 Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plugin 'google/vim-jsonnet' " jsonnet language support
+
+Plugin 'rust-lang/rust.vim' " jsonnet language support
 
 " fzf
 set rtp+=/usr/local/opt/fzf
 Plugin 'junegunn/fzf.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
 
-nnoremap <silent> <Leader><Leader> :call fzf#run(fzf#wrap('mru', {
-  \ 'source': '(sed "1d" $HOME/.cache/neomru/file \| sed s:' . getcwd() . '/:: && rg --files) \| awk ''!cnts[$0]++''',
-  \ 'options': '--no-sort --prompt "mru> "'
-  \ }))<CR>
+function! Mru(onlyLocal)
+  if a:onlyLocal
+    let grep = 'grep ^' . getcwd() . ' |'
+  else
+    let grep = ''
+  endif
+
+  call fzf#run(fzf#wrap('mru', {
+    \ 'source': '(sed "1d" $HOME/.cache/neomru/file | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!cnts[$0]++''',
+    \ 'options': '--no-sort --prompt "mru> "'
+    \ }))
+endfunction
+
+command -bang Mru :call Mru(!<bang>0)
+
+nnoremap <silent> <Leader><Leader> :Mru<cr>
+nnoremap <silent> <Leader>f :Mru!<cr>
 
 let g:fzf_history_dir = '~/.fzf-history'
 
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
-
 let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit'
   \ }
 
 imap <c-x><c-k> <plug>(fzf-complete-word)
 
+function! NodeRelativeFilename(lines)
+  let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
+  if l:fn =~ '^\.'
+    return l:fn
+  else
+    return './' . l:fn
+  endif
+endfunction
+
+inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
+  \ 'reducer': function('NodeRelativeFilename'),
+  \ 'source': 'rg --files --hidden',
+  \ }))
+
 nnoremap <silent> <Leader>* :execute 'Rg' "\\b" . expand('<cword>') . "\\b"<CR>
-nnoremap <Leader>g :Rg 
+nnoremap <leader>G :Rg 
+
+nnoremap <leader>g :set operatorfunc=SearchOperator<cr>g@
+vnoremap <leader>g :<c-u>call SearchOperator(visualmode())<cr>
+
+function! SearchOperator(type)
+    if a:type ==# 'v'
+        normal! `<v`>y
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+    else
+        return
+    endif
+
+    execute "Rg " . @@
+endfunction
+
+nnoremap <silent> <Leader>v :e $MYVIMRC<cr>
 
 " Plugin 'neoclide/coc.nvim'
 
@@ -119,6 +159,7 @@ Plugin 'airblade/vim-gitgutter'
 nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nmap <Leader>hv <Plug>GitGutterPreviewHunk
+let g:gitgutter_preview_win_floating = 1
 
 Plugin 'AndrewRadev/sideways.vim' " move arguments left and right
 nnoremap <c-h> :SidewaysLeft<cr>
@@ -169,12 +210,23 @@ set guioptions-=m
 set guioptions-=T
 set complete-=i
 set nofileignorecase " make sure we use exact case on macos
+set splitbelow
+set splitright
+set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
+set diffopt+=vertical
 
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 vnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+imap <c-x><c-f> <plug>(fzf-complete-path)
 
 if has("win32") || has("win64")
     set directory=$TMP
@@ -201,6 +253,7 @@ highlight ALEErrorSign ctermfg=196 guifg=#ff0000
 highlight ALEWarningSign ctermfg=226 guifg=#ffff00
 let g:ale_history_log_output = 1
 let g:ale_fixers = {'javascript': ['prettier', 'eslint']}
+let g:ale_linters = {'rust': ['cargo']}
 
 function! FixJsFormatting()
   let command = 'eslint'
@@ -353,3 +406,5 @@ fun! JsRequireComplete(findstart, base)
   endif
 endfun
 autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete
+
+autocmd FileType rust set shiftwidth=2
