@@ -7,8 +7,12 @@ if ! zgen saved; then
 
   zgen oh-my-zsh plugins/git
   zgen oh-my-zsh plugins/nvm
+  zgen oh-my-zsh plugins/fzf
   zgen load joshuarubin/zsh-direnv
   zgen load zdharma/history-search-multi-word
+  zgen load 1ambda/zsh-snippets
+
+  zgen load lincheney/fzf-tab-completion zsh
 
   zgen load ~/.zsh
   zgen load ~/.zsh/prompt
