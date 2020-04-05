@@ -12,18 +12,32 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'tomasr/molokai'
-Plugin 'sickill/vim-monokai'
 Plugin 'tpope/vim-vinegar'
 " Plugin 'justinmk/vim-dirvish'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'lifepillar/vim-solarized8'
 Plugin 'tpope/vim-fugitive' " git commands
 Plugin 'tpope/vim-rhubarb' " github helpers for vim-fugitive
 Plugin 'groenewege/vim-less'
 Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-abolish'
 Plugin 'featurist/vim-pogoscript'
+Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
 Plugin 'machakann/vim-sandwich'
+
+let g:sandwich_no_default_key_mappings = 1
+silent! nmap <unique><silent> gd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> gr <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> gdb <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! nmap <unique><silent> grb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+
+let g:operator_sandwich_no_default_key_mappings = 1
+" add
+silent! map <unique> ga <Plug>(operator-sandwich-add)
+" delete
+silent! xmap <unique> gd <Plug>(operator-sandwich-delete)
+" replace
+silent! xmap <unique> gr <Plug>(operator-sandwich-replace)
+
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim' " super undo
 Plugin 'tpope/vim-cucumber'
@@ -42,6 +56,7 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
+autocmd FileType javascriptreact UltiSnipsAddFiletypes javascript
 autocmd FileType typescript UltiSnipsAddFiletypes javascript
 autocmd FileType typescriptreact UltiSnipsAddFiletypes javascript
 
@@ -55,7 +70,11 @@ Plugin 'Shougo/neomru.vim' " for fzf mru
 Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plugin 'google/vim-jsonnet' " jsonnet language support
 
-Plugin 'rust-lang/rust.vim' " jsonnet language support
+" Plugin 'ycm-core/YouCompleteMe'
+Plugin 'vim-scripts/indentpython.vim'
+
+Plugin 'rust-lang/rust.vim'
+Plugin 'racer-rust/vim-racer'
 
 " fzf
 set rtp+=/usr/local/opt/fzf
@@ -76,6 +95,7 @@ function! Mru(onlyLocal)
 endfunction
 
 command -bang Mru :call Mru(!<bang>0)
+command Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
@@ -103,11 +123,13 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ 'source': 'rg --files --hidden',
   \ }))
 
-nnoremap <silent> <Leader>* :execute 'Rg' "\\b" . expand('<cword>') . "\\b"<CR>
+nnoremap <silent> <Leader>* :call Search("\\b" . expand('<cword>') .  "\\b")<cr>
 nnoremap <leader>G :Rg 
 
 nnoremap <leader>g :set operatorfunc=SearchOperator<cr>g@
 vnoremap <leader>g :<c-u>call SearchOperator(visualmode())<cr>
+
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 function! SearchOperator(type)
     if a:type ==# 'v'
@@ -118,7 +140,12 @@ function! SearchOperator(type)
         return
     endif
 
-    execute "Rg " . @@
+    call Search(@@)
+endfunction
+
+function! Search(str)
+    call histadd("cmd", "Rg " . a:str)
+    execute "Rg " . a:str
 endfunction
 
 nnoremap <silent> <Leader>v :e $MYVIMRC<cr>
@@ -192,11 +219,11 @@ set number
 set ruler
 set background=dark
 highlight clear CursorLine
-colorscheme molokai
-let g:rehash256 = 1
 highlight CursorLine ctermbg=235
 highlight clear MatchParen
 highlight MatchParen cterm=bold,underline gui=bold,underline
+colorscheme molokai
+let g:rehash256 = 1
 set laststatus=2
 set scrolloff=3
 set ignorecase
@@ -225,6 +252,18 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+nnoremap <silent> <C-W><C-J> :exe "resize +5"<CR>
+nnoremap <silent> <C-W><C-K> :exe "resize -5"<CR>
+nnoremap <silent> <C-W><C-L> :exe "vertical resize +10"<CR>
+nnoremap <silent> <C-W><C-H> :exe "vertical resize -10"<CR>
+
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
 
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
@@ -408,3 +447,5 @@ endfun
 autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete
 
 autocmd FileType rust set shiftwidth=2
+
+call operator#sandwich#set('all', 'all', 'hi_duration', 0)
