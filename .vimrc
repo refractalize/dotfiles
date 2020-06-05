@@ -12,6 +12,8 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'tomasr/molokai'
+Plugin 'sonph/onehalf', {'rtp': 'vim/'}
+Plugin 'joshdick/onedark.vim'
 Plugin 'tpope/vim-vinegar'
 " Plugin 'justinmk/vim-dirvish'
 Plugin 'tpope/vim-fugitive' " git commands
@@ -21,23 +23,8 @@ Plugin 'tpope/vim-markdown'
 Plugin 'tpope/vim-abolish'
 Plugin 'featurist/vim-pogoscript'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-surround' " add/remove/change quotes, parens
 Plugin 'tpope/vim-rails'
-Plugin 'machakann/vim-sandwich'
-
-let g:sandwich_no_default_key_mappings = 1
-silent! nmap <unique><silent> gd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> gr <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> gdb <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! nmap <unique><silent> grb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-
-let g:operator_sandwich_no_default_key_mappings = 1
-" add
-silent! map <unique> ga <Plug>(operator-sandwich-add)
-" delete
-silent! xmap <unique> gd <Plug>(operator-sandwich-delete)
-" replace
-silent! xmap <unique> gr <Plug>(operator-sandwich-replace)
-
 Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim' " super undo
 Plugin 'tpope/vim-cucumber'
@@ -50,6 +37,13 @@ Plugin 'vim-scripts/summerfruit256.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
+Plugin 'AndrewRadev/splitjoin.vim'
+
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'onedark'
 
 Plugin 'SirVer/ultisnips'
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -69,6 +63,7 @@ Plugin 'moll/vim-node'
 Plugin 'Shougo/neomru.vim' " for fzf mru
 Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plugin 'google/vim-jsonnet' " jsonnet language support
+Plugin 'szw/vim-g'
 
 " Plugin 'ycm-core/YouCompleteMe'
 Plugin 'vim-scripts/indentpython.vim'
@@ -78,7 +73,10 @@ Plugin 'racer-rust/vim-racer'
 
 " fzf
 set rtp+=/usr/local/opt/fzf
-Plugin 'junegunn/fzf.vim'
+" Plugin 'junegunn/fzf.vim'
+Plugin 'artemave/fzf.vim'
+" Plugin 'lotabout/skim'
+" Plugin 'lotabout/skim.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
 
 function! Mru(onlyLocal)
@@ -90,12 +88,12 @@ function! Mru(onlyLocal)
 
   call fzf#run(fzf#wrap('mru', {
     \ 'source': '(sed "1d" $HOME/.cache/neomru/file | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!cnts[$0]++''',
-    \ 'options': '--no-sort --prompt "mru> "'
+    \ 'options': ['--no-sort', '--prompt', 'mru> ', '--tiebreak', 'end']
     \ }))
 endfunction
 
-command -bang Mru :call Mru(!<bang>0)
-command Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
+command! -bang Mru :call Mru(!<bang>0)
+command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
@@ -124,7 +122,9 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ }))
 
 nnoremap <silent> <Leader>* :call Search("\\b" . expand('<cword>') .  "\\b")<cr>
-nnoremap <leader>G :Rg 
+
+nnoremap <leader>R :Rg 
+nnoremap <leader>r :Rg<cr>
 
 nnoremap <leader>g :set operatorfunc=SearchOperator<cr>g@
 vnoremap <leader>g :<c-u>call SearchOperator(visualmode())<cr>
@@ -148,12 +148,15 @@ function! Search(str)
     execute "Rg " . a:str
 endfunction
 
-nnoremap <silent> <Leader>v :e $MYVIMRC<cr>
+nnoremap <silent> <Leader>v :e ~/.vimrc<cr>
 
-" Plugin 'neoclide/coc.nvim'
+nmap <leader>cf :let @+=expand("%")<CR>
+nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
+nmap <leader>cF :let @+=expand("%:p")<CR>
 
-" autocmd FileType unite let b:coc_suggest_disable = 1
-" inoremap <silent><expr> <c-n> coc#refresh()
+Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+let g:coc_global_extensions = ['coc-solargraph']
+inoremap <silent><expr> <c-n> coc#refresh()
 " set updatetime=140
 
 Plugin 'artemave/vigun'
@@ -168,9 +171,8 @@ let g:user_emmet_settings = {
   \  'html' : {
   \    'empty_element_suffix': ' />'
   \  },
-  \  'jsx' : {
-  \    'extends': 'html',
-  \    'attribute_name': {'class': 'class'},
+  \  'mdx' : {
+  \    'extends': 'jsx',
   \  }
   \}
 
@@ -197,8 +199,12 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-let g:solarized_termtrans = 1
-let g:solarized_old_cursor_style=1
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
 
 call vundle#end()
 
@@ -218,17 +224,18 @@ set path+=**     " allow searching all files and subdirectories in current direc
 set number
 set ruler
 set background=dark
-highlight clear CursorLine
-highlight CursorLine ctermbg=235
-highlight clear MatchParen
-highlight MatchParen cterm=bold,underline gui=bold,underline
-colorscheme molokai
+set cursorline
+colorscheme onedark
+highlight DiffText term=NONE cterm=NONE gui=NONE guifg=NONE guibg=#000000
+highlight DiffChange term=NONE cterm=NONE gui=NONE guifg=NONE guibg=#484540 gui=NONE
+highlight DiffDelete gui=NONE guibg=#1e2127 guifg=#5f3a41
+highlight DiffAdd gui=NONE guifg=NONE guibg=#3b453f
 let g:rehash256 = 1
 set laststatus=2
 set scrolloff=3
 set ignorecase
 set smartcase
-set cursorline
+set cursorline " very slow in ruby?
 silent! set guifont="Source Code Pro:h11"
 silent! set guifont=Source_Code_Pro:h10:cANSI
 set backspace=2
@@ -241,6 +248,12 @@ set splitbelow
 set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical
+
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -275,24 +288,35 @@ endif
 
 " guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block
 
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\e[5 q\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\e[2 q\<Esc>\\"
-else
-  let &t_SI = "\e[5 q"
-  let &t_EI = "\e[2 q"
-endif
-
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '∆'
 let g:ale_lint_delay = 1000
 let g:ale_linters_explicit = 0
-highlight ALEErrorSign ctermfg=196 guifg=#ff0000
-highlight ALEWarningSign ctermfg=226 guifg=#ffff00
+highlight link ALEErrorSign ErrorMsg
+highlight link ALEWarningSign WarningMsg
+highlight ALEError cterm=bold gui=bold ctermbg=238 guibg=#3B4048
+highlight ALEWarning cterm=bold gui=bold ctermbg=238 guibg=#3B4048
 let g:ale_history_log_output = 1
-let g:ale_fixers = {'javascript': ['prettier', 'eslint']}
+let g:ale_fixers = {
+\ 'javascript': [
+\   'prettier',
+\   'eslint'
+\ ],
+\ 'ruby': [
+\   'rubocop'
+\ ],
+\}
 let g:ale_linters = {'rust': ['cargo']}
+nnoremap <silent> [l :ALEPrevious<CR>
+nnoremap <silent> ]l :ALENext<CR>
+
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
 
 function! FixJsFormatting()
   let command = 'eslint'
@@ -358,7 +382,7 @@ function! DiffToggle()
     endif
 endfunction
 
-nnoremap <silent> <Leader>s :call DiffIgnoreWhitespaceToggle()<CR>
+nnoremap <silent> <Leader>w :call DiffIgnoreWhitespaceToggle()<CR>
 function! DiffIgnoreWhitespaceToggle()
    if &diffopt =~ 'iwhite'
        set diffopt-=iwhite
@@ -371,43 +395,6 @@ if executable('ag')
   set grepprg=ag\ --vimgrep
   set grepformat=%f:%l:%c:%m
 endif
-
-function! JsRequires()
-  let grep_term = "require(.*)"
-  execute 'silent grep!' "'".grep_term."'"
-  redraw!
-
-  let results = getqflist()
-  call setqflist([])
-
-  for require in results
-    let match = matchlist(require.text, "'".'\(\.\.\?\/.*\)'."'")
-    if len(match) > 0
-      let module_path = match[1]
-      let module_path_with_explicit_index = ''
-
-      if match(module_path, '\.$') != -1
-        let module_path = module_path . '/index'
-      elseif match(module_path, '\/$') != -1
-        let module_path = module_path . 'index'
-      elseif match(module_path, 'index\(\.jsx\?\)\?$') == -1
-        let module_path_with_explicit_index = module_path . '/index'
-      endif
-
-      let module_base = fnamemodify(bufname(require.bufnr), ':p:h')
-
-      let current_file_full_path = expand('%:p:r')
-      let module_full_path = fnamemodify(module_base . '/' . module_path, ':p:r')
-      let module_full_path_with_explicit_index = fnamemodify(module_base . '/' . module_path_with_explicit_index, ':p:r')
-
-      if module_full_path == current_file_full_path || module_full_path_with_explicit_index == current_file_full_path
-        caddexpr bufname(require.bufnr) . ':' . require.lnum . ':' .require.text
-      endif
-    endif
-  endfor
-  copen
-endfunction
-autocmd FileType {javascript,javascript.jsx} nnoremap <leader>R :call JsRequires()<cr>
 
 fun! JsRequireComplete(findstart, base)
   if a:findstart
@@ -447,5 +434,6 @@ endfun
 autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete
 
 autocmd FileType rust set shiftwidth=2
-
-call operator#sandwich#set('all', 'all', 'hi_duration', 0)
+autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
+nnoremap <Leader>n :set number!<CR>
+nnoremap <Leader>l :set cursorline!<CR>
