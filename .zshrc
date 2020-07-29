@@ -1,4 +1,4 @@
-export ZGEN_RESET_ON_CHANGE=(${HOME}/.zshrc ${HOME}/.zsh/*)
+export ZGEN_RESET_ON_CHANGE=(${HOME}/.zshrc ${HOME}/.zsh/*.zsh)
 # git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
 source "${HOME}/.zgen/zgen.zsh"
 

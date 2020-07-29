@@ -1,0 +1,2 @@
+unsetopt sharehistory
+setopt incappendhistory

@@ -1,39 +1,43 @@
 [user]
-	name = Tim Macfarlane
-	email = timmacfarlane@gmail.com
+    name = Tim Macfarlane
+    email = timmacfarlane@gmail.com
 [color]
-	ui = true
+    ui = true
 [alias]
-	co = checkout
-	st = status
-	br = branch
-	l = log -1
-	sm = submodule update --init --recursive
-	local = log @{u}..
-	unpushed = log @{u}..
-	unreleased = log $(git describe --abbrev=0)..
+    co = checkout
+    st = status
+    br = branch
+    l = log -1
+    sm = submodule update --init --recursive
+    local = log @{u}..
+    unpushed = log @{u}..
+    unreleased = log $(git describe --abbrev=0)..
+    clean-branches = "!git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d"
+	pushu = push -u origin HEAD
 [credential]
-	helper = osxkeychain
+    helper = osxkeychain
 [push]
-	default = simple
+    default = simple
 [merge]
-	conflictstyle = diff3
-	tool = vimdiff
+    conflictstyle = diff3
+    tool = vimdiff
 [core]
-	editor = vim
-	trustctime = false
+    editor = vim
+    trustctime = false
 [mergetool "tortoise"]
-	cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
+    cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
 [pull]
     ff = only
 [hub]
-	protocol = https
+    protocol = https
 [mergetool]
-	keepBackup = false
-	prompt = false
-[diff "gzip"]
-	binary = true
-	textconv = gzcat
+    keepBackup = false
+    prompt = false
 [core]
-	attributesFile = ~/.gitattributes
-	pager = less -XFSRi
+    attributesFile = ~/.gitattributes
+    pager = less -XFSRi
+[filter "lfs"]
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process

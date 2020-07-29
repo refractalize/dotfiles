@@ -43,6 +43,8 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
 let g:airline_powerline_fonts = 1
+let g:airline_section_a = ''
+let g:airline_section_b = ''
 let g:airline_theme = 'onedark'
 
 Plugin 'SirVer/ultisnips'
@@ -88,7 +90,7 @@ function! Mru(onlyLocal)
 
   call fzf#run(fzf#wrap('mru', {
     \ 'source': '(sed "1d" $HOME/.cache/neomru/file | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!cnts[$0]++''',
-    \ 'options': ['--no-sort', '--prompt', 'mru> ', '--tiebreak', 'end']
+    \ 'options': ['--no-sort', '--prompt', a:onlyLocal ? 'mru> ' : 'mru-all> ', '--tiebreak', 'end']
     \ }))
 endfunction
 
@@ -123,11 +125,10 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
 
 nnoremap <silent> <Leader>* :call Search("\\b" . expand('<cword>') .  "\\b")<cr>
 
-nnoremap <leader>R :Rg 
-nnoremap <leader>r :Rg<cr>
+nnoremap <leader>G :Rg 
+nnoremap <leader>g :Rg<cr>
 
-nnoremap <leader>g :set operatorfunc=SearchOperator<cr>g@
-vnoremap <leader>g :<c-u>call SearchOperator(visualmode())<cr>
+vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
@@ -155,9 +156,9 @@ nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
 Plugin 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = ['coc-solargraph']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
 inoremap <silent><expr> <c-n> coc#refresh()
-" set updatetime=140
+set updatetime=140
 
 Plugin 'artemave/vigun'
 au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
@@ -191,8 +192,8 @@ nmap <Leader>hv <Plug>GitGutterPreviewHunk
 let g:gitgutter_preview_win_floating = 1
 
 Plugin 'AndrewRadev/sideways.vim' " move arguments left and right
-nnoremap <c-h> :SidewaysLeft<cr>
-nnoremap <c-l> :SidewaysRight<cr>
+nnoremap _ :SidewaysLeft<cr>
+nnoremap + :SidewaysRight<cr>
 
 omap aa <Plug>SidewaysArgumentTextobjA
 xmap aa <Plug>SidewaysArgumentTextobjA
@@ -278,6 +279,21 @@ cnoremap <C-n> <Down>
 cnoremap <C-b> <Left>
 cnoremap <C-f> <Right>
 
+" Go to tab by number
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+noremap <leader>0 :tablast<cr>
+
+au TabLeave * let g:lasttab = tabpagenr()
+nnoremap <silent> <leader>t :exe "tabn ".g:lasttab<cr>
+
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
 if has("win32") || has("win64")
@@ -358,8 +374,8 @@ noremap <S-+> <C-w> +
 
 " remap 'increase number' since C-a is captured by tmux/screen
 " Easier increment/decrement
-nnoremap + <C-a>
-nnoremap _ <C-x>
+" nnoremap + <C-a>
+" nnoremap _ <C-x>
 " CTags
 "
 " $PATH appears different to vim for some reason and hence wrong ctags gets picked
@@ -434,6 +450,6 @@ endfun
 autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete
 
 autocmd FileType rust set shiftwidth=2
-autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
+" autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
 nnoremap <Leader>n :set number!<CR>
 nnoremap <Leader>l :set cursorline!<CR>
