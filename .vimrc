@@ -38,6 +38,7 @@ Plugin 'maksimr/vim-jsbeautify'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'AndrewRadev/splitjoin.vim'
+Plugin 'Chiel92/vim-autoformat'
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -67,11 +68,20 @@ Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plugin 'google/vim-jsonnet' " jsonnet language support
 Plugin 'szw/vim-g'
 
+" json and jsonl support
+Plugin 'elzr/vim-json' 
+let g:vim_json_syntax_conceal = 0
+
 " Plugin 'ycm-core/YouCompleteMe'
 Plugin 'vim-scripts/indentpython.vim'
 
 Plugin 'rust-lang/rust.vim'
 Plugin 'racer-rust/vim-racer'
+Plugin 'JuliaEditorSupport/julia-vim'
+
+" visual copy
+" Option+C (macOS + Kitty)
+vnoremap <M-c>  "+y
 
 " fzf
 set rtp+=/usr/local/opt/fzf
@@ -80,6 +90,7 @@ Plugin 'artemave/fzf.vim'
 " Plugin 'lotabout/skim'
 " Plugin 'lotabout/skim.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
+let g:fzf_layout = { 'down': '~40%' }
 
 function! Mru(onlyLocal)
   if a:onlyLocal
@@ -95,6 +106,9 @@ function! Mru(onlyLocal)
 endfunction
 
 command! -bang Mru :call Mru(!<bang>0)
+command! -bar -bang Mapsv call fzf#vim#maps("x", <bang>0)
+command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
+command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>
@@ -108,6 +122,7 @@ let g:fzf_action = {
   \ }
 
 imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-l> <plug>(fzf-complete-line)
 
 function! NodeRelativeFilename(lines)
   let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
@@ -130,6 +145,7 @@ nnoremap <leader>g :Rg<cr>
 
 vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 
+" set the search patten to the visually highlighted text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 function! SearchOperator(type)
@@ -155,10 +171,16 @@ nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
-Plugin 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
-inoremap <silent><expr> <c-n> coc#refresh()
-set updatetime=140
+" Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+" let g:coc_global_extensions = ['coc-json', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
+" inoremap <silent><expr> <c-n> coc#refresh()
+" set updatetime=140
+
+" " GoTo code navigation.
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
 
 Plugin 'artemave/vigun'
 au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
@@ -200,12 +222,19 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+Plugin 'neomake/neomake'
+Plugin 'tpope/vim-dispatch' " for vim-test
+Plugin 'vim-test/vim-test'
+Plugin 'radenling/vim-dispatch-neovim'
 
+nmap <leader>tf :TestFile<CR>
+nmap <leader>tn :TestNearest<CR>
+nmap <leader>tl :TestLast<CR>
+nmap <leader>tv :TestVisit<CR>
+nmap <leader>to :copen<CR>
+let test#strategy = 'dispatch'
+
+autocmd FileType qf 30wincmd_
 
 call vundle#end()
 
@@ -262,6 +291,11 @@ nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 vnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 
+nnoremap gk k
+nnoremap gj j
+vnoremap gk k
+vnoremap gj j
+
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
@@ -292,7 +326,6 @@ noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
 
 au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <silent> <leader>t :exe "tabn ".g:lasttab<cr>
 
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
@@ -323,7 +356,11 @@ let g:ale_fixers = {
 \   'rubocop'
 \ ],
 \}
-let g:ale_linters = {'rust': ['cargo']}
+let g:ale_linters = {
+\  'rust': ['cargo'],
+\  'javascript': ['eslint'],
+\  'javascriptreact': ['eslint']
+\}
 nnoremap <silent> [l :ALEPrevious<CR>
 nnoremap <silent> ]l :ALENext<CR>
 
@@ -453,3 +490,4 @@ autocmd FileType rust set shiftwidth=2
 " autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
 nnoremap <Leader>n :set number!<CR>
 nnoremap <Leader>l :set cursorline!<CR>
+nnoremap <Leader>e :e %:h
