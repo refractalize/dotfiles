@@ -1,0 +1,8 @@
+if [[ "$1" = '' ]]
+then
+  pane=""
+else
+  pane="-t $1"
+fi
+
+vim <(tmux capture-pane $pane -J -S -$(tmux show-options -g | grep history-limit | cut -d' ' -f 2) -p)

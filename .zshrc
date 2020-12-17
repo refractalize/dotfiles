@@ -17,6 +17,7 @@ if ! zgen saved; then
 
   zgen load ~/.zsh
   zgen load ~/.zsh/prompt
+  zgen load ~/.secrets.zsh
 
   zgen save
 fi
