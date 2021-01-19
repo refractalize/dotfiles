@@ -3,7 +3,7 @@ preexec() {
   print -Pn "\e]2; %~/ \a"
 
   # for timing commands
-  timer=${timer:-$SECONDS}
+  timer=$(($(print -P %D{%s%6.})/1000))
 }
 
 autoload -Uz vcs_info
@@ -25,11 +25,12 @@ precmd() {
 
   # for timing commands
   if [ $timer ]; then
-    timer_show=$(($SECONDS - $timer))
-    export PROMPT="${vcs_info_msg_0_}(%F{green}${timer_show}s%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
-    unset timer_show
+    local now=$(($(print -P %D{%s%6.})/1000))
+    elapsed=$(duration $(($now-$timer)))
+    export PROMPT="${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    unset elapsed
     unset timer
   else
-    export PROMPT="${vcs_info_msg_0_}%F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
   fi
 }
