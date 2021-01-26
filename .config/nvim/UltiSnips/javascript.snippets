@@ -1,0 +1,127 @@
+snippet self
+var self = this
+endsnippet
+
+snippet =>
+=> {
+	${0}
+}
+endsnippet
+
+snippet cl
+console.log('${0}')
+endsnippet
+
+snippet db
+console.log('${1:}', $1)
+endsnippet
+
+snippet describe
+describe('${1:}', () => {
+  ${0}
+})
+endsnippet
+
+snippet it
+it('${1:}', () => {
+  ${0}
+})
+endsnippet
+
+snippet context
+context('${1:}', () => {
+  ${0}
+})
+endsnippet
+
+snippet beforeEach
+beforeEach(() => {
+  ${0}
+})
+endsnippet
+
+snippet afterEach
+afterEach(() => {
+  ${0}
+})
+endsnippet
+
+snippet before
+before(() => {
+  ${0}
+})
+endsnippet
+
+snippet after
+after(() => {
+  ${0}
+})
+endsnippet
+
+snippet jsx
+/** @jsx hyperdom.jsx */
+endsnippet
+
+snippet req
+const ${1:} = require('$1')
+endsnippet
+
+snippet json
+JSON.stringify(${0}, null, 2)
+endsnippet
+
+snippet cj
+console.log('${1:}', JSON.stringify($1, null, 2))
+endsnippet
+
+snippet promise
+new Promise((resolve, reject) => {
+  ${0}
+})
+endsnippet
+
+snippet then
+then((${1}) => {
+  ${0}
+})
+endsnippet
+
+snippet expect
+const {expect} = require('chai')
+endsnippet
+
+snippet this=
+.${1:} = $1
+endsnippet
+
+snippet mochaeslint
+/* eslint-env mocha */
+endsnippet
+
+snippet wait
+await new Promise(resolve => setTimeout(resolve, ${0}))
+endsnippet
+
+snippet for
+for (let n = 0; n < ${1}; n++) {
+  ${0}
+}
+endsnippet
+
+snippet import
+${VISUAL:import/(const|var|let) (.*?)\s*=\s*require\((.*?)\)/import $2 from $3/g}
+endsnippet
+
+# ${VISUAL:const $1 = require('$1')/import (.*?)\s*from\s*(.*?)/const $2 = require($3)/g}
+snippet require
+${VISUAL:require/import (.*?)\s*from\s*(.*)/const $1 = require($2)/g}
+endsnippet
+
+snippet styled(
+styled(({className}) => (
+  <div className={className}>
+    $0
+  </div>
+))\`
+\`
+endsnippet
