@@ -23,14 +23,21 @@ precmd() {
 
   vcs_info
 
+  if [[ -n $SSH_TTY ]]
+  then
+    local DISPLAY_HOST="%F{yellow}$(hostname) "
+  else
+    local DISPLAY_HOST=
+  fi
+
   # for timing commands
   if [ $timer ]; then
     local now=$(($(print -P %D{%s%6.})/1000))
     elapsed=$(duration $(($now-$timer)))
-    export PROMPT="${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
     unset elapsed
     unset timer
   else
-    export PROMPT="${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
   fi
 }
