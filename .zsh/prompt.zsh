@@ -8,12 +8,18 @@ preexec() {
 
 autoload -Uz vcs_info
 
+PROMPT_GREEN='%F{green}'
+PROMPT_YELLOW='%F{yellow}'
+PROMPT_CYAN='%F{cyan}'
+PROMPT_BLUE='%F{blue}'
+PROMPT_RED='%F{red}'
+
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' stagedstr ' %F{green}+'
-zstyle ':vcs_info:*' unstagedstr ' %F{yellow}#'
-zstyle ':vcs_info:*' formats '%F{blue}{%F{cyan}%b%u%c%F{blue}} '
-zstyle ':vcs_info:*' actionformats '%F{blue}{%F{cyan}%b %F{red}%a%u%c%F{blue}} '
+zstyle ':vcs_info:*' stagedstr " %F{green}+"
+zstyle ':vcs_info:*' unstagedstr " %F{yellow}#"
+zstyle ':vcs_info:*' formats "%F{blue}{%F{cyan}%b%u%c%F{blue}} "
+zstyle ':vcs_info:*' actionformats "%F{blue}{%F{cyan}%b %F{red}%a%u%c%F{blue}} "
 
 setopt prompt_subst
 
@@ -34,10 +40,10 @@ precmd() {
   if [ $timer ]; then
     local now=$(($(print -P %D{%s%6.})/1000))
     elapsed=$(duration $(($now-$timer)))
-    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
     unset elapsed
     unset timer
   else
-    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
   fi
 }
