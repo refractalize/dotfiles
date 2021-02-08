@@ -304,6 +304,7 @@ set virtualedit=block " we can select beyond the end of the line in visual block
 set diffopt+=vertical
 set isfname-==
 set regexpengine=1 " vim-ruby performance
+set mouse=nvi
 
 " italic
 highlight Comment gui=italic
