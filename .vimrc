@@ -39,6 +39,7 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'AndrewRadev/splitjoin.vim'
 Plugin 'Chiel92/vim-autoformat'
+Plugin 'direnv/direnv.vim'
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
