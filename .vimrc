@@ -92,11 +92,8 @@ Plugin 'JuliaEditorSupport/julia-vim'
 vnoremap <M-y> "+y
 
 " fzf
-set rtp+=/usr/local/opt/fzf
-" Plugin 'junegunn/fzf.vim'
-Plugin 'artemave/fzf.vim'
-" Plugin 'lotabout/skim'
-" Plugin 'lotabout/skim.vim'
+Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plugin 'junegunn/fzf.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
 let g:fzf_layout = { 'down': '~40%' }
 
