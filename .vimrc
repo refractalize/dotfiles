@@ -184,9 +184,9 @@ nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
-" Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 " let g:coc_global_extensions = ['coc-json', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
-" inoremap <silent><expr> <c-n> coc#refresh()
+inoremap <silent><expr> <c-n> coc#refresh()
 " set updatetime=140
 
 " " GoTo code navigation.
