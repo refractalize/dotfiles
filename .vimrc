@@ -285,6 +285,10 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
+nnoremap <Leader>sn :set number!<CR>
+nnoremap <Leader>sl :set cursorline!<CR>
+nnoremap <Leader>e :e %:h
+
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
