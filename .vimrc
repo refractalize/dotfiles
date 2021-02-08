@@ -338,14 +338,14 @@ endif
 " guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block
 
 let g:ale_sign_column_always = 1
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '∆'
+let g:ale_sign_error = '🤬'
+let g:ale_sign_warning = '🤔'
 let g:ale_lint_delay = 1000
 let g:ale_linters_explicit = 0
 highlight link ALEErrorSign ErrorMsg
 highlight link ALEWarningSign WarningMsg
-highlight ALEError cterm=bold gui=bold ctermbg=238 guibg=#3B4048
-highlight ALEWarning cterm=bold gui=bold ctermbg=238 guibg=#3B4048
+highlight ALEError gui=italic guibg=#3B4048
+highlight ALEWarning gui=italic guibg=#3B4048
 let g:ale_history_log_output = 1
 let g:ale_fixers = {
 \ 'javascript': [
