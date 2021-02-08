@@ -56,6 +56,11 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 autocmd FileType javascriptreact UltiSnipsAddFiletypes javascript
 autocmd FileType typescript UltiSnipsAddFiletypes javascript
 autocmd FileType typescriptreact UltiSnipsAddFiletypes javascript
+" vim thin | cursor for insert
+if !has('nvim')
+  let &t_SI = "\e[5 q"
+  let &t_EI = "\e[2 q"
+endif
 
 Plugin 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
 Plugin 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
@@ -286,6 +291,11 @@ if exists('+termguicolors')
   endif
 
   set termguicolors
+endif
+
+if !has('nvim')
+  let &t_ZH="\e[3m"
+  let &t_ZR="\e[23m"
 endif
 
 nnoremap <Leader>sn :set number!<CR>
