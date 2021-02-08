@@ -14,6 +14,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tomasr/molokai'
 Plugin 'sonph/onehalf', {'rtp': 'vim/'}
 Plugin 'joshdick/onedark.vim'
+Plugin 'ntk148v/vim-horizon'
 Plugin 'tpope/vim-vinegar'
 " Plugin 'justinmk/vim-dirvish'
 Plugin 'tpope/vim-fugitive' " git commands
@@ -278,7 +279,7 @@ set number
 set ruler
 set background=dark
 set cursorline
-colorscheme onedark
+colorscheme horizon
 highlight DiffText term=NONE cterm=NONE gui=NONE guifg=NONE guibg=#000000
 highlight DiffChange term=NONE cterm=NONE gui=NONE guifg=NONE guibg=#484540 gui=NONE
 highlight DiffDelete gui=NONE guibg=#1e2127 guifg=#5f3a41
