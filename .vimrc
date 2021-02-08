@@ -16,7 +16,6 @@ Plugin 'sonph/onehalf', {'rtp': 'vim/'}
 Plugin 'joshdick/onedark.vim'
 Plugin 'ntk148v/vim-horizon'
 Plugin 'tpope/vim-vinegar'
-" Plugin 'justinmk/vim-dirvish'
 Plugin 'tpope/vim-fugitive' " git commands
 Plugin 'tpope/vim-rhubarb' " github helpers for vim-fugitive
 Plugin 'groenewege/vim-less'
@@ -26,7 +25,6 @@ Plugin 'featurist/vim-pogoscript'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-surround' " add/remove/change quotes, parens
 Plugin 'tpope/vim-rails'
-Plugin 'VimClojure'
 Plugin 'sjl/gundo.vim' " super undo
 Plugin 'tpope/vim-cucumber'
 Plugin 'godlygeek/tabular' " format tables of data
@@ -80,7 +78,6 @@ Plugin 'szw/vim-g'
 Plugin 'elzr/vim-json' 
 let g:vim_json_syntax_conceal = 0
 
-" Plugin 'ycm-core/YouCompleteMe'
 Plugin 'vim-scripts/indentpython.vim'
 
 Plugin 'rust-lang/rust.vim'
