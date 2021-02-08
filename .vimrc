@@ -4,52 +4,47 @@ let mapleader=" "
 set nocompatible               " be iMproved
 filetype off                   " required!
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim/plugged')
 
-" let Vundle manage Vundle
-" required!
-Plugin 'VundleVim/Vundle.vim'
+Plug 'tomasr/molokai'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+Plug 'joshdick/onedark.vim'
+Plug 'ntk148v/vim-horizon'
+Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-fugitive' " git commands
+Plug 'tpope/vim-rhubarb' " github helpers for vim-fugitive
+Plug 'groenewege/vim-less'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-abolish'
+Plug 'featurist/vim-pogoscript'
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-surround' " add/remove/change quotes, parens
+Plug 'tpope/vim-rails'
+Plug 'sjl/gundo.vim' " super undo
+Plug 'tpope/vim-cucumber'
+Plug 'godlygeek/tabular' " format tables of data
+Plug 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
+Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'pangloss/vim-javascript'
+Plug 'vim-scripts/summerfruit256.vim'
+Plug 'maksimr/vim-jsbeautify'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'Chiel92/vim-autoformat'
+Plug 'nvim-lua/completion-nvim'
+Plug 'direnv/direnv.vim'
 
-Plugin 'tomasr/molokai'
-Plugin 'sonph/onehalf', {'rtp': 'vim/'}
-Plugin 'joshdick/onedark.vim'
-Plugin 'ntk148v/vim-horizon'
-Plugin 'tpope/vim-vinegar'
-Plugin 'tpope/vim-fugitive' " git commands
-Plugin 'tpope/vim-rhubarb' " github helpers for vim-fugitive
-Plugin 'groenewege/vim-less'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-abolish'
-Plugin 'featurist/vim-pogoscript'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-surround' " add/remove/change quotes, parens
-Plugin 'tpope/vim-rails'
-Plugin 'sjl/gundo.vim' " super undo
-Plugin 'tpope/vim-cucumber'
-Plugin 'godlygeek/tabular' " format tables of data
-Plugin 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
-Plugin 'leafgarland/typescript-vim'
-Plugin 'maxmellon/vim-jsx-pretty'
-Plugin 'pangloss/vim-javascript'
-Plugin 'vim-scripts/summerfruit256.vim'
-Plugin 'maksimr/vim-jsbeautify'
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'AndrewRadev/splitjoin.vim'
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'nvim-lua/completion-nvim'
-Plugin 'direnv/direnv.vim'
-
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 let g:airline_powerline_fonts = 1
 let g:airline_section_a = ''
 let g:airline_section_b = ''
 let g:airline_theme = 'onedark'
 
-Plugin 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
@@ -64,26 +59,26 @@ if !has('nvim')
   let &t_EI = "\e[2 q"
 endif
 
-Plugin 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
-Plugin 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
-Plugin 'tpope/vim-jdaddy' " JSON manipulation
-Plugin 'tpope/vim-commentary' " make lines comments or not
-Plugin 'tpope/vim-repeat' " repeat complex commands with .
-Plugin 'moll/vim-node'
-Plugin 'Shougo/neomru.vim' " for fzf mru
-Plugin 'FooSoft/vim-argwrap' " expanding and collapsing lists
-Plugin 'google/vim-jsonnet' " jsonnet language support
-Plugin 'szw/vim-g'
+Plug 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
+Plug 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
+Plug 'tpope/vim-jdaddy' " JSON manipulation
+Plug 'tpope/vim-commentary' " make lines comments or not
+Plug 'tpope/vim-repeat' " repeat complex commands with .
+Plug 'moll/vim-node'
+Plug 'Shougo/neomru.vim' " for fzf mru
+Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
+Plug 'google/vim-jsonnet' " jsonnet language support
+Plug 'szw/vim-g'
 
 " json and jsonl support
-Plugin 'elzr/vim-json' 
+Plug 'elzr/vim-json' 
 let g:vim_json_syntax_conceal = 0
 
-Plugin 'vim-scripts/indentpython.vim'
+Plug 'vim-scripts/indentpython.vim'
 
-Plugin 'rust-lang/rust.vim'
-Plugin 'racer-rust/vim-racer'
-Plugin 'JuliaEditorSupport/julia-vim'
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer'
+Plug 'JuliaEditorSupport/julia-vim'
 
 " visual copy
 " Option+C (macOS + Kitty)
@@ -92,8 +87,8 @@ Plugin 'JuliaEditorSupport/julia-vim'
 vnoremap <M-y> "+y
 
 " fzf
-Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plugin 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
 let g:fzf_layout = { 'down': '~40%' }
 
@@ -184,7 +179,7 @@ nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
-Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " let g:coc_global_extensions = ['coc-json', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
 inoremap <silent><expr> <c-n> coc#refresh()
 " set updatetime=140
@@ -195,14 +190,14 @@ inoremap <silent><expr> <c-n> coc#refresh()
 " nmap <silent> gi <Plug>(coc-implementation)
 " nmap <silent> gr <Plug>(coc-references)
 
-Plugin 'artemave/vigun'
+Plug 'artemave/vigun'
 au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
 
-Plugin 'w0rp/ale'
-Plugin 'will133/vim-dirdiff'
-Plugin 'nightsense/wonka'
+Plug 'w0rp/ale'
+Plug 'will133/vim-dirdiff'
+Plug 'nightsense/wonka'
 
-Plugin 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim'
 let g:user_emmet_settings = {
   \  'html' : {
   \    'empty_element_suffix': ' />'
@@ -212,7 +207,7 @@ let g:user_emmet_settings = {
   \  }
   \}
 
-Plugin '907th/vim-auto-save'
+Plug '907th/vim-auto-save'
 let g:auto_save = 1
 
 " vim-jsbeautify
@@ -220,13 +215,13 @@ autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
-Plugin 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nmap <Leader>hv <Plug>GitGutterPreviewHunk
 let g:gitgutter_preview_win_floating = 1
 
-Plugin 'AndrewRadev/sideways.vim' " move arguments left and right
+Plug 'AndrewRadev/sideways.vim' " move arguments left and right
 nnoremap _ :SidewaysLeft<cr>
 nnoremap + :SidewaysRight<cr>
 
@@ -235,10 +230,10 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-Plugin 'neomake/neomake'
-Plugin 'tpope/vim-dispatch' " for vim-test
-Plugin 'vim-test/vim-test'
-Plugin 'radenling/vim-dispatch-neovim'
+Plug 'neomake/neomake'
+Plug 'tpope/vim-dispatch' " for vim-test
+Plug 'vim-test/vim-test'
+Plug 'radenling/vim-dispatch-neovim'
 
 nmap <leader>tf :TestFile<CR>
 nmap <leader>tl :TestNearest<CR>
@@ -258,7 +253,7 @@ function! AdjustWindowHeight(percent_full_width, percent_full_height)
   endif
 endfunction
 
-call vundle#end()
+call plug#end()
 
 filetype plugin indent on
 
