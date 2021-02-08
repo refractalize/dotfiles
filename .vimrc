@@ -290,7 +290,6 @@ set laststatus=2
 set scrolloff=3
 set ignorecase
 set smartcase
-set cursorline " very slow in ruby?
 silent! set guifont="Source Code Pro:h11"
 silent! set guifont=Source_Code_Pro:h10:cANSI
 set backspace=2
@@ -304,6 +303,7 @@ set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical
 set isfname-==
+set regexpengine=1 " vim-ruby performance
 
 " italic
 highlight Comment gui=italic
