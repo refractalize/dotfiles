@@ -280,8 +280,11 @@ set virtualedit=block " we can select beyond the end of the line in visual block
 set diffopt+=vertical
 
 if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  if exists('$TMUX')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  endif
+
   set termguicolors
 endif
 
