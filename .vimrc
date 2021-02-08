@@ -305,6 +305,9 @@ set virtualedit=block " we can select beyond the end of the line in visual block
 set diffopt+=vertical
 set isfname-==
 
+" italic
+highlight Comment gui=italic
+
 if exists('+termguicolors')
   if exists('$TMUX')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
