@@ -86,7 +86,9 @@ Plugin 'JuliaEditorSupport/julia-vim'
 
 " visual copy
 " Option+C (macOS + Kitty)
-vnoremap <M-c>  "+y
+" at the end of ~/.config/kitty/kitty.conf
+" map cmd+c send_text all \x1b\x63
+vnoremap <M-y> "+y
 
 " fzf
 set rtp+=/usr/local/opt/fzf
