@@ -303,6 +303,7 @@ set splitbelow
 set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical
+set isfname-==
 
 if exists('+termguicolors')
   if exists('$TMUX')
