@@ -56,6 +56,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 autocmd FileType javascriptreact UltiSnipsAddFiletypes javascript
 autocmd FileType typescript UltiSnipsAddFiletypes javascript
 autocmd FileType typescriptreact UltiSnipsAddFiletypes javascript
+
 " vim thin | cursor for insert
 if !has('nvim')
   let &t_SI = "\e[5 q"
@@ -243,13 +244,22 @@ Plugin 'vim-test/vim-test'
 Plugin 'radenling/vim-dispatch-neovim'
 
 nmap <leader>tf :TestFile<CR>
-nmap <leader>tn :TestNearest<CR>
-nmap <leader>tl :TestLast<CR>
+nmap <leader>tl :TestNearest<CR>
+nmap <leader>tt :TestLast<CR>
 nmap <leader>tv :TestVisit<CR>
 nmap <leader>to :copen<CR>
 let test#strategy = 'dispatch'
 
-autocmd FileType qf 30wincmd_
+autocmd FileType qf call AdjustWindowHeight(30, 40)
+function! AdjustWindowHeight(percent_full_width, percent_full_height)
+  if &columns*a:percent_full_width/100 >= 100
+    exe "wincmd L"
+    exe (&columns*a:percent_full_width/100) . "wincmd |"
+  else
+    exe "wincmd J"
+    exe (&lines*a:percent_full_height/100) . "wincmd _"
+  endif
+endfunction
 
 call vundle#end()
 
