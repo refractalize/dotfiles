@@ -129,7 +129,8 @@ let g:fzf_action = {
   \ }
 
 imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-l> <plug>(fzf-complete-line)
+imap <c-x><c-l> <plug>(fzf-complete-buffer)
+imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
 
 function! NodeRelativeFilename(lines)
   let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
@@ -145,10 +146,12 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ 'source': 'rg --files --hidden',
   \ }))
 
-nnoremap <silent> <Leader>* :call Search("\\b" . expand('<cword>') .  "\\b")<cr>
+nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
 
 nnoremap <leader>G :Rg 
 nnoremap <leader>g :Rg<cr>
+nnoremap <leader>l :BLines<cr>
+command! -bang -nargs=* Rgs call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
 
 vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 
@@ -164,10 +167,15 @@ function! SearchOperator(type)
         return
     endif
 
-    call Search(@@)
+    call SearchString(@@)
 endfunction
 
-function! Search(str)
+function! SearchString(str)
+    call histadd("cmd", "Rgs " . a:str)
+    execute "Rgs " . a:str
+endfunction
+
+function! SearchRegex(str)
     call histadd("cmd", "Rg " . a:str)
     execute "Rg " . a:str
 endfunction
