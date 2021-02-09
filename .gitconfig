@@ -22,7 +22,7 @@
     conflictstyle = diff3
     tool = vimdiff
 [core]
-    editor = vim
+    editor = nvim
     trustctime = false
 [mergetool "tortoise"]
     cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
@@ -35,7 +35,7 @@
     prompt = false
 [core]
     attributesFile = ~/.gitattributes
-    pager = less -XFSRi
+    pager = delta --hyperlinks
 [filter "lfs"]
     required = true
     clean = git-lfs clean -- %f
