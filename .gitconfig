@@ -21,6 +21,8 @@
 [merge]
     conflictstyle = diff3
     tool = vimdiff
+[mergetool "vimdiff"]
+    path = nvim
 [core]
     editor = nvim
     trustctime = false
