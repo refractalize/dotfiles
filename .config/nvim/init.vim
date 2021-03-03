@@ -294,6 +294,7 @@ set diffopt+=vertical
 set isfname-==
 set regexpengine=1 " vim-ruby performance
 set mouse=nvi
+set inccommand=nosplit
 
 if exists('+termguicolors')
   if exists('$TMUX')
@@ -319,15 +320,32 @@ nnoremap gj j
 vnoremap gk k
 vnoremap gj j
 
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <M-j> <C-W>j
+nnoremap <M-k> <C-W>k
+nnoremap <M-l> <C-W>l
+nnoremap <M-h> <C-W>h
+nnoremap <M-s> <C-W>s
+nnoremap <M-v> <C-W>v
+nnoremap <M-o> <C-W>o
+nnoremap <M-=> <C-W>=
+nnoremap <M-t> <C-W>T
+nnoremap <M-w> <C-W>c
+nnoremap <M-d> :Gdiff<cr>
 
-nnoremap <silent> <C-W><C-J> :exe "resize +5"<CR>
-nnoremap <silent> <C-W><C-K> :exe "resize -5"<CR>
-nnoremap <silent> <C-W><C-L> :exe "vertical resize +10"<CR>
-nnoremap <silent> <C-W><C-H> :exe "vertical resize -10"<CR>
+nnoremap <M-1> 1gt
+nnoremap <M-2> 2gt
+nnoremap # 3gt
+nnoremap <M-4> 4gt
+nnoremap <M-5> 5gt
+nnoremap <M-6> 6gt
+nnoremap <M-7> 7gt
+nnoremap <M-8> 8gt
+nnoremap <M-9> 9gt
+
+nnoremap <silent> <M-J> :exe "resize -2"<CR>
+nnoremap <silent> <M-K> :exe "resize +2"<CR>
+nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
+nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
 
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
