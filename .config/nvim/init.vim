@@ -557,6 +557,14 @@ if has('nvim')
   tnoremap <C-v><Esc> <Esc>
 endif
 
+" spelling
+autocmd BufRead,BufNewFile *.md setlocal spell
+autocmd FileType gitcommit setlocal spell
+highlight SpellBad guifg=#eC6a88
+highlight SpellCap guifg=#eC6a88
+highlight SpellRare guifg=#eC6a88
+highlight SpellLocal guifg=#eC6a88
+
 source $HOME/.config/nvim/completion.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/snippets.vim
