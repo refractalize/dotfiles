@@ -26,7 +26,9 @@ Plug 'godlygeek/tabular' " format tables of data
 Plug 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
 Plug 'leafgarland/typescript-vim'
 Plug 'maxmellon/vim-jsx-pretty'
+Plug 'jparise/vim-graphql'
 Plug 'pangloss/vim-javascript'
+Plug 'RRethy/vim-illuminate'
 Plug 'vim-scripts/summerfruit256.vim'
 Plug 'maksimr/vim-jsbeautify'
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -52,7 +54,11 @@ Plug 'moll/vim-node'
 Plug 'Shougo/neomru.vim' " for fzf mru
 Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plug 'google/vim-jsonnet' " jsonnet language support
-" Plug 'szw/vim-g'
+
+" completion
+set completeopt-=preview
+let g:deoplete#enable_at_startup = 1
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " json and jsonl support
 Plug 'elzr/vim-json' 
@@ -64,10 +70,10 @@ Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
 Plug 'JuliaEditorSupport/julia-vim'
 
-function! Google(searchTermArg)
+function! Google(range, searchTermArg)
   let searchTerm = []
 
-  let sel = getpos('.') == getpos("'<") ? getline("'<")[getpos("'<")[2] - 1:getpos("'>")[2] - 1] : ''
+  let sel = a:range == 0 ? '' : getline("'<")[getpos("'<")[2] - 1:getpos("'>")[2] - 1]
 
   if sel != ''
     call add(searchTerm, sel)
@@ -81,7 +87,7 @@ function! Google(searchTermArg)
   call system("open http://www.google.fr/search?q=" . escapedSearchTerm)
 endfunction
 
-command! -nargs=* -range Google call Google(<q-args>)
+command! -nargs=* -range Google call Google(<range>, <q-args>)
 
 " visual copy
 " Option+C (macOS + Kitty)
@@ -324,6 +330,7 @@ nnoremap <M-j> <C-W>j
 nnoremap <M-k> <C-W>k
 nnoremap <M-l> <C-W>l
 nnoremap <M-h> <C-W>h
+nnoremap <M-;> <C-W>p
 nnoremap <M-s> <C-W>s
 nnoremap <M-v> <C-W>v
 nnoremap <M-o> <C-W>o
@@ -506,43 +513,6 @@ if executable('ag')
   set grepprg=ag\ --vimgrep
   set grepformat=%f:%l:%c:%m
 endif
-
-fun! JsRequireComplete(findstart, base)
-  if a:findstart
-    " locate the start of the word
-    let line = getline('.')
-    let end = col('.') - 1
-    let start = end
-    while start > 0 && line[start - 1] =~ "[^'\"]"
-      let start -= 1
-    endwhile
-
-    let base = substitute(line[start : end - 1], '^[./]*', '', '')
-    let cmd = 'ag --nogroup --nocolor --hidden -i -g "'.base.'"'
-
-    let g:js_require_complete_matches = map(
-          \ systemlist(cmd),
-          \ {i, val -> substitute(val, '\(index\)\?.jsx\?$', '', '')}
-          \ )
-
-    return start
-  else
-    " find files matching with "a:base"
-    let res = []
-    let search_path = substitute(expand('%:h'), '[^/.]\+', '..', 'g')
-    for m in g:js_require_complete_matches
-      if m =~ substitute(a:base, '^[./]*', '', '')
-        if search_path != ''
-          call add(res, search_path.'/'.m)
-        else
-          call add(res, m)
-        endif
-      endif
-    endfor
-    return res
-  endif
-endfun
-autocmd FileType {javascript,javascript.jsx} setlocal completefunc=JsRequireComplete
 
 autocmd FileType rust set shiftwidth=2
 " autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
