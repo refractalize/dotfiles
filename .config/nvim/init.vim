@@ -51,7 +51,6 @@ Plug 'tpope/vim-jdaddy' " JSON manipulation
 Plug 'tpope/vim-commentary' " make lines comments or not
 Plug 'tpope/vim-repeat' " repeat complex commands with .
 Plug 'moll/vim-node'
-Plug 'Shougo/neomru.vim' " for fzf mru
 Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plug 'google/vim-jsonnet' " jsonnet language support
 
@@ -101,6 +100,18 @@ Plug 'junegunn/fzf.vim'
 let $FZF_DEFAULT_OPTS .= ' --exact'
 let g:fzf_layout = { 'down': '~40%' }
 
+function! AddMruFile(buffer)
+  if len(a:buffer) > 0 && match(a:buffer, '^term:') == -1
+    call writefile([a:buffer], $HOME . '/.config/nvim/mru', 'a')
+  endif
+endfunction
+
+augroup mru
+  au!
+
+  au BufAdd,BufEnter,BufLeave,BufWritePost * call AddMruFile(expand('<afile>:p'))
+augroup END
+
 function! Mru(onlyLocal)
   if a:onlyLocal
     let grep = 'grep ^' . getcwd() . ' |'
@@ -109,7 +120,7 @@ function! Mru(onlyLocal)
   endif
 
   call fzf#run(fzf#wrap('mru', {
-    \ 'source': '(sed "1d" $HOME/.cache/neomru/file | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!cnts[$0]++''',
+    \ 'source': '(tail -r $HOME/.config/nvim/mru | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!counts[$0]++''',
     \ 'options': ['--no-sort', '--prompt', a:onlyLocal ? 'mru> ' : 'mru-all> ', '--tiebreak', 'end']
     \ }))
 endfunction
