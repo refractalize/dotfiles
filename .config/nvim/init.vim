@@ -9,10 +9,19 @@ call plug#begin('~/.vim/plugged')
 Plug 'tomasr/molokai'
 Plug 'sonph/onehalf', {'rtp': 'vim/'}
 Plug 'joshdick/onedark.vim'
+Plug 'rakr/vim-one'
 Plug 'ntk148v/vim-horizon'
+Plug 'ayu-theme/ayu-vim'
+Plug 'Lokaltog/vim-monotone'
+" Plug 'Yggdroot/indentLine'
+Plug 'overcache/NeoSolarized'
+Plug 'mhartington/oceanic-next'
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
 Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-fugitive' " git commands
 Plug 'tpope/vim-rhubarb' " github helpers for vim-fugitive
+Plug 'junegunn/gv.vim'
 Plug 'groenewege/vim-less'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-abolish'
@@ -20,7 +29,7 @@ Plug 'featurist/vim-pogoscript'
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-surround' " add/remove/change quotes, parens
 Plug 'tpope/vim-rails'
-Plug 'sjl/gundo.vim' " super undo
+Plug 'mbbill/undotree'
 Plug 'tpope/vim-cucumber'
 Plug 'godlygeek/tabular' " format tables of data
 Plug 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
@@ -34,6 +43,7 @@ Plug 'maksimr/vim-jsbeautify'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'AndrewRadev/linediff.vim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'direnv/direnv.vim'
 Plug 'vim-airline/vim-airline'
@@ -53,9 +63,13 @@ Plug 'tpope/vim-repeat' " repeat complex commands with .
 Plug 'moll/vim-node'
 Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plug 'google/vim-jsonnet' " jsonnet language support
+Plug 'jxnblk/vim-mdx-js'
+let g:vcoolor_disable_mappings = 1
+Plug 'KabbAmine/vCoolor.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 " completion
-set completeopt-=preview
 let g:deoplete#enable_at_startup = 1
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
@@ -94,56 +108,7 @@ command! -nargs=* -range Google call Google(<range>, <q-args>)
 " map cmd+c send_text all \x1b\x63
 vnoremap <M-y> "+y
 
-" fzf
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-let $FZF_DEFAULT_OPTS .= ' --exact'
-let g:fzf_layout = { 'down': '~40%' }
-
-function! AddMruFile(buffer)
-  if len(a:buffer) > 0 && match(a:buffer, '^term:') == -1
-    call writefile([a:buffer], $HOME . '/.config/nvim/mru', 'a')
-  endif
-endfunction
-
-augroup mru
-  au!
-
-  au BufAdd,BufEnter,BufLeave,BufWritePost * call AddMruFile(expand('<afile>:p'))
-augroup END
-
-function! Mru(onlyLocal)
-  if a:onlyLocal
-    let grep = 'grep ^' . getcwd() . ' |'
-  else
-    let grep = ''
-  endif
-
-  call fzf#run(fzf#wrap('mru', {
-    \ 'source': '(tail -r $HOME/.config/nvim/mru | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!counts[$0]++''',
-    \ 'options': ['--no-sort', '--prompt', a:onlyLocal ? 'mru> ' : 'mru-all> ', '--tiebreak', 'end']
-    \ }))
-endfunction
-
-command! -bang Mru :call Mru(!<bang>0)
-command! -bar -bang Mapsv call fzf#vim#maps("x", <bang>0)
-command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
-command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
-
-nnoremap <silent> <Leader><Leader> :Mru<cr>
-nnoremap <silent> <Leader>f :Mru!<cr>
-
-let g:fzf_history_dir = '~/.fzf-history'
-
-let g:fzf_action = {
-  \ 'ctrl-s': 'split',
-  \ 'ctrl-v': 'vsplit'
-  \ }
-
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
 
 function! NodeRelativeFilename(lines)
   let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
@@ -153,18 +118,6 @@ function! NodeRelativeFilename(lines)
     return './' . l:fn
   endif
 endfunction
-
-inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
-  \ 'reducer': function('NodeRelativeFilename'),
-  \ 'source': 'rg --files --hidden',
-  \ }))
-
-nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
-
-nnoremap <leader>G :Rg 
-nnoremap <leader>g :Rg<cr>
-nnoremap <leader>l :BLines<cr>
-command! -bang -nargs=* Rgs call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
 
 vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 
@@ -236,9 +189,9 @@ autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 Plug 'airblade/vim-gitgutter'
-nmap <Leader>ha <Plug>(GitGutterStageHunk)
-nmap <Leader>hr <Plug>(GitGutterUndoHunk)
-nmap <Leader>hv <Plug>(GitGutterPreviewHunk)
+nmap ds <Plug>(GitGutterStageHunk)
+nmap du <Plug>(GitGutterUndoHunk)
+nmap dp <Plug>(GitGutterPreviewHunk)
 let g:gitgutter_preview_win_floating = 1
 
 Plug 'AndrewRadev/sideways.vim' " move arguments left and right
@@ -279,6 +232,7 @@ filetype plugin indent on
 
 set exrc   " enable per-directory .vimrc files
 set secure " disable unsafe commands in local .vimrc files
+set undofile
 
 set hidden
 set shiftwidth=2
@@ -310,7 +264,7 @@ set virtualedit=block " we can select beyond the end of the line in visual block
 set diffopt+=vertical
 set isfname-==
 set regexpengine=1 " vim-ruby performance
-set mouse=nvi
+set mouse=a
 set inccommand=nosplit
 
 if exists('+termguicolors')
@@ -342,35 +296,36 @@ nnoremap <M-k> <C-W>k
 nnoremap <M-l> <C-W>l
 nnoremap <M-h> <C-W>h
 nnoremap <M-;> <C-W>p
+nnoremap <M-r> <C-W>r
+nnoremap <M-x> <C-W>x
+nnoremap <M-R> <C-W>R
 nnoremap <M-s> <C-W>s
 nnoremap <M-v> <C-W>v
 nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
-nnoremap <M-t> <C-W>T
+nnoremap <M-t> :tabnew<cr>
 nnoremap <M-w> <C-W>c
 nnoremap <M-d> :Gdiff<cr>
+nnoremap <M-g> :G<cr>
 
 nnoremap <M-1> 1gt
 nnoremap <M-2> 2gt
-nnoremap # 3gt
+nnoremap £ 3gt
 nnoremap <M-4> 4gt
 nnoremap <M-5> 5gt
 nnoremap <M-6> 6gt
 nnoremap <M-7> 7gt
 nnoremap <M-8> 8gt
 nnoremap <M-9> 9gt
+nnoremap <M-0> :tablast<cr>
+
+map <ScrollWheelUp> <C-Y>
+map <ScrollWheelDown> <C-E>
 
 nnoremap <silent> <M-J> :exe "resize -2"<CR>
 nnoremap <silent> <M-K> :exe "resize +2"<CR>
 nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
 nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
-
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cnoremap <C-b> <Left>
-cnoremap <C-f> <Right>
 
 " Go to tab by number
 noremap <leader>1 1gt
@@ -384,9 +339,29 @@ noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
 
-au TabLeave * let g:lasttab = tabpagenr()
+vnoremap <leader>o :diffget<cr>
 
-imap <c-x><c-f> <plug>(fzf-complete-path)
+" from :help emacs-keys
+" start of line
+cnoremap <C-A>		<Home>
+" back one character
+cnoremap <C-B>		<Left>
+" delete character under cursor
+cnoremap <C-D>		<Del>
+" end of line
+cnoremap <C-E>		<End>
+" forward one character
+cnoremap <C-F>		<Right>
+" recall newer command-line
+cnoremap <C-N>		<Down>
+" recall previous (older) command-line
+cnoremap <C-P>		<Up>
+" back one word
+cnoremap <M-b>	<S-Left>
+" forward one word
+cnoremap <M-f>	<S-Right>
+
+au TabLeave * let g:lasttab = tabpagenr()
 
 if has("win32") || has("win64")
     set directory=$TMP
@@ -394,51 +369,6 @@ else
     set shell=bash
 endif
 
-" guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block
-
-sign define LspDiagnosticsSignError text=🤬 texthl=LspDiagnosticsSignError linehl= numhl=
-sign define LspDiagnosticsSignWarning text=🤔 texthl=LspDiagnosticsSignWarning linehl= numhl=
-sign define LspDiagnosticsSignInformation text=🤓 texthl=LspDiagnosticsSignInformation linehl= numhl=
-sign define LspDiagnosticsSignHint text=H texthl=LspDiagnosticsSignHint linehl= numhl=
-highlight LspDiagnosticsDefaultInformation gui=italic guifg=lightblue
-highlight LspDiagnosticsDefaultError gui=italic guifg=red
-highlight LspDiagnosticsDefaultWarning gui=italic guifg=orange
-highlight LspDiagnosticsUnderlineInformation gui=italic guibg=#3B4048
-highlight LspDiagnosticsUnderlineError gui=italic guibg=#3B4048
-highlight LspDiagnosticsUnderlineWarning gui=italic guibg=#3B4048
-
-let g:ale_sign_column_always = 1
-let g:ale_sign_error = '🤬'
-let g:ale_sign_warning = '🤔'
-let g:ale_lint_delay = 1000
-let g:ale_linters_explicit = 0
-highlight link ALEErrorSign ErrorMsg
-highlight link ALEWarningSign WarningMsg
-highlight ALEError gui=italic guibg=#3B4048
-highlight ALEWarning gui=italic guibg=#3B4048
-" highlight LspDiagnosticsDefaultError gui=italic
-" highlight LspDiagnosticsDefaultWarning gui=italic
-" highlight LspDiagnosticsUnderlineError gui=italic guibg=#3B4048
-" highlight LspDiagnosticsUnderlineWarning gui=italic guibg=#3B4048
-highlight ALEVirtualTextStyleError gui=italic guifg=#e95678
-highlight ALEVirtualTextStyleWarning gui=italic guifg=#f09483
-let g:ale_history_log_output = 1
-let g:ale_fixers = {
-\ 'javascript': [
-\   'prettier',
-\   'eslint'
-\ ],
-\ 'ruby': [
-\   'rubocop'
-\ ],
-\}
-let g:ale_linters = {
-\  'rust': ['cargo'],
-\  'javascript': ['eslint'],
-\  'javascriptreact': ['eslint']
-\}
-nnoremap <silent> [l :ALEPrevious<CR>
-nnoremap <silent> ]l :ALENext<CR>
 
 function! SynStack()
   if !exists("*synstack")
@@ -446,16 +376,6 @@ function! SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-
-function! FixJsFormatting()
-  let command = 'eslint'
-  if executable('standard')
-    let command = 'standard'
-  endif
-  silent let f = system(command.' --fix '.expand('%'))
-  checktime
-endfunction
-autocmd FileType {javascript,javascript.jsx} nnoremap <Leader>p :call FixJsFormatting()<cr>
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
 
@@ -526,7 +446,8 @@ if executable('ag')
 endif
 
 autocmd FileType rust set shiftwidth=2
-" autocmd FileType ruby setlocal nonumber " very slow in ruby when editing
+autocmd FileType ruby set syntax=
+autocmd FileType typescript set syntax=
 nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
@@ -547,6 +468,8 @@ highlight SpellRare guifg=#eC6a88
 highlight SpellLocal guifg=#eC6a88
 
 source $HOME/.config/nvim/completion.vim
+source $HOME/.config/nvim/fzf.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/snippets.vim
 source $HOME/.config/nvim/vim.vim
+source $HOME/.config/nvim/ale.vim
