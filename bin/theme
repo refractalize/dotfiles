@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+THEME=$1
+
+CURRENT_FILENAME=~/.zsh/themes/current.zsh
+ln -sf $(realpath --relative-to ~/.zsh/themes ~/.zsh/themes/$THEME.zsh) $CURRENT_FILENAME
+source $CURRENT_FILENAME
+CURRENT_THEME_NAME=$(readlink $CURRENT_FILENAME)
+echo Current theme: ${CURRENT_THEME_NAME%.zsh}

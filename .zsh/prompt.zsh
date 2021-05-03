@@ -40,10 +40,10 @@ precmd() {
   if [ $timer ]; then
     local now=$(($(print -P %D{%s%6.})/1000))
     elapsed=$(duration $(($now-$timer)))
-    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}(%F{green}$(date '+%H:%M:%S') +${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}(%F{green}+${elapsed}%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
     unset elapsed
     unset timer
   else
-    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}(%F{green}$(date '+%H:%M:%S')%F{blue}) %F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
+    export PROMPT="$DISPLAY_HOST${vcs_info_msg_0_}%F{blue}%c %F{red}%(?..[%?] )%F{blue}λ%f "
   fi
 }
