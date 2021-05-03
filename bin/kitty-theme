@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+set -e
+
+DIR=~/.config/kitty/kitty-cat/colors
+
+if [[ -z $1 ]]
+then
+  THEME=$(ls $DIR | fzf)
+else
+  THEME=$1.conf
+fi
+
+kitty @ set-colors -a -c $DIR/$THEME
+ln -sf $(realpath --relative-to ~/.config/kitty $DIR/$THEME) ~/.config/kitty/theme.conf
