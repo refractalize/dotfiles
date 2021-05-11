@@ -164,7 +164,7 @@ nmap <leader>cF :let @+=expand("%:p")<CR>
 " nmap <silent> gr <Plug>(coc-references)
 
 Plug 'artemave/vigun'
-au FileType javascript nnoremap <Leader>o :VigunMochaOnly<cr>
+au FileType {javascript,typescript} nnoremap <Leader>o :VigunMochaOnly<cr>
 
 Plug 'w0rp/ale'
 Plug 'will133/vim-dirdiff'
