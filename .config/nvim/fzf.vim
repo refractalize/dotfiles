@@ -9,9 +9,22 @@ let g:fzf_action = {
   \ 'alt-v': 'vsplit'
   \ }
 
+let g:mru_file = $HOME . '/.config/nvim/mru'
+
 function! AddMruFile(buffer)
-  if len(a:buffer) > 0 && match(a:buffer, '^term:') == -1
-    call writefile([a:buffer], $HOME . '/.config/nvim/mru', 'a')
+  if len(a:buffer) > 0 && match(a:buffer, '\(^term:\)\|\(/\.git/index$\)') == -1 && filereadable(a:buffer) && filetype != 'fugitive'
+    call writefile([a:buffer], g:mru_file, 'a')
+  endif
+
+  if str2nr(system('wc -l ' . g:mru_file)) > 2000
+    let tmpfile = tempname()
+    " remove duplicate entries (there are usually a lot)
+    call system('tail -r ' . g:mru_file . ' | awk ''!counts[$0]++'' > ' . tmpfile . ' && mv ' . tmpfile . ' ' . g:mru_file)
+
+    if str2nr(system('wc -l ' . g:mru_file)) > 1000
+      " only keep the most recent 1000 entries
+      call system('tail -n 1000 ' . g:mru_file . ' > ' . tmpfile . ' && mv ' . tmpfile . ' ' . g:mru_file)
+    end
   endif
 endfunction
 
@@ -21,17 +34,28 @@ augroup mru
   au BufAdd,BufEnter,BufLeave,BufWritePost * call AddMruFile(expand('<afile>:p'))
 augroup END
 
+function! OpenBuffers()
+  return map(filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&filetype") != "qf"'), "fnamemodify(bufname(v:val), ':p')")
+endfunction
+
 function! Mru(onlyLocal)
+  let openBuffersTempFile = tempname()
+  call writefile(['^' . getcwd()] + OpenBuffers(), openBuffersTempFile)
+
   if a:onlyLocal
-    let grep = 'grep ^' . getcwd() . ' |'
+    let grep = ' | grep -f ' . openBuffersTempFile
   else
     let grep = ''
   endif
 
-  call fzf#run(fzf#wrap('mru', {
-    \ 'source': '(tail -r $HOME/.config/nvim/mru | ' . l:grep .  ' sed s:' . getcwd() . '/:: && rg --files --hidden) | awk ''!counts[$0]++''',
-    \ 'options': ['--no-sort', '--prompt', a:onlyLocal ? 'mru> ' : 'mru-all> ', '--tiebreak', 'end']
-    \ }))
+  call fzf#run(fzf#wrap('mru', fzf#vim#with_preview({
+    \ 'source': '(tail -r ' . g:mru_file . ' | cut -f1' . l:grep .  ' | sed s:' . getcwd() . '/:: && rm ' . openBuffersTempFile . ' && rg --files --hidden) | awk ''!counts[$0]++''',
+    \ 'options': [
+      \ '--no-sort',
+      \ '--prompt', a:onlyLocal ? 'mru> ' : 'mru-all> ',
+      \ '--tiebreak', 'end'
+    \ ]
+    \ })))
 endfunction
 
 imap <c-x><c-k> <plug>(fzf-complete-word)
@@ -59,6 +83,13 @@ nnoremap <leader>g :Rg<cr>
 nnoremap <leader>l :BLines<cr>
 command! -bang -nargs=* Rgs call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
 
-command! -nargs=* BLog call fzf#vim#buffer_commits(fzf#vim#with_preview({ "placeholder": "", "options": ['--preview', 'git show --format=format: $(echo {} | grep -o "[a-f0-9]\{7,\}" | head -1) -- ' . expand('%') . ' | delta']}), 0)
+command! -nargs=* Log call fzf#vim#buffer_commits(
+  \ fzf#vim#with_preview({
+    \ "placeholder": "",
+    \ "options": [
+      \ '--preview', 'git show --format=format: $(echo {} | grep -o "[a-f0-9]\{7,\}" | head -1) -- ' . expand('%') . ' | delta --width=$FZF_PREVIEW_COLUMNS'
+    \ ]}
+  \ ),
+\ 0)
 
 imap <c-x><c-f> <plug>(fzf-complete-path)
