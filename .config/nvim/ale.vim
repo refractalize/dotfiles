@@ -13,13 +13,19 @@ highlight ALEWarning cterm=undercurl gui=undercurl
 " highlight LspDiagnosticsDefaultWarning gui=italic
 " highlight LspDiagnosticsUnderlineError gui=italic guibg=#3B4048
 " highlight LspDiagnosticsUnderlineWarning gui=italic guibg=#3B4048
-highlight ALEVirtualTextError gui=italic guifg=#e95678
-highlight ALEVirtualTextWarning gui=italic guifg=#f09483
+highlight clear ALEVirtualTextError
+highlight link ALEVirtualTextError TypeDef
+highlight clear ALEVirtualTextWarning
+highlight link ALEVirtualTextWarning TypeDef
 let g:ale_virtualtext_cursor = 1
-let g:ale_virtualtext_prefix = "         "
+let g:ale_virtualtext_prefix = "    ⊘    "
 let g:ale_history_log_output = 1
 let g:ale_fixers = {
 \ 'javascript': [
+\   'prettier',
+\   'eslint'
+\ ],
+\ 'javascriptreact': [
 \   'prettier',
 \   'eslint'
 \ ],
@@ -32,12 +38,17 @@ let g:ale_fixers = {
 \ 'json': [
 \   'jq'
 \ ],
+\ 'xml': [
+\   'xmllint'
+\ ],
 \}
 let g:ale_linters = {
-\  'rust': ['cargo'],
+\  'rust': ['cargo', 'analyzer'],
 \  'javascript': ['eslint'],
 \  'javascriptreact': ['eslint']
 \}
+
+let g:ale_rust_cargo_check_tests = 1
 nnoremap <silent> [l :ALEPrevious<CR>
 nnoremap <silent> ]l :ALENext<CR>
 nnoremap <M-f> :ALEFix<CR>
