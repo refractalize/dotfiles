@@ -5,15 +5,19 @@ To setup on a new machine:
 
 ## Install
 
-# Zgen
+# zgen
 
 ```sh
 git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
 ```
 
-# NeoVim
+See: https://github.com/tarjoilija/zgen#installation
+
+# vim-plug
 
 ```sh
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 ```
+
+See: https://github.com/junegunn/vim-plug#neovim
