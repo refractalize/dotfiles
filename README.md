@@ -1,21 +1,7 @@
 To setup on a new machine:
 
-```sh
-cd ~    
-git init
-git remote add origin https://github.com/refractalize/dotfiles.git
-git fetch
-git reset origin/master
-```
-
-And checkout as necessary:
-
-```sh
-git checkout .vimrc
-git checkout .gitconfig
-```
-
-You'll most likely need to install [Vundle](https://github.com/VundleVim/Vundle.vim#quick-start).
+1. Install [yadm](https://yadm.io/docs/install)
+2. `yadm clone https://github.com/refractalize/dotfiles.git`
 
 ## Install
 
@@ -25,8 +11,9 @@ You'll most likely need to install [Vundle](https://github.com/VundleVim/Vundle.
 git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
 ```
 
-# Vim
+# NeoVim
 
 ```sh
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
