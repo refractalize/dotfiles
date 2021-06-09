@@ -1,6 +1,8 @@
 let ayucolor="light"
 let g:airline_theme = 'ayu'
+let g:lightline.colorscheme = 'ayu_light'
 let g:indentLine_color_gui = '#EED9BE'
+set background=light
 colorscheme ayu
 
 highlight DiffText term=NONE cterm=NONE gui=NONE guifg=NONE guibg=#F2D9CD

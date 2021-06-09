@@ -17,7 +17,6 @@ Plug 'Lokaltog/vim-monotone'
 Plug 'overcache/NeoSolarized'
 Plug 'mhartington/oceanic-next'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
-Plug 'kyazdani42/nvim-tree.lua'
 Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-fugitive' " git commands
 Plug 'tpope/vim-rhubarb' " github helpers for vim-fugitive
@@ -29,6 +28,7 @@ Plug 'featurist/vim-pogoscript'
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-surround' " add/remove/change quotes, parens
 Plug 'tpope/vim-rails'
+Plug 'junegunn/vim-easy-align'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-cucumber'
 Plug 'godlygeek/tabular' " format tables of data
@@ -46,12 +46,12 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'direnv/direnv.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
 Plug 'SirVer/ultisnips'
 Plug 'nvim-lua/completion-nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -60,6 +60,7 @@ Plug 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
 Plug 'tpope/vim-jdaddy' " JSON manipulation
 Plug 'tpope/vim-commentary' " make lines comments or not
 Plug 'tpope/vim-repeat' " repeat complex commands with .
+Plug 'tpope/vim-dadbod'
 Plug 'moll/vim-node'
 Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
 Plug 'google/vim-jsonnet' " jsonnet language support
@@ -68,9 +69,14 @@ let g:vcoolor_disable_mappings = 1
 Plug 'KabbAmine/vCoolor.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'wsdjeg/vim-fetch'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'lewis6991/gitsigns.nvim'
 
 " completion
 let g:deoplete#enable_at_startup = 1
+Plug 'shougo/deoplete-lsp'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " json and jsonl support
@@ -164,7 +170,7 @@ nmap <leader>cF :let @+=expand("%:p")<CR>
 " nmap <silent> gr <Plug>(coc-references)
 
 Plug 'artemave/vigun'
-au FileType {javascript,typescript} nnoremap <Leader>o :VigunMochaOnly<cr>
+au FileType javascript,typescript nnoremap <Leader>o :VigunMochaOnly<cr>
 
 Plug 'w0rp/ale'
 Plug 'will133/vim-dirdiff'
@@ -187,12 +193,6 @@ let g:auto_save = 1
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
-
-Plug 'airblade/vim-gitgutter'
-nmap ds <Plug>(GitGutterStageHunk)
-nmap du <Plug>(GitGutterUndoHunk)
-nmap dp <Plug>(GitGutterPreviewHunk)
-let g:gitgutter_preview_win_floating = 1
 
 Plug 'AndrewRadev/sideways.vim' " move arguments left and right
 nnoremap _ :SidewaysLeft<cr>
@@ -261,11 +261,12 @@ set nofileignorecase " make sure we use exact case on macos
 set splitbelow
 set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
-set diffopt+=vertical
+set diffopt+=vertical " diffs are always shown left/right
 set isfname-==
 set regexpengine=1 " vim-ruby performance
 set mouse=a
 set inccommand=nosplit
+set signcolumn=yes:1
 
 if exists('+termguicolors')
   if exists('$TMUX')
@@ -445,7 +446,6 @@ if executable('ag')
   set grepformat=%f:%l:%c:%m
 endif
 
-autocmd FileType rust set shiftwidth=2
 autocmd FileType ruby set syntax=
 autocmd FileType typescript set syntax=
 nnoremap <Leader>sn :set number!<CR>
@@ -469,7 +469,17 @@ highlight SpellLocal guifg=#eC6a88
 
 source $HOME/.config/nvim/completion.vim
 source $HOME/.config/nvim/fzf.vim
+source $HOME/.config/nvim/statusline.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/snippets.vim
 source $HOME/.config/nvim/vim.vim
 source $HOME/.config/nvim/ale.vim
+source $HOME/.config/nvim/vim-easy-align.vim
+source $HOME/.config/nvim/projects.vim
+source $HOME/.config/nvim/vim-surround.vim
+
+lua << EOF
+require('gitsigns').setup {
+  current_line_blame = true
+}
+EOF

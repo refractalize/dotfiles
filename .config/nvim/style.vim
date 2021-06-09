@@ -1,6 +1,4 @@
-let g:airline_powerline_fonts = 1
-let g:airline_section_a = ''
-let g:airline_section_b = ''
+lua require'colorizer'.setup()
 
 highlight QuickFixLine ctermfg=209 guifg=#fab795
 
@@ -39,10 +37,16 @@ augroup illuminate_augroup
   autocmd VimEnter * execute "hi illuminatedWord gui=underline guibg=" . ReturnHighlightTerm("CursorLine", "guibg")
 augroup END
 
+function ReloadStatusLineConfig()
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+endfunction
+
 function! SetTheme(theme)
   silent execute "!ln -sf " . a:theme . ".vim $HOME/.config/nvim/themes/current.vim"
   source $HOME/.config/nvim/themes/current.vim
-  AirlineRefresh
+  call ReloadStatusLineConfig()
   execute "hi illuminatedWord gui=underline guibg=" . ReturnHighlightTerm("CursorLine", "guibg")
   silent execute "!theme " . a:theme
 endfunction
