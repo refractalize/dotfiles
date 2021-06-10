@@ -267,6 +267,8 @@ set regexpengine=1 " vim-ruby performance
 set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
+set title
+set titlestring=nvim\ %{getcwd()}
 
 if exists('+termguicolors')
   if exists('$TMUX')
@@ -478,8 +480,4 @@ source $HOME/.config/nvim/vim-easy-align.vim
 source $HOME/.config/nvim/projects.vim
 source $HOME/.config/nvim/vim-surround.vim
 
-lua << EOF
-require('gitsigns').setup {
-  current_line_blame = true
-}
-EOF
+lua require('gitsigns').setup()
