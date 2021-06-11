@@ -73,6 +73,7 @@ Plug 'wsdjeg/vim-fetch'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'mcchrish/nnn.vim'
 
 " completion
 let g:deoplete#enable_at_startup = 1
@@ -366,13 +367,6 @@ cnoremap <M-f>	<S-Right>
 
 au TabLeave * let g:lasttab = tabpagenr()
 
-if has("win32") || has("win64")
-    set directory=$TMP
-else
-    set shell=bash
-endif
-
-
 function! SynStack()
   if !exists("*synstack")
     return
@@ -456,9 +450,8 @@ nnoremap <Leader>e :e %:h
 
 " escaping terminal
 if has('nvim')
-  tnoremap <Esc> <C-\><C-n>
-  tnoremap <M-[> <Esc>
-  tnoremap <C-v><Esc> <Esc>
+  tnoremap <Esc> <Esc>
+  tnoremap <Esc><Esc> <C-\><C-n>
 endif
 
 " spelling
