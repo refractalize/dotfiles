@@ -11,9 +11,15 @@ Plug 'sonph/onehalf', {'rtp': 'vim/'}
 Plug 'joshdick/onedark.vim'
 Plug 'rakr/vim-one'
 Plug 'ntk148v/vim-horizon'
+Plug 'rakr/vim-two-firewatch'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'ayu-theme/ayu-vim'
 Plug 'Lokaltog/vim-monotone'
+Plug 'yashguptaz/calvera-dark.nvim'
 " Plug 'Yggdroot/indentLine'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'overcache/NeoSolarized'
 Plug 'mhartington/oceanic-next'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
@@ -22,7 +28,6 @@ Plug 'tpope/vim-fugitive' " git commands
 Plug 'tpope/vim-rhubarb' " github helpers for vim-fugitive
 Plug 'junegunn/gv.vim'
 Plug 'groenewege/vim-less'
-Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-abolish'
 Plug 'featurist/vim-pogoscript'
 Plug 'vim-ruby/vim-ruby'
@@ -32,6 +37,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-cucumber'
 Plug 'godlygeek/tabular' " format tables of data
+Plug 'plasticboy/vim-markdown'
 Plug 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
 Plug 'leafgarland/typescript-vim'
 Plug 'maxmellon/vim-jsx-pretty'
@@ -47,7 +53,6 @@ Plug 'AndrewRadev/linediff.vim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'direnv/direnv.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'SirVer/ultisnips'
 Plug 'nvim-lua/completion-nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
@@ -71,9 +76,8 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'wsdjeg/vim-fetch'
 Plug 'norcalli/nvim-colorizer.lua'
-Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'mcchrish/nnn.vim'
+Plug 'kyazdani42/nvim-tree.lua'
 
 " completion
 let g:deoplete#enable_at_startup = 1
@@ -104,7 +108,7 @@ function! Google(range, searchTermArg)
   endif
 
   let escapedSearchTerm = luaeval('_A:gsub("\n", "\r\n"):gsub("([^%w])", function(c) return string.format("%%%02X", string.byte(c)) end)', join(searchTerm, ' '))
-  call system("open http://www.google.fr/search?q=" . escapedSearchTerm)
+  call system("open http://www.google.fr/search\\?q=" . escapedSearchTerm)
 endfunction
 
 command! -nargs=* -range Google call Google(<range>, <q-args>)
@@ -158,17 +162,6 @@ nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
 nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
-
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" let g:coc_global_extensions = ['coc-json', 'coc-html', 'coc-yaml', 'coc-emmet', 'coc-snippets']
-" inoremap <silent><expr> <c-n> coc#refresh()
-" set updatetime=140
-
-" " GoTo code navigation.
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
 
 Plug 'artemave/vigun'
 au FileType javascript,typescript nnoremap <Leader>o :VigunMochaOnly<cr>
@@ -241,7 +234,7 @@ set tabstop=4
 set expandtab
 set smarttab
 set hlsearch
-syntax on
+syntax manual
 set path+=**     " allow searching all files and subdirectories in current directory
 set number
 set ruler
@@ -402,17 +395,6 @@ endif
 
 noremap <S-+> <C-w> +
 
-" remap 'increase number' since C-a is captured by tmux/screen
-" Easier increment/decrement
-" nnoremap + <C-a>
-" nnoremap _ <C-x>
-" CTags
-"
-" $PATH appears different to vim for some reason and hence wrong ctags gets picked
-" until then, you need to manually override ctags in /usr/bin/ with those from homebrew
-" TODO fix vim path
-map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
-
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
 nnoremap gp `[v`]
@@ -442,8 +424,11 @@ if executable('ag')
   set grepformat=%f:%l:%c:%m
 endif
 
-autocmd FileType ruby set syntax=
-autocmd FileType typescript set syntax=
+autocmd FileType fugitive set syntax=ON
+autocmd FileType gitcommit set syntax=ON
+autocmd FileType vim set syntax=ON
+autocmd FileType eruby set syntax=ON
+
 nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
@@ -455,22 +440,28 @@ if has('nvim')
 endif
 
 " spelling
-autocmd BufRead,BufNewFile *.md setlocal spell
+autocmd FileType *.md setlocal spell
 autocmd FileType gitcommit setlocal spell
+
 highlight SpellBad guifg=#eC6a88
 highlight SpellCap guifg=#eC6a88
 highlight SpellRare guifg=#eC6a88
 highlight SpellLocal guifg=#eC6a88
 
+source $HOME/.config/nvim/treesitter.vim
 source $HOME/.config/nvim/completion.vim
 source $HOME/.config/nvim/fzf.vim
-source $HOME/.config/nvim/statusline.vim
+source $HOME/.config/nvim/lightline.vim
 source $HOME/.config/nvim/style.vim
-source $HOME/.config/nvim/snippets.vim
 source $HOME/.config/nvim/vim.vim
 source $HOME/.config/nvim/ale.vim
 source $HOME/.config/nvim/vim-easy-align.vim
-source $HOME/.config/nvim/projects.vim
 source $HOME/.config/nvim/vim-surround.vim
+source $HOME/.config/nvim/nvimtree.vim
+source $HOME/.config/nvim/vim-vsnip.vim
 
-lua require('gitsigns').setup()
+nnoremap <leader>n :NvimTreeToggle<CR>
+command! -bang -nargs=0 RgDiffMaster call fzf#vim#grep("git diff master... | diff2vimgrep", 0, {}, <bang>0)
+
+command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
+command! ProfileStop :profile stop

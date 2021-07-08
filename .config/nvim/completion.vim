@@ -1,37 +1,3 @@
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {"ruby", "typescript"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  highlight = {
-    enable = true              -- false will disable the whole extension
-  }
-}
-EOF
-
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  textobjects = {
-    select = {
-      enable = true,
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-
-        -- Or you can define your own textobjects like this
-        ["iF"] = {
-          python = "(function_definition) @function",
-          cpp = "(function_definition) @function",
-          c = "(function_definition) @function",
-          java = "(method_declaration) @function",
-        },
-      },
-    },
-  },
-}
-EOF
-
 lua << EOF
 local nvim_lsp = require('lspconfig')
 
@@ -61,9 +27,9 @@ local on_attach = function(client, bufnr)
 
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
-      buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+      buf_set_keymap("n", "<M-f>", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   elseif client.resolved_capabilities.document_range_formatting then
-      buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+      buf_set_keymap("n", "<M-f>", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
 end
 

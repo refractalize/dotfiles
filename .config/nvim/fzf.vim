@@ -28,7 +28,7 @@ function! OpenBuffers()
   return map(filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&filetype") != "qf"'), "fnamemodify(bufname(v:val), ':p')")
 endfunction
 
-function! HandleMruEntry(files)
+function! OpenOneOrMoreSelectedFiles(files)
   if len(a:files) > 1
     exe 'args ' . join(map(a:files, 'split(v:val)[0]'), ' ')
   else
@@ -46,14 +46,10 @@ function! Mru(onlyLocal)
     let grep = ''
   endif
 
-  let Fn = function("HandleMruEntry")
-
-  " \ 'sink': function("HandleMruEntry"),
-
   call fzf#run(fzf#wrap('mru', fzf#vim#with_preview({
     \ 'source': 'rg --files --hidden | CLICOLOR_FORCE=1 fzf-mru ~/.config/nvim/mru ' . l:grep . ' && rm ' . openBuffersTempFile,
     \ 'placeholder': '{1}',
-    \ 'sink*': function("HandleMruEntry"),
+    \ 'sink*': function("OpenOneOrMoreSelectedFiles"),
     \ 'options': [
       \ '--no-sort',
       \ '--ansi',
@@ -91,6 +87,25 @@ nnoremap <leader>G :Rg
 nnoremap <leader>g :Rg<cr>
 nnoremap <leader>l :BLines<cr>
 command! -bang -nargs=* Rgs call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
+
+function! OpenFileInBranch(file, branch)
+  exe 'Gedit ' . a:branch . ':' . a:file
+endfunction
+
+command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
+    \ 'source': 'git ls-tree --name-only -r ' . <q-args>,
+    \ 'placeholder': '{1}',
+    \ 'sink': { file -> OpenFileInBranch(file, <f-args>) },
+    \ 'options': [
+      \ '--preview', 'git show ' . <q-args> . ':{} | bat --color always --decorations never --file-name {}',
+      \ '--no-sort',
+      \ '--ansi',
+      \ '--nth=1',
+      \ '--delimiter= ',
+      \ '--prompt', 'GTree> ',
+      \ '--tiebreak', 'end',
+    \ ]
+    \ }))
 
 command! -nargs=* Log call fzf#vim#buffer_commits(
   \ fzf#vim#with_preview({
