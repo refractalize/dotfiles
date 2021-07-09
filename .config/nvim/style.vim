@@ -2,14 +2,11 @@ lua require'colorizer'.setup()
 
 highlight QuickFixLine ctermfg=209 guifg=#fab795
 
+" undercurl support with Kitty
 let &t_Cs = "\e[4:3m"
 let &t_Ce = "\e[4:0m"
 
-" IndentLine {{
-let g:indentLine_char = '|'
-let g:indentLine_first_char = '|'
-let g:indentLine_showFirstIndentLevel = 1
-" }}
+let g:lightline = {}
 
 source $HOME/.config/nvim/themes/current.vim
 

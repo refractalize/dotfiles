@@ -76,10 +76,43 @@ command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
 command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! -bar -bang Mapsc call fzf#vim#maps("c", <bang>0)
 
+function! NodeRelativeFilename(lines)
+  let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
+  if l:fn =~ '^\.'
+    return l:fn
+  else
+    return './' . l:fn
+  endif
+endfunction
+
 inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ 'reducer': function('NodeRelativeFilename'),
   \ 'source': 'rg --files --hidden',
   \ }))
+
+function! SearchString(str)
+    call histadd("cmd", "Rgs " . a:str)
+    execute "Rgs " . a:str
+endfunction
+
+function! SearchRegex(str)
+    call histadd("cmd", "Rg " . a:str)
+    execute "Rg " . a:str
+endfunction
+
+function! SearchOperator(type)
+    if a:type ==# 'v'
+        normal! `<v`>y
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+    else
+        return
+    endif
+
+    call SearchString(@@)
+endfunction
+
+vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 
 nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
 

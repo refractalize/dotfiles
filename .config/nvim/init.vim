@@ -4,114 +4,7 @@ let mapleader=" "
 set nocompatible               " be iMproved
 filetype off                   " required!
 
-call plug#begin('~/.vim/plugged')
-
-Plug 'tomasr/molokai'
-Plug 'sonph/onehalf', {'rtp': 'vim/'}
-Plug 'joshdick/onedark.vim'
-Plug 'rakr/vim-one'
-Plug 'ntk148v/vim-horizon'
-Plug 'rakr/vim-two-firewatch'
-Plug 'ghifarit53/tokyonight-vim'
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'ayu-theme/ayu-vim'
-Plug 'Lokaltog/vim-monotone'
-Plug 'yashguptaz/calvera-dark.nvim'
-" Plug 'Yggdroot/indentLine'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'overcache/NeoSolarized'
-Plug 'mhartington/oceanic-next'
-Plug 'kyazdani42/nvim-web-devicons' " for file icons
-Plug 'tpope/vim-vinegar'
-Plug 'tpope/vim-fugitive' " git commands
-Plug 'tpope/vim-rhubarb' " github helpers for vim-fugitive
-Plug 'junegunn/gv.vim'
-Plug 'groenewege/vim-less'
-Plug 'tpope/vim-abolish'
-Plug 'featurist/vim-pogoscript'
-Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-surround' " add/remove/change quotes, parens
-Plug 'tpope/vim-rails'
-Plug 'junegunn/vim-easy-align'
-Plug 'mbbill/undotree'
-Plug 'tpope/vim-cucumber'
-Plug 'godlygeek/tabular' " format tables of data
-Plug 'plasticboy/vim-markdown'
-Plug 'michaeljsmith/vim-indent-object' " treat indented sections of code as vim objects
-Plug 'leafgarland/typescript-vim'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'jparise/vim-graphql'
-Plug 'pangloss/vim-javascript'
-Plug 'RRethy/vim-illuminate'
-Plug 'vim-scripts/summerfruit256.vim'
-Plug 'maksimr/vim-jsbeautify'
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'AndrewRadev/linediff.vim'
-Plug 'Chiel92/vim-autoformat'
-Plug 'direnv/direnv.vim'
-Plug 'itchyny/lightline.vim'
-Plug 'nvim-lua/completion-nvim'
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'tpope/vim-unimpaired' " [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
-Plug 'tpope/vim-eunuch' " file unix commands, :Delete, :Move, etc
-Plug 'tpope/vim-jdaddy' " JSON manipulation
-Plug 'tpope/vim-commentary' " make lines comments or not
-Plug 'tpope/vim-repeat' " repeat complex commands with .
-Plug 'tpope/vim-dadbod'
-Plug 'moll/vim-node'
-Plug 'FooSoft/vim-argwrap' " expanding and collapsing lists
-Plug 'google/vim-jsonnet' " jsonnet language support
-Plug 'jxnblk/vim-mdx-js'
-let g:vcoolor_disable_mappings = 1
-Plug 'KabbAmine/vCoolor.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'wsdjeg/vim-fetch'
-Plug 'norcalli/nvim-colorizer.lua'
-Plug 'lewis6991/gitsigns.nvim'
-Plug 'kyazdani42/nvim-tree.lua'
-
-" completion
-let g:deoplete#enable_at_startup = 1
-Plug 'shougo/deoplete-lsp'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-" json and jsonl support
-Plug 'elzr/vim-json' 
-let g:vim_json_syntax_conceal = 0
-
-Plug 'vim-scripts/indentpython.vim'
-
-Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer'
-Plug 'JuliaEditorSupport/julia-vim'
-
-function! Google(range, searchTermArg)
-  let searchTerm = []
-
-  let sel = a:range == 0 ? '' : getline("'<")[getpos("'<")[2] - 1:getpos("'>")[2] - 1]
-
-  if sel != ''
-    call add(searchTerm, sel)
-  endif
-
-  if a:searchTermArg != ''
-    call add(searchTerm, a:searchTermArg)
-  endif
-
-  let escapedSearchTerm = luaeval('_A:gsub("\n", "\r\n"):gsub("([^%w])", function(c) return string.format("%%%02X", string.byte(c)) end)', join(searchTerm, ' '))
-  call system("open http://www.google.fr/search\\?q=" . escapedSearchTerm)
-endfunction
-
-command! -nargs=* -range Google call Google(<range>, <q-args>)
+lua require('plugins')
 
 " visual copy
 " Option+C (macOS + Kitty)
@@ -121,106 +14,14 @@ vnoremap <M-y> "+y
 
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
-function! NodeRelativeFilename(lines)
-  let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
-  if l:fn =~ '^\.'
-    return l:fn
-  else
-    return './' . l:fn
-  endif
-endfunction
-
-vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
-
 " set the search patten to the visually highlighted text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
-
-function! SearchOperator(type)
-    if a:type ==# 'v'
-        normal! `<v`>y
-    elseif a:type ==# 'char'
-        normal! `[v`]y
-    else
-        return
-    endif
-
-    call SearchString(@@)
-endfunction
-
-function! SearchString(str)
-    call histadd("cmd", "Rgs " . a:str)
-    execute "Rgs " . a:str
-endfunction
-
-function! SearchRegex(str)
-    call histadd("cmd", "Rg " . a:str)
-    execute "Rg " . a:str
-endfunction
 
 nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
 
 nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
-
-Plug 'artemave/vigun'
-au FileType javascript,typescript nnoremap <Leader>o :VigunMochaOnly<cr>
-
-Plug 'w0rp/ale'
-Plug 'will133/vim-dirdiff'
-Plug 'nightsense/wonka'
-
-Plug 'mattn/emmet-vim'
-let g:user_emmet_settings = {
-  \  'html' : {
-  \    'empty_element_suffix': ' />'
-  \  },
-  \  'mdx' : {
-  \    'extends': 'jsx',
-  \  }
-  \}
-
-Plug '907th/vim-auto-save'
-let g:auto_save = 1
-
-" vim-jsbeautify
-autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
-
-Plug 'AndrewRadev/sideways.vim' " move arguments left and right
-nnoremap _ :SidewaysLeft<cr>
-nnoremap + :SidewaysRight<cr>
-
-omap aa <Plug>SidewaysArgumentTextobjA
-xmap aa <Plug>SidewaysArgumentTextobjA
-omap ia <Plug>SidewaysArgumentTextobjI
-xmap ia <Plug>SidewaysArgumentTextobjI
-
-Plug 'neomake/neomake'
-Plug 'tpope/vim-dispatch' " for vim-test
-Plug 'vim-test/vim-test'
-Plug 'radenling/vim-dispatch-neovim'
-
-nmap <leader>tf :TestFile<CR>
-nmap <leader>tl :TestNearest<CR>
-nmap <leader>tt :TestLast<CR>
-nmap <leader>tv :TestVisit<CR>
-nmap <leader>to :copen<CR>
-let test#strategy = 'dispatch'
-
-autocmd FileType qf call AdjustWindowHeight(30, 40)
-function! AdjustWindowHeight(percent_full_width, percent_full_height)
-  if &columns*a:percent_full_width/100 >= 100
-    exe "wincmd L"
-    exe (&columns*a:percent_full_width/100) . "wincmd |"
-  else
-    exe "wincmd J"
-    exe (&lines*a:percent_full_height/100) . "wincmd _"
-  endif
-endfunction
-
-call plug#end()
 
 filetype plugin indent on
 
@@ -263,18 +64,8 @@ set inccommand=nosplit
 set signcolumn=yes:1
 set title
 set titlestring=nvim\ %{getcwd()}
+set termguicolors
 
-if exists('+termguicolors')
-  if exists('$TMUX')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  endif
-
-  set termguicolors
-endif
-
-nnoremap <Leader>sn :set number!<CR>
-nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
 
 " navigate long, wrapping lines
@@ -360,69 +151,12 @@ cnoremap <M-f>	<S-Right>
 
 au TabLeave * let g:lasttab = tabpagenr()
 
-function! SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-
 nnoremap <silent> <leader>a :ArgWrap<CR>
-
-function! ShowSpecIndex()
-  call setloclist(0, [])
-
-  for line_number in range(1,line('$'))
-    if getline(line_number) =~ '^ *\(\<its\?\>\|\<describe\>\|\<context\>\)'
-      let expr = printf('%s:%s:%s', expand("%"), line_number, substitute(getline(line_number), ' ', nr2char(160), ''))
-      laddexpr expr
-    endif
-  endfor
-
-  lopen
-
-  " hide filename and linenumber
-  set conceallevel=2 concealcursor=nc
-  syntax match qfFileName /^[^|]*|[^|]*| / transparent conceal
-endfunction
-
-nnoremap <Leader>si :call ShowSpecIndex()<cr>
-
-if &term =~ '^screen'
-    " tmux knows the extended mouse mode
-    set ttymouse=xterm2
-endif
-
-noremap <S-+> <C-w> +
 
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
 nnoremap gp `[v`]
-
-command! Requires execute "Ag -s \"require\\(\\s*['\\\\\\\"][^'\\\\\\\"]*" . expand('%:t:r') . "[^'\\\\\\\"]*['\\\\\\\"]\\s*\\)\""
-
-nnoremap <silent> <Leader>d :call DiffToggle()<CR>
-function! DiffToggle()
-    if &diff
-        diffoff
-    else
-        diffthis
-    endif
-endfunction
-
-nnoremap <silent> <Leader>w :call DiffIgnoreWhitespaceToggle()<CR>
-function! DiffIgnoreWhitespaceToggle()
-   if &diffopt =~ 'iwhite'
-       set diffopt-=iwhite
-   else
-       set diffopt+=iwhite
-   endif
-endfunction
-
-if executable('ag')
-  set grepprg=ag\ --vimgrep
-  set grepformat=%f:%l:%c:%m
-endif
+nnoremap gf :e <cfile><CR>
 
 autocmd FileType fugitive set syntax=ON
 autocmd FileType gitcommit set syntax=ON
@@ -433,35 +167,14 @@ nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
 
-" escaping terminal
-if has('nvim')
-  tnoremap <Esc> <Esc>
-  tnoremap <Esc><Esc> <C-\><C-n>
-endif
-
-" spelling
-autocmd FileType *.md setlocal spell
-autocmd FileType gitcommit setlocal spell
-
-highlight SpellBad guifg=#eC6a88
-highlight SpellCap guifg=#eC6a88
-highlight SpellRare guifg=#eC6a88
-highlight SpellLocal guifg=#eC6a88
-
-source $HOME/.config/nvim/treesitter.vim
-source $HOME/.config/nvim/completion.vim
 source $HOME/.config/nvim/fzf.vim
-source $HOME/.config/nvim/lightline.vim
 source $HOME/.config/nvim/style.vim
-source $HOME/.config/nvim/vim.vim
-source $HOME/.config/nvim/ale.vim
-source $HOME/.config/nvim/vim-easy-align.vim
-source $HOME/.config/nvim/vim-surround.vim
-source $HOME/.config/nvim/nvimtree.vim
-source $HOME/.config/nvim/vim-vsnip.vim
+source $HOME/.config/nvim/google.vim
+source $HOME/.config/nvim/diff.vim
+source $HOME/.config/nvim/spelling.vim
+source $HOME/.config/nvim/terminal.vim
 
 nnoremap <leader>n :NvimTreeToggle<CR>
-command! -bang -nargs=0 RgDiffMaster call fzf#vim#grep("git diff master... | diff2vimgrep", 0, {}, <bang>0)
 
 command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
 command! ProfileStop :profile stop
