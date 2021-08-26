@@ -51,7 +51,7 @@ require('packer').startup(function()
   use 'groenewege/vim-less'
   use 'tpope/vim-abolish'
   use 'featurist/vim-pogoscript'
-  use 'vim-ruby/vim-ruby'
+  -- use 'vim-ruby/vim-ruby'
   use {
     'tpope/vim-surround', -- add/remove/change quotes, parens
     config = function()
@@ -93,39 +93,79 @@ require('packer').startup(function()
   use 'AndrewRadev/splitjoin.vim'
   use 'AndrewRadev/linediff.vim'
   use 'direnv/direnv.vim'
+
   use {
-    'itchyny/lightline.vim',
+    'hoob3rt/lualine.nvim',
+
+    requires = {'nvim-lua/lsp-status.nvim'},
 
     config = function()
-      vim.g.lightline = {
-        colorscheme = vim.g.lightline.colorscheme,
+      local function filename()
+        return vim.fn.expand('%')
+      end
 
-        separator = { left = "\u{e0b0}", right = "\u{e0b2}" },
-        subseparator = { left = "\u{e0b1}", right = "\u{e0b3}" },
-        active = {
-          left = {
-            { 'mode', 'paste' },
-            { 'readonly', 'relativepath', 'modified' }
+      require'lualine'.setup {
+        -- options = {
+        --   icons_enabled = true,
+        --   theme = 'gruvbox',
+        --   component_separators = {'', ''},
+        --   section_separators = {'', ''},
+        --   disabled_filetypes = {}
+        -- },
+        sections = {
+          -- lualine_a = {'mode'},
+          -- lualine_b = {'branch'},
+          lualine_c = {
+            { filename },
           },
-          right = {
-            { 'lineinfo' },
-            { 'percent' },
-            { 'fileformat', 'fileencoding', 'filetype' }
-          }
+          lualine_x = {'encoding', 'fileformat', 'filetype', require'lsp-status'.status},
+          -- lualine_y = {'progress'},
+          -- lualine_z = {'location'}
         },
-        component_function = {
-          gitbranch = 'FugitiveHead'
-        },
+        -- inactive_sections = {
+        --   lualine_a = {},
+        --   lualine_b = {},
+        --   lualine_c = {'filename'},
+        --   lualine_x = {'location'},
+        --   lualine_y = {},
+        --   lualine_z = {}
+        -- },
+        -- tabline = {},
+        extensions = {
+          'fugitive',
+          'nvim-tree',
+          'quickfix',
+          'fzf'
+        }
       }
     end
   }
 
   use {
     'neovim/nvim-lspconfig',
+
+    requires = {
+      'nvim-lua/lsp-status.nvim',
+      'ms-jpq/coq_nvim'
+    },
+
     config = function()
       local nvim_lsp = require('lspconfig')
+      local lsp_status = require'lsp-status'
+
+      lsp_status.config {
+        indicator_errors = '🤬',
+        indicator_warnings = '🤔',
+        indicator_info = '🤓',
+        indicator_hint = '🥃',
+        indicator_ok = 'Ok',
+      }
+
+      lsp_status.register_progress()
 
       local on_attach = function(client, bufnr)
+        lsp_status.on_attach(client)
+
         local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
         local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
@@ -135,6 +175,7 @@ require('packer').startup(function()
         local opts = { noremap=true, silent=true }
         buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
         buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', 'gv', '<Cmd>vertical lua vim.lsp.buf.definition()<CR>', opts)
         buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
         buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -145,8 +186,8 @@ require('packer').startup(function()
         buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
         buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
         buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev({enable_popup = false})<CR>', opts)
+        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next({enable_popup = false})<CR>', opts)
         buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
         -- Set some keybinds conditional on server capabilities
@@ -155,21 +196,42 @@ require('packer').startup(function()
         elseif client.resolved_capabilities.document_range_formatting then
             buf_set_keymap("n", "<M-f>", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
         end
+
+        vim.cmd([[
+          sign define ALEErrorSign text=🤬
+          sign define ALEWarningSign text=🤔
+          sign define LspDiagnosticsSignError text=🤬
+          sign define LspDiagnosticsSignWarning text=🤔
+          sign define LspDiagnosticsSignInformation text=🤓
+          sign define LspDiagnosticsSignHint text=🤓
+        ]])
       end
 
       local servers = {'tsserver', 'rust_analyzer', 'solargraph'}
       for _, lsp in ipairs(servers) do
-        nvim_lsp[lsp].setup {
+        nvim_lsp[lsp].setup(require('coq')().lsp_ensure_capabilities({
           on_attach = on_attach,
-        }
+          capabilities = lsp_status.capabilities,
+          flags = {
+            debounce_text_changes = 140,
+          }
+        }))
       end
 
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+      -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+    end
+  }
+
+  use {
+    'projekt0n/github-nvim-theme',
+    config = function()
+      -- require('github-theme').setup()
     end
   }
 
   use {
     'nvim-treesitter/nvim-treesitter',
+    branch = '0.5-compat',
     run = ':TSUpdate',
     config = function()
       require'nvim-treesitter.configs'.setup {
@@ -224,9 +286,21 @@ require('packer').startup(function()
   }
 
   use 'nvim-treesitter/nvim-treesitter-textobjects'
-  use 'nvim-lua/popup.nvim'
-  use 'nvim-lua/plenary.nvim'
-  use 'nvim-telescope/telescope.nvim'
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+  }
+
+  use {
+    "nvim-telescope/telescope-frecency.nvim",
+
+    after = 'telescope.nvim',
+
+    config = function()
+      require"telescope".load_extension("frecency")
+    end
+  }
+
   use 'tpope/vim-unimpaired' -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
   use 'tpope/vim-eunuch' -- file unix commands, :Delete, :Move, etc
   use 'tpope/vim-jdaddy' -- JSON manipulation
@@ -241,13 +315,24 @@ require('packer').startup(function()
   use 'junegunn/fzf.vim'
   use 'wsdjeg/vim-fetch'
   use 'norcalli/nvim-colorizer.lua'
-  use 'lewis6991/gitsigns.nvim'
+  use {
+    'lewis6991/gitsigns.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function()
+      require('gitsigns').setup()
+    end
+  }
   use {
     'kyazdani42/nvim-tree.lua',
 
     config = function()
+      -- vim.g.nvim_tree_width_allow_resize = 0
+      vim.g.nvim_tree_auto_resize = 0
       vim.g.nvim_tree_follow = 1
       vim.g.nvim_tree_disable_netrw = 0
+      vim.g.nvim_tree_hijack_netrw = 0
       vim.g.nvim_tree_icons = {
         default = '',
         symlink = '',
@@ -288,12 +373,86 @@ require('packer').startup(function()
   }
 
   use {
+    'ms-jpq/coq_nvim',
+    branch = 'coq',
+
+    config = function()
+      vim.g.coq_settings = {
+        auto_start = true
+      }
+    end
+  }
+
+  use {
+    disable = true,
+    'hrsh7th/nvim-compe',
+
+    config = function()
+      vim.o.completeopt = "menuone,noselect"
+
+      require'compe'.setup {
+        enabled = true;
+        autocomplete = true;
+        debug = false;
+        min_length = 1;
+        preselect = 'enable';
+        throttle_time = 80;
+        source_timeout = 200;
+        resolve_timeout = 800;
+        incomplete_delay = 400;
+        max_abbr_width = 100;
+        max_kind_width = 100;
+        max_menu_width = 100;
+        documentation = {
+          border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
+          winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+          max_width = 120,
+          min_width = 60,
+          max_height = math.floor(vim.o.lines * 0.3),
+          min_height = 1,
+        };
+
+        source = {
+          path = true,
+          buffer = true,
+          calc = true,
+          nvim_lsp = true,
+          nvim_lua = true,
+          vsnip = true,
+          -- ultisnips = true;
+          -- luasnip = true;
+
+          treesitter = true,
+        };
+      }
+
+      vim.cmd([[
+        inoremap <silent><expr> <C-N> compe#complete()
+        inoremap <silent><expr> <CR> compe#confirm('<CR>')
+        inoremap <silent><expr> <C-e> compe#close('<C-e>')
+        inoremap <silent><expr> <C-f> compe#scroll({ 'delta': +4 })
+        inoremap <silent><expr> <C-d> compe#scroll({ 'delta': -4 })
+      ]])
+    end
+  }
+
+  use {
+    disable = true,
+
     'Shougo/deoplete.nvim',
     setup = function()
       vim.g['deoplete#enable_at_startup'] = 1
     end,
     run = ':UpdateRemotePlugins',
-    requires = { 'shougo/deoplete-lsp' },
+    requires = {
+      'shougo/deoplete-lsp',
+
+      config = function()
+        vim.cmd([[
+          g:deoplete#lsp#use_icons_for_candidates
+        ]])
+      end
+    },
     config = function()
       vim.cmd([[
         set completeopt=menuone,noinsert,noselect
@@ -307,24 +466,57 @@ require('packer').startup(function()
     end
   }
 
+  use 'google/vim-searchindex'
   use {
-    'elzr/vim-json',
+    'mfussenegger/nvim-dap',
+
     config = function()
-      vim.g.vim_json_syntax_conceal = 0
+      local dap = require('dap')
+      dap.adapters.ruby = {
+        type = 'executable';
+        command = 'bundle';
+        args = {'exec', 'readapt', 'stdio'};
+      }
+
+      dap.configurations.ruby = {
+        {
+          type = 'ruby';
+          request = 'launch';
+          name = 'Rails';
+          program = 'bundle';
+          programArgs = {'exec', 'rails', 's'};
+          useBundler = true;
+        },
+        {
+          type = 'ruby';
+          request = 'launch';
+          name = 'Nearest Test';
+          program = 'bundle';
+          programArgs = {'exec', 'rails', 'test', '${file}:${lineNumber}'};
+          useBundler = true;
+        },
+      }
     end
   }
+
+  -- use {
+  --   'elzr/vim-json',
+  --   config = function()
+  --     vim.g.vim_json_syntax_conceal = 0
+  --   end
+  -- }
 
   use 'vim-scripts/indentpython.vim'
   use 'rust-lang/rust.vim'
   use 'racer-rust/vim-racer'
   use 'JuliaEditorSupport/julia-vim'
 
-  use {
-    'w0rp/ale',
-    config = function()
-      vim.cmd('source $HOME/.config/nvim/ale.vim')
-    end
-  }
+  -- use {
+  --   'w0rp/ale',
+  --   config = function()
+  --     vim.cmd('source $HOME/.config/nvim/ale.vim')
+  --   end
+  -- }
   use 'will133/vim-dirdiff'
   use 'nightsense/wonka'
 
@@ -342,11 +534,24 @@ require('packer').startup(function()
     end
   }
   use {
-    '907th/vim-auto-save',
+    'Pocco81/AutoSave.nvim',
+
     config = function()
-      vim.g.auto_save = 1
+      local autosave = require("autosave")
+
+      autosave.setup({
+        conditions = {
+            exists = false,
+            filetype_is_not = {},
+            modifiable = true,
+        },
+        execution_message = '',
+        on_off_commands = true,
+      })
     end
   }
+
+  use 'kshenoy/vim-signature'
 
   use {
     'AndrewRadev/sideways.vim', -- move arguments left and right
@@ -364,14 +569,16 @@ require('packer').startup(function()
   }
 
   use {
+    'tpope/vim-dispatch',
+
+    config = function()
+      -- we keep this here to make sure the `after` in vim-dispatch-neovim works
+    end
+  }
+
+  use {
     'vim-test/vim-test',
-    requires = {
-      'tpope/vim-dispatch',
-      {
-        'radenling/vim-dispatch-neovim',
-        after = 'vim-dispatch'
-      }
-    },
+
     config = function()
       vim.cmd([[
         nmap <leader>tf :TestFile<CR>
@@ -381,7 +588,7 @@ require('packer').startup(function()
         nmap <leader>to :copen<CR>
         let test#strategy = 'dispatch'
 
-        autocmd FileType qf call AdjustWindowHeight(30, 40)
+        " autocmd FileType qf call AdjustWindowHeight(30, 40)
         function! AdjustWindowHeight(percent_full_width, percent_full_height)
           if &columns*a:percent_full_width/100 >= 100
             exe "wincmd L"
@@ -393,5 +600,10 @@ require('packer').startup(function()
         endfunction
       ]])
     end
+  }
+
+  use {
+    'radenling/vim-dispatch-neovim',
+    after = 'vim-dispatch'
   }
 end)

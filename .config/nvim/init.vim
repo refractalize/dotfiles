@@ -51,6 +51,7 @@ set backspace=2
 set guioptions-=r
 set guioptions-=m
 set guioptions-=T
+set guicursor+=n-v-c-sm:block-Cursor,i-ci-ve:ver25-CursorIM
 set complete-=i
 set nofileignorecase " make sure we use exact case on macos
 set splitbelow
@@ -58,7 +59,6 @@ set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical " diffs are always shown left/right
 set isfname-==
-set regexpengine=1 " vim-ruby performance
 set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
@@ -94,6 +94,7 @@ nnoremap <M-=> <C-W>=
 nnoremap <M-t> :tabnew<cr>
 nnoremap <M-w> <C-W>c
 nnoremap <M-d> :Gdiff<cr>
+nnoremap <M-D> :Gdiff origin/master...<cr>
 nnoremap <M-g> :G<cr>
 
 nnoremap <M-1> 1gt
@@ -148,6 +149,8 @@ cnoremap <C-P>		<Up>
 cnoremap <M-b>	<S-Left>
 " forward one word
 cnoremap <M-f>	<S-Right>
+" delete previous word
+cnoremap <M-BS> <C-W>
 
 au TabLeave * let g:lasttab = tabpagenr()
 
@@ -158,10 +161,13 @@ nnoremap <silent> <leader>a :ArgWrap<CR>
 nnoremap gp `[v`]
 nnoremap gf :e <cfile><CR>
 
-autocmd FileType fugitive set syntax=ON
-autocmd FileType gitcommit set syntax=ON
-autocmd FileType vim set syntax=ON
-autocmd FileType eruby set syntax=ON
+autocmd FileType fugitive set syntax=fugitive
+autocmd FileType gitcommit set syntax=gitcommit
+autocmd FileType vim set syntax=vim
+autocmd FileType eruby set syntax=eruby
+autocmd FileType xml set syntax=ON
+autocmd FileType conf set syntax=ON
+autocmd FileType git set syntax=ON
 
 nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
@@ -178,3 +184,5 @@ nnoremap <leader>n :NvimTreeToggle<CR>
 
 command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
 command! ProfileStop :profile stop
+
+autocmd BufWritePost plugins.lua source <afile> | PackerCompile
