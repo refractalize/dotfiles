@@ -1,3 +1,6 @@
+export HISTSIZE=1000000000
+export SAVEHIST=1000000000
+
 setopt sharehistory
 
 # only browse local history with ^N ^P
@@ -16,3 +19,17 @@ function down-line-or-history-local () {
 }
 zle -N down-line-or-history-local
 bindkey "^N" down-line-or-history-local
+
+backup-zsh-history () {
+  PREV=$(wc -l ~/.zsh_history.bak | awk '{ print $1 }')
+  CURR=$(wc -l ~/.zsh_history | awk '{ print $1 }')
+
+  if [[ -z $PREV || $PREV -le $CURR ]]
+  then
+    cp ~/.zsh_history ~/.zsh_history.bak
+  else
+    echo "!! ZSH history was truncated ($PREV down to $CURR entries) !!"
+  fi
+}
+
+backup-zsh-history
