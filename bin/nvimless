@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+FILETYPE=$1
+
+if [[ -n "$FILETYPE" ]]
+then
+  nvim -R -c "set filetype=$FILETYPE" -
+else
+  nvim -R -
+fi

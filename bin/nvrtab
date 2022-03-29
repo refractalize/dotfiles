@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+set -e
+
+# kitty launch --type=background doesn't use the PATH env var as set in kitty.conf
+export PATH=/usr/local/bin:$PATH
+
+zparseopts -D -A opts -window-id::
+
+WINDOW_ID=${opts[--window-id]:-$KITTY_WINDOW_ID}
+
+PID=$(kitty @ ls | jq "[.[] | .tabs[] | select(.windows[] | select(.id == $WINDOW_ID)) | .windows[] | .foreground_processes[] | select(.cmdline[] | . == \"nvim\") | .pid][0]")
+
+NVIM_LISTEN_ADDRESS=$(lsof $(nvr --serverlist) | awk "{ if ( \$2 == \"$PID\") { print \$8 }}")
+
+NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr $@
