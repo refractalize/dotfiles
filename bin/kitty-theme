@@ -1,15 +1,30 @@
 #!/usr/bin/env zsh
 
-set -e
+zparseopts -D -A opts -tab=tab -choose=choose
 
-DIR=~/.config/kitty/kitty-cat/colors
+THEME=$1
+KITTY_CUSTOM_DIR=~/.config/kitty/themes
+KITTY_THEME_ZIP=~/Library/Caches/kitty/kitty-themes.zip
 
-if [[ -z $1 ]]
+if [[ -n $tab ]]
 then
-  THEME=$(ls $DIR | fzf)
+  TAB=(--match-tab recent:0)
 else
-  THEME=$1.conf
+  TAB=""
 fi
 
-kitty @ set-colors -a -c $DIR/$THEME
-ln -sf $(realpath --relative-to ~/.config/kitty $DIR/$THEME) ~/.config/kitty/theme.conf
+theme() {
+  [[ -f $KITTY_CUSTOM_DIR/$THEME.conf ]] && cat $KITTY_CUSTOM_DIR/$THEME.conf || unzip -p $KITTY_THEME_ZIP kitty-themes-master/themes/$THEME.conf
+}
+
+if [[ -z $THEME || -n $choose ]]
+then
+  THEME=$((ls -1 $KITTY_CUSTOM_DIR && unzip -qq -l $KITTY_THEME_ZIP | awk '/themes\/[^/]*\.conf/ { print $4 }' | xargs basename -s .conf) | fzf)
+fi
+
+kitty @ set-colors $TAB <(theme)
+
+if [[ -n $choose ]]
+then
+  echo $THEME
+fi

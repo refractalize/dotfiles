@@ -1,0 +1,74 @@
+{
+  "light": {
+    "kitty": "ayu_light",
+    "nvim": "ayu_light"
+  },
+  "ayu-light": {
+    "kitty": "ayu_light",
+    "nvim": "ayu_light"
+  },
+  "dark": {
+    "kitty": "horizon",
+    "nvim": "horizon"
+  },
+  "horizon": {
+    "kitty": "horizon",
+    "nvim": "horizon"
+  },
+  "ayu-dark": {
+    "kitty": "ayu",
+    "nvim": "ayu-dark"
+  },
+  "github-dark": {
+    "kitty": "github-dark",
+    "nvim": "github-dark"
+  },
+  "github-light": {
+    "kitty": "github-light",
+    "nvim": "github-light"
+  },
+  "solarized-dark": {
+    "kitty": "Solarized_Dark",
+    "nvim": "solarized-dark"
+  },
+  "solarized-light": {
+    "kitty": "Solarized_Light",
+    "nvim": "solarized-light"
+  },
+  "gruvbox-light": {
+    "kitty": "gruvbox-light",
+    "nvim": "gruvbox-light"
+  },
+  "gruvbox-dark": {
+    "kitty": "gruvbox-dark",
+    "nvim": "gruvbox-dark"
+  },
+  "one-dark": {
+    "kitty": "OneDark",
+    "nvim": "one-dark"
+  },
+  "one-light": {
+    "kitty": "OneHalfLight",
+    "nvim": "one-light"
+  },
+  "rose-pine-dark": {
+    "kitty": "rose-pine-moon",
+    "nvim": "rose-pine-dark"
+  },
+  "rose-pine-light": {
+    "kitty": "rose-pine-dawn",
+    "nvim": "rose-pine-light"
+  },
+  "tokyonight-dark": {
+    "kitty": "tokyo_night_storm",
+    "nvim": "tokyonight-dark"
+  },
+  "tokyonight-light": {
+    "kitty": "tokyo_night_day",
+    "nvim": "tokyonight-light"
+  },
+  "oceanic-material-dark": {
+    "kitty": "OceanicMaterial",
+    "nvim": "oceanic-material-dark"
+  }
+}
