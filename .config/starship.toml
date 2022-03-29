@@ -1,0 +1,31 @@
+format = """
+$all\
+$time\
+$line_break\
+$jobs\
+$battery\
+$status\
+$shell\
+$env_var\
+$character
+"""
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[env_var.PROMPT_ICON]
+format = "$env_value "
+
+[git_status]
+stashed = ''
+modified = '~'
+
+[status]
+format = "[$symbol $status]($style) "
+disabled = false
+
+[time]
+disabled = false
