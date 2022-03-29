@@ -1,1 +1,1 @@
-dark.vim
+rose-pine-dark.vim

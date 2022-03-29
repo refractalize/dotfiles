@@ -6,16 +6,10 @@ filetype off                   " required!
 
 lua require('plugins')
 
-" visual copy
-" Option+C (macOS + Kitty)
-" at the end of ~/.config/kitty/kitty.conf
-" map cmd+c send_text all \x1b\x63
-vnoremap <M-y> "+y
-
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
 " set the search patten to the visually highlighted text
-vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+vnoremap * y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
 
@@ -63,7 +57,7 @@ set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
 set title
-set titlestring=nvim\ %{getcwd()}
+set titlestring=%{fnamemodify(getcwd(),':t')}
 set termguicolors
 
 nnoremap <Leader>e :e %:h
@@ -79,54 +73,8 @@ nnoremap gj j
 vnoremap gk k
 vnoremap gj j
 
-nnoremap <M-j> <C-W>j
-nnoremap <M-k> <C-W>k
-nnoremap <M-l> <C-W>l
-nnoremap <M-h> <C-W>h
-nnoremap <M-;> <C-W>p
-nnoremap <M-r> <C-W>r
-nnoremap <M-x> <C-W>x
-nnoremap <M-R> <C-W>R
-nnoremap <M-s> <C-W>s
-nnoremap <M-v> <C-W>v
-nnoremap <M-o> <C-W>o
-nnoremap <M-=> <C-W>=
-nnoremap <M-t> :tabnew<cr>
-nnoremap <M-w> <C-W>c
-nnoremap <M-d> :Gdiff<cr>
-nnoremap <M-D> :Gdiff origin/master...<cr>
-nnoremap <M-g> :G<cr>
-
-nnoremap <M-1> 1gt
-nnoremap <M-2> 2gt
-nnoremap £ 3gt
-nnoremap <M-4> 4gt
-nnoremap <M-5> 5gt
-nnoremap <M-6> 6gt
-nnoremap <M-7> 7gt
-nnoremap <M-8> 8gt
-nnoremap <M-9> 9gt
-nnoremap <M-0> :tablast<cr>
-
 map <ScrollWheelUp> <C-Y>
 map <ScrollWheelDown> <C-E>
-
-nnoremap <silent> <M-J> :exe "resize -2"<CR>
-nnoremap <silent> <M-K> :exe "resize +2"<CR>
-nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
-nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
-
-" Go to tab by number
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
-noremap <leader>0 :tablast<cr>
 
 vnoremap <leader>o :diffget<cr>
 
@@ -152,14 +100,12 @@ cnoremap <M-f>	<S-Right>
 " delete previous word
 cnoremap <M-BS> <C-W>
 
-au TabLeave * let g:lasttab = tabpagenr()
-
 nnoremap <silent> <leader>a :ArgWrap<CR>
 
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
 nnoremap gp `[v`]
-nnoremap gf :e <cfile><CR>
+" nnoremap gf :e <cfile><CR>
 
 autocmd FileType fugitive set syntax=fugitive
 autocmd FileType gitcommit set syntax=gitcommit
@@ -173,12 +119,18 @@ nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
 
+source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/fzf.vim
 source $HOME/.config/nvim/style.vim
+source $HOME/.config/nvim/theme.vim
 source $HOME/.config/nvim/google.vim
 source $HOME/.config/nvim/diff.vim
 source $HOME/.config/nvim/spelling.vim
 source $HOME/.config/nvim/terminal.vim
+source $HOME/.config/nvim/tabs.vim
+source $HOME/.config/nvim/windows.vim
+
+autocmd VimResized * wincmd =
 
 nnoremap <leader>n :NvimTreeToggle<CR>
 
@@ -186,3 +138,7 @@ command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile 
 command! ProfileStop :profile stop
 
 autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+
+" this doesn't seem to work with vim-test
+autocmd WinClosed * if &buftype == 'quickfix' | let g:quickfix_height = winheight(0) | endif
+autocmd FileType qf if exists('g:quickfix_height') | execute(g:quickfix_height . 'wincmd_') | endif

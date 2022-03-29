@@ -1,9 +1,43 @@
 #!/usr/bin/env zsh
 
-THEME=$1
+zparseopts -D -A opts -json=json -query=query -choose=choose -tab=tab
 
-CURRENT_FILENAME=~/.zsh/themes/current.zsh
-ln -sf $(realpath --relative-to ~/.zsh/themes ~/.zsh/themes/$THEME.zsh) $CURRENT_FILENAME
-source $CURRENT_FILENAME
-CURRENT_THEME_NAME=$(readlink $CURRENT_FILENAME)
-echo Current theme: ${CURRENT_THEME_NAME%.zsh}
+THEME=${1:-$THEME}
+
+THEME_CONFIG_FILE=~/.config/themes.json
+
+if [[ -z $THEME || -n $choose ]]
+then
+  THEME=$(jq -r '. | keys[]' $THEME_CONFIG_FILE | fzf)
+fi
+
+THEME_CONFIG=$(jq ".[\"$THEME\"]" $THEME_CONFIG_FILE)
+
+if [[ $THEME_CONFIG == "null" ]]
+then
+  echo "No such theme $THEME"
+  exit 1
+fi
+
+KITTY_THEME=$(echo $THEME_CONFIG | jq -r .kitty)
+NVIM_THEME=$(echo $THEME_CONFIG | jq -r .nvim)
+
+JSON=$(echo '{}' | jq --arg theme $THEME --arg nvim $NVIM_THEME --arg kitty $KITTY_THEME '{theme: $theme, nvim: $nvim, kitty: $kitty}')
+
+if [[ -z $query ]]
+then
+  if [[ -n $tab ]]
+  then
+    kitty-theme --tab $KITTY_THEME
+    nvim-theme $NVIM_THEME
+  else
+    kitty-theme $KITTY_THEME
+  fi
+fi
+
+if [[ -n $json ]]
+then
+  echo $JSON
+else
+  echo "theme: $THEME"
+fi
