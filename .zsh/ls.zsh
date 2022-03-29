@@ -1,1 +1,1 @@
-alias ls="gls --hyperlink=auto -hG --color"
+alias ls="gls --hyperlink=auto -hG --color=auto"

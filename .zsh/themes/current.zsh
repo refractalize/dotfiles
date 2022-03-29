@@ -1,1 +1,1 @@
-ayu-light.zsh
+horizon.zsh

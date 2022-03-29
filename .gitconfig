@@ -47,4 +47,4 @@
     process = git-lfs filter-process
 [delta]
     features = side-by-side line-numbers
-    syntax-theme = OneHalfLight
+    syntax-theme = OneHalfDark
