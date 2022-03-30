@@ -234,7 +234,7 @@ require('packer').startup(function()
         end
       end
 
-      local servers = {'tsserver', 'rust_analyzer', 'solargraph', 'jsonls', 'cssls', 'html', 'julials'}
+      local servers = {'tsserver', 'rust_analyzer', 'solargraph', 'jsonls', 'cssls', 'html', 'julials', 'yamlls'}
 
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup({
