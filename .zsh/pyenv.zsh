@@ -1,1 +1,4 @@
-eval "$(pyenv init -)"
+if (( $+commands[pyenv] ))
+then
+  eval "$(pyenv init -)"
+fi

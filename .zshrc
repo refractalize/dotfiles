@@ -3,7 +3,7 @@ export ZGEN_RESET_ON_CHANGE=(${HOME}/.zshrc ${HOME}/.zsh/*.zsh)
 source "${HOME}/.zgen/zgen.zsh"
 
 if ! zgen saved; then
-  zgen load ~/.zsh/extras/homebrew-completions.zsh
+  zgen load ~/.zsh/extras/homebrew.zsh
 
   zgen oh-my-zsh
 
@@ -15,6 +15,7 @@ if ! zgen saved; then
   zgen load lincheney/fzf-tab-completion zsh
   zgen load zsh-users/zsh-autosuggestions
   zgen load zdharma/fast-syntax-highlighting
+  zgen load lukechilds/zsh-nvm
 
   zgen load ~/.secrets.zsh
   zgen load ~/.zsh

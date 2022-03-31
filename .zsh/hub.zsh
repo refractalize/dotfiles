@@ -1,1 +1,0 @@
-alias git="GITHUB_TOKEN=$GITHUB_TOKEN hub"

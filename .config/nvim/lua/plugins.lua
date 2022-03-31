@@ -1,5 +1,9 @@
 -- installed ~/.local/share/nvim/site/pack/packer/start
 
+require('packer').init({
+  max_jobs = 70,
+})
+
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
   use 'tomasr/molokai'
@@ -273,7 +277,6 @@ require('packer').startup(function()
 
   use {
     'nvim-treesitter/nvim-treesitter',
-    branch = '0.5-compat',
     run = ':TSUpdate',
     config = function()
       require'nvim-treesitter.configs'.setup {
