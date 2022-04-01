@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+ARGS=($@)
+QUERY=$(echo '' | fzf --history=$HOME/.fzf-history/jq --print-query --preview "jq -C {q} $ARGS" --query=".")
+
+if [[ $? -ne 130 ]]
+then
+  echo $QUERY
+  jq $QUERY $ARGS
+fi
