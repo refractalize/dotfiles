@@ -1,0 +1,84 @@
+{
+  "frozen": {
+    "prefix": [
+      "frozen"
+    ],
+    "body": [
+      "# frozen_string_literal: true"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "metric": {
+    "prefix": [
+      "metric"
+    ],
+    "body": [
+      "# rubocop:disable Metrics/${1|MethodLength,ModuleLength,CyclomaticComplexity,PerceivedComplexity|}",
+      "$TM_SELECTED_TEXT",
+      "# rubocop:enable Metrics/$1"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "surround": {
+    "prefix": [
+      "surround"
+    ],
+    "body": [
+      "start",
+      "  $TM_SELECTED_TEXT",
+      "end"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "here": {
+    "prefix": [
+      "here"
+    ],
+    "body": [
+      "puts \"here: #{__FILE__}:#{__LINE__}\""
+    ],
+    "description": "debug line"
+  },
+  "method": {
+    "prefix": [
+      "def"
+    ],
+    "body": [
+      "def $1",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "init": {
+    "prefix": [
+      "init"
+    ],
+    "body": [
+      "def initialize$1",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "test '$1' do",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "ap": {
+    "prefix": [
+      "ap"
+    ],
+    "body": [
+      "ap $1: $1"
+    ],
+    "description": "debug"
+  }
+}

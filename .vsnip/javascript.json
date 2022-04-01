@@ -1,0 +1,29 @@
+{
+  "wait": {
+    "prefix": [
+      "wait"
+    ],
+    "body": [
+      "await new Promise(r => setTimeout(r, $1))"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('var', var)": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "console.log('$1', $1)"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('text')": {
+    "prefix": [
+      "cl"
+    ],
+    "body": [
+      "console.log('$0')"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  }
+}

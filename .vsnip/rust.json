@@ -1,0 +1,23 @@
+{
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "#[test]",
+      "fn $1() {",
+      "    $0",
+      "}"
+    ],
+    "description": "Adds a test"
+  },
+  "debug": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "println!(\"$1: {:?}\", $1);"
+    ],
+    "description": "Prints a value to the console"
+  }
+}

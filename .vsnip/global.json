@@ -1,0 +1,14 @@
+{
+  "env": {
+    "prefix": "env",
+    "body": [
+      "#!/usr/bin/env $1"
+    ]
+  },
+  "uuid": {
+    "prefix": "uuid",
+    "body": [
+      "${VIM:system('python -c \"import uuid, sys;sys.stdout.write(str(uuid.uuid4()))\"')}"
+    ]
+  }
+}
