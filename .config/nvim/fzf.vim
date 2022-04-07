@@ -50,7 +50,7 @@ function! Mru(onlyLocal, multi)
 
   let options = {
     \ 'source': 'rg --files --hidden | CLICOLOR_FORCE=1 fzf-mru ~/.config/nvim/mru ' . l:grep . ' && rm ' . openBuffersTempFile,
-    \ 'placeholder': '{1}',
+    \ 'placeholder': '{}',
     \ 'options': [
       \ '--no-sort',
       \ '--ansi',
@@ -68,6 +68,8 @@ endfunction
 imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-l> <plug>(fzf-complete-line)
 imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
+inoremap <expr> <c-x><c-f> fzf#vim#complete("rg --files <Bar> xargs realpath --relative-to " . expand("%:h"))
+
 
 " lookup recent command history
 inoremap <expr> <c-x><c-h> fzf#vim#complete(fzf#wrap({
