@@ -14,6 +14,7 @@ require('packer').startup(function()
       'rose-pine/neovim',
       as = 'rose-pine',
   })
+  use 'EdenEast/nightfox.nvim'
   use 'morhetz/gruvbox'
   use 'rakr/vim-one'
   use 'glepnir/oceanic-material'
@@ -464,19 +465,36 @@ require('packer').startup(function()
 
       -- Use buffer source for `/`.
       cmp.setup.cmdline('/', {
+        completion = {
+          autocomplete = false,
+        },
         sources = {
           { name = 'buffer' }
         }
       })
 
       -- Use cmdline & path source for ':'.
-      -- cmp.setup.cmdline(':', {
-      --   sources = cmp.config.sources({
-      --     { name = 'path' }
-      --   }, {
-      --     { name = 'cmdline' }
-      --   })
-      -- })
+      cmp.setup.cmdline(':', {
+        completion = {
+          autocomplete = false,
+        },
+        sources = cmp.config.sources({
+          { name = 'path' },
+          {
+            name = 'buffer',
+            option = {
+              get_bufnrs = function()
+                return vim.api.nvim_list_bufs()
+              end
+            }
+          }
+        }, {
+          { name = 'cmdline' }
+        }),
+        mapping = {
+          ['<Tab>'] = cmp.config.disable
+        },
+      })
 
       -- Setup lspconfig.
       local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
