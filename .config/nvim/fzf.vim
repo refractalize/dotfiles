@@ -67,8 +67,17 @@ endfunction
 
 imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-l> <plug>(fzf-complete-line)
+inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
+  \ 'prefix': '^.*$',
+  \ 'source': 'rg -n ^ --color always',
+  \ 'options': '--ansi --delimiter : --nth 3..',
+  \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
 imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
+
 inoremap <expr> <c-x><c-f> fzf#vim#complete("rg --files <Bar> xargs realpath --relative-to " . expand("%:h"))
+inoremap <expr> <c-x><c-r> fzf#vim#complete(fzf#wrap({
+  \ 'source': "rg --files <Bar> xargs realpath --relative-to " . expand("%:h"),
+  \ 'reducer': { lines -> fnamemodify(lines[0], ':e') ==# expand("%:e") ? fnamemodify(lines[0], ':r') : lines[0] }}))
 
 
 " lookup recent command history
@@ -76,6 +85,22 @@ inoremap <expr> <c-x><c-h> fzf#vim#complete(fzf#wrap({
       \   'source': "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 \| sed -E 's/[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
       \   'options': '--tiebreak index',
       \ }))
+
+function! NodeRelativeFilename(filenames)
+  let filename_with_ext = a:filenames[0]
+  let filename = fnamemodify(filename_with_ext, ':e') ==# 'js' ? fnamemodify(filename_with_ext, ':r') : filename_with_ext
+
+  if l:filename =~ '^\.'
+    return l:filename
+  else
+    return './' . l:filename
+  endif
+endfunction
+
+inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
+  \ 'reducer': function('NodeRelativeFilename'),
+  \ 'source': "rg --files <Bar> xargs realpath --relative-to " . expand("%:h"),
+  \ }))
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
@@ -87,20 +112,6 @@ command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
 command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! -bar -bang Mapsc call fzf#vim#maps("c", <bang>0)
 command! -bar -bang Mapst call fzf#vim#maps("t", <bang>0)
-
-function! NodeRelativeFilename(lines)
-  let fn = substitute(tlib#file#Relative(join(a:lines), expand('%:h')), '\.[^.]*$', '', '')
-  if l:fn =~ '^\.'
-    return l:fn
-  else
-    return './' . l:fn
-  endif
-endfunction
-
-inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
-  \ 'reducer': function('NodeRelativeFilename'),
-  \ 'source': 'rg --files --hidden',
-  \ }))
 
 function! SearchString(str)
     call histadd("cmd", "Rgs " . a:str)
@@ -184,5 +195,4 @@ command! -nargs=* Log call fzf#vim#buffer_commits(
   \ ),
 \ 0)
 
-imap <c-x><c-f> <plug>(fzf-complete-path)
 nnoremap <leader>b :Gdiffbranch<cr>
