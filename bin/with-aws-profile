@@ -1,0 +1,17 @@
+#!/usr/bin/env zsh
+
+PROFILE=$1
+
+if [[ ${#*[@]} -le 1 ]]
+then
+  echo "Usage: $0 <profile-name> <command> [<args>]"
+  echo
+  echo "runs <commaand> passing AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY"
+  echo "for the given AWS <profile-name>"
+  exit 1
+fi
+
+export AWS_ACCESS_KEY_ID=$(aws configure --profile $PROFILE get aws_access_key_id)
+export AWS_SECRET_ACCESS_KEY=$(aws configure --profile $PROFILE get aws_secret_access_key)
+
+${@[@]:2}
