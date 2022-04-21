@@ -435,17 +435,7 @@ require('packer').startup(function()
             -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
           end,
         },
-        mapping = {
-          ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-          ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-          ['<C-y>'] = cmp.config.disable, -- If you want to remove the default `<C-y>` mapping, You can specify `cmp.config.disable` value.
-          ['<C-e>'] = cmp.mapping({
-            i = cmp.mapping.abort(),
-            c = cmp.mapping.close(),
-          }),
-          ['<CR>'] = cmp.mapping.confirm({ select = false }),
-        },
+        mapping = cmp.mapping.preset.insert(),
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
           { name = 'vsnip' }, -- For vsnip users.
@@ -465,19 +455,27 @@ require('packer').startup(function()
 
       -- Use buffer source for `/`.
       cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
+
         completion = {
           autocomplete = false,
         },
+
         sources = {
           { name = 'buffer' }
-        }
+        },
       })
 
       -- Use cmdline & path source for ':'.
       cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline({
+          ['<Tab>'] = cmp.config.disable
+        }),
+
         completion = {
           autocomplete = false,
         },
+
         sources = cmp.config.sources({
           { name = 'path' },
           {
@@ -491,9 +489,6 @@ require('packer').startup(function()
         }, {
           { name = 'cmdline' }
         }),
-        mapping = {
-          ['<Tab>'] = cmp.config.disable
-        },
       })
 
       -- Setup lspconfig.
