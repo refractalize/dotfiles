@@ -129,6 +129,7 @@ source $HOME/.config/nvim/spelling.vim
 source $HOME/.config/nvim/terminal.vim
 source $HOME/.config/nvim/tabs.vim
 source $HOME/.config/nvim/windows.vim
+source $HOME/.config/nvim/ignorelint.vim
 
 autocmd VimResized * wincmd =
 
