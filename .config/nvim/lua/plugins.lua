@@ -197,6 +197,7 @@ require('packer').startup(function()
       }
 
       vim.cmd([[
+        command! LspLogs execute("e " . luaeval('vim.lsp.get_log_path()'))
         sign define DiagnosticSignError text=🤬
         sign define DiagnosticSignWarn text=🤔
         sign define DiagnosticSignInfo text=🤓
