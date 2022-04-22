@@ -277,8 +277,10 @@ require('packer').startup(function()
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = function()
+      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "phpdoc" end, require('nvim-treesitter.parsers').available_parsers()),
+
       require'nvim-treesitter.configs'.setup {
-        ensure_installed = 'maintained',
+        ensure_installed = all_except_broken_languages,
         highlight = {
           enable = true              -- false will disable the whole extension
         },
