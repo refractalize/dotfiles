@@ -9,7 +9,7 @@ lua require('plugins')
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
 " set the search patten to the visually highlighted text
-vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", ""), "\n", "\\\\n", "")<CR><CR>
+vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g")<CR><CR>
 
 nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
 
