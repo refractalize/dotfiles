@@ -140,9 +140,13 @@ vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
 nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
 
 nnoremap <leader>G :Rg 
+nnoremap <leader>r :SearchCurrentFilename<cr>
+autocmd FileType eruby nnoremap <leader>r :call SearchRegex("\\b" . substitute(expand("%:t:r:r"), "^_", "", "") . "\\b")<cr>
 nnoremap <leader>g :Rg<cr>
 nnoremap <leader>l :BLines<cr>
 command! -bang -nargs=* Rgs call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
+
+command! SearchCurrentFilename call SearchRegex("\\b" . expand("%:t:r") . "\\b")
 
 function! RgReloadWithSort(query, fullscreen)
   let rgCommandBase = "rg --column --line-number --no-heading --color=always --smart-case "
