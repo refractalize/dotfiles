@@ -53,6 +53,7 @@ require('packer').startup(function()
     'hrsh7th/vim-vsnip-integ',
     after = 'vim-vsnip'
   }
+
   use 'overcache/NeoSolarized'
   use 'mhartington/oceanic-next'
   use 'kyazdani42/nvim-web-devicons' -- for file icons
@@ -469,9 +470,7 @@ require('packer').startup(function()
 
       -- Use cmdline & path source for ':'.
       cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline({
-          ['<Tab>'] = cmp.config.disable
-        }),
+        mapping = cmp.mapping.preset.cmdline(),
 
         completion = {
           autocomplete = false,
