@@ -137,7 +137,7 @@ nnoremap <leader>n :NvimTreeToggle<CR>
 command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
 command! ProfileStop :profile stop
 
-autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+autocmd BufWritePost ~/.config/nvim/lua/plugins.lua source <afile> | PackerCompile
 
 " this doesn't seem to work with vim-test
 autocmd WinClosed * if &buftype == 'quickfix' | let g:quickfix_height = winheight(0) | endif
