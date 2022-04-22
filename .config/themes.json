@@ -70,5 +70,29 @@
   "oceanic-material-dark": {
     "kitty": "OceanicMaterial",
     "nvim": "oceanic-material-dark"
+  },
+  "dawnfox": {
+    "kitty": "dawnfox",
+    "nvim": "dawnfox"
+  },
+  "dayfox": {
+    "kitty": "dayfox",
+    "nvim": "dayfox"
+  },
+  "duskfox": {
+    "kitty": "duskfox",
+    "nvim": "duskfox"
+  },
+  "nightfox": {
+    "kitty": "nightfox",
+    "nvim": "nightfox"
+  },
+  "nordfox": {
+    "kitty": "nordfox",
+    "nvim": "nordfox"
+  },
+  "terafox": {
+    "kitty": "terafox",
+    "nvim": "terafox"
   }
 }

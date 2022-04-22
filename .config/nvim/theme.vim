@@ -1,5 +1,11 @@
 function! SetTheme(theme)
-  execute "source " . $HOME . "/.config/nvim/themes/" . a:theme . ".vim"
+  let filename = $HOME . "/.config/nvim/themes/" . a:theme . ".vim"
+  if filereadable(filename)
+    execute "source " . $HOME . "/.config/nvim/themes/" . a:theme . ".vim"
+  else
+    execute "colorscheme " . a:theme
+  endif
+
   execute "hi illuminatedWord gui=underline guibg=" . ReturnHighlightTerm("CursorLine", "guibg")
 endfunction
 
