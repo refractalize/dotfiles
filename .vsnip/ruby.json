@@ -13,7 +13,7 @@
       "metric"
     ],
     "body": [
-      "# rubocop:disable Metrics/${1|MethodLength,ModuleLength,CyclomaticComplexity,PerceivedComplexity|}",
+      "# rubocop:disable Metrics/${1|MethodLength,BlockLength,ModuleLength,CyclomaticComplexity,PerceivedComplexity|}",
       "$TM_SELECTED_TEXT",
       "# rubocop:enable Metrics/$1"
     ],
@@ -72,6 +72,26 @@
     ],
     "description": "debug line"
   },
+  "setup": {
+    "prefix": [
+      "setup"
+    ],
+    "body": [
+      "setup do",
+      "  $0",
+      "end"
+    ]
+  },
+  "teardown": {
+    "prefix": [
+      "teardown"
+    ],
+    "body": [
+      "teardown do",
+      "  $0",
+      "end"
+    ]
+  },
   "ap": {
     "prefix": [
       "ap"
@@ -80,5 +100,26 @@
       "ap $1: $1"
     ],
     "description": "debug"
+  },
+  "test_case": {
+    "prefix": [
+      "test_case"
+    ],
+    "body": [
+      "# frozen_string_literal: true",
+      "",
+      "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} < ActiveSupport::TestCase",
+      "  $0",
+      "end"
+    ],
+    "description": "debug"
+  },
+  "cls": {
+    "prefix": [
+      "cls"
+    ],
+    "body": [
+      "${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}"
+    ]
   }
 }
