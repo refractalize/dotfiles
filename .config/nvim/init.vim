@@ -59,6 +59,7 @@ set signcolumn=yes:1
 set title
 set titlestring=%{fnamemodify(getcwd(),':t')}
 set termguicolors
+set selection=exclusive " visual mode pressing $ does not include character beyond end of line
 
 nnoremap <Leader>e :e %:h
 
