@@ -277,7 +277,9 @@ require('packer').startup(function()
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = function()
-      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "phpdoc" end, require('nvim-treesitter.parsers').available_parsers()),
+      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "phpdoc" end, require('nvim-treesitter.parsers').available_parsers())
+
+      require"nvim-treesitter.parsers".filetype_to_parsername.zsh = 'bash'
 
       require'nvim-treesitter.configs'.setup {
         ensure_installed = all_except_broken_languages,
