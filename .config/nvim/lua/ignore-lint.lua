@@ -24,9 +24,8 @@ local function diagnostic_codes(diagnostics)
 end
 
 local function ignore_lint_line()
-  local current_buffer = vim.api.nvim_get_current_buf()
   local current_line = vim.api.nvim_win_get_cursor(0)[1]
-  local diagnostics = vim.diagnostic.get(current_buffer, {lnum = current_line - 1})
+  local diagnostics = vim.diagnostic.get(0, {lnum = current_line - 1})
 
   if diagnostics then
     local line = vim.api.nvim_get_current_line()
@@ -64,11 +63,8 @@ local function get_indent(lines)
   return min_indent
 end
 
-local function ignore_lint_visual()
-  local start_line = vim.fn.line("'<'")
-  local end_line = vim.fn.line("'>")
-  local current_buffer = vim.api.nvim_get_current_buf()
-  local diagnostics = vim.diagnostic.get(current_buffer)
+local function ignore_lint_visual(start_line, end_line)
+  local diagnostics = vim.diagnostic.get(0)
 
   local matching_diagnostics = vim.tbl_filter(function (d)
     return d.lnum >= (start_line - 1) and d.lnum <= (end_line - 1)
@@ -76,16 +72,16 @@ local function ignore_lint_visual()
 
   local codes = diagnostic_codes(matching_diagnostics)
 
-  local lines = vim.api.nvim_buf_get_lines(current_buffer, start_line - 1, end_line, 1)
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, 1)
   local indent = get_indent(lines)
 
-  vim.api.nvim_buf_set_lines(current_buffer, end_line, end_line, 1, {indent .. "# rubocop:enable " .. codes})
-  vim.api.nvim_buf_set_lines(current_buffer, start_line - 1, start_line - 1, 1, {indent .. "# rubocop:disable " .. codes})
+  vim.api.nvim_buf_set_lines(0, end_line, end_line, 1, {indent .. "# rubocop:enable " .. codes})
+  vim.api.nvim_buf_set_lines(0, start_line - 1, start_line - 1, 1, {indent .. "# rubocop:disable " .. codes})
 end
 
-local function ignore_lints(range)
+local function ignore_lints(range, start_line, end_line)
   if range > 0 then
-    ignore_lint_visual()
+    ignore_lint_visual(start_line, end_line)
   else
     ignore_lint_line()
   end
