@@ -29,3 +29,9 @@ disabled = false
 
 [time]
 disabled = false
+
+[custom.pr]
+command = "git config branch.$(git branch --show-current).pr-number"
+when="git config branch.$(git branch --show-current).pr-number"
+symbol = " "
+style = "bold blue"
