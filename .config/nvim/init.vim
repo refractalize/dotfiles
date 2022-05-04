@@ -56,8 +56,6 @@ set isfname-==
 set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
-set title
-set titlestring=%{fnamemodify(getcwd(),':t')}
 set termguicolors
 set selection=exclusive " visual mode pressing $ does not include character beyond end of line
 
@@ -131,6 +129,7 @@ source $HOME/.config/nvim/terminal.vim
 source $HOME/.config/nvim/tabs.vim
 source $HOME/.config/nvim/windows.vim
 source $HOME/.config/nvim/ignorelint.vim
+source $HOME/.config/nvim/titlestring.vim
 
 autocmd VimResized * wincmd =
 
