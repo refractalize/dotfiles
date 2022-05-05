@@ -25,5 +25,13 @@
       "console.log('$0')"
     ],
     "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('filename:1')": {
+    "prefix": [
+      "tr"
+    ],
+    "body": [
+      "console.log('trace: $RELATIVE_FILEPATH:$TM_LINE_NUMBER')"
+    ]
   }
 }
