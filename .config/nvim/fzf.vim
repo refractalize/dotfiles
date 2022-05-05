@@ -38,7 +38,7 @@ function! OpenBuffers()
   return map(filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&filetype") != "qf"'), "fnamemodify(bufname(v:val), ':p')")
 endfunction
 
-function! Mru(onlyLocal, multi)
+function! Mru(onlyLocal, multi, query)
   let openBuffersTempFile = tempname()
   call writefile(['^' . getcwd()] + OpenBuffers(), openBuffersTempFile)
 
@@ -61,6 +61,11 @@ function! Mru(onlyLocal, multi)
       \ '--tiebreak', 'end',
     \ ]
   \ }
+
+  if a:query != ''
+    call add(options['options'], '--query')
+    call add(options['options'], a:query)
+  endif
 
   call fzf#run(fzf#wrap('mru', fzf#vim#with_preview(options)))
 endfunction
@@ -103,9 +108,11 @@ inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ }))
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>
+vnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
-command! -bang Mru :call Mru(!<bang>0, 0)
-command! -bang MMru :call Mru(!<bang>0, 1)
+vnoremap <silent> <Leader>f :Mru!<cr>
+command! -bang -range Mru :call Mru(!<bang>0, 0, GetVisualSelection(<range>))
+command! -bang -range MMru :call Mru(!<bang>0, 1, GetVisualSelection(<range>))
 
 command! -bar -bang Mapsv call fzf#vim#maps("x", <bang>0)
 command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
