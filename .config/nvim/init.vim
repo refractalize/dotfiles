@@ -118,6 +118,7 @@ nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
 
+source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/fzf.vim
 source $HOME/.config/nvim/style.vim
