@@ -182,7 +182,9 @@ require('packer').startup(function()
     'neovim/nvim-lspconfig',
 
     requires = {
-      'nvim-lua/lsp-status.nvim'
+      'nvim-lua/lsp-status.nvim',
+      'hrsh7th/nvim-cmp',
+      'hrsh7th/cmp-nvim-lsp',
     },
 
     config = function()
@@ -233,15 +235,16 @@ require('packer').startup(function()
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
       end
 
       local servers = {'tsserver', 'rust_analyzer', 'solargraph', 'jsonls', 'cssls', 'html', 'julials', 'yamlls'}
+      local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
 
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup({
           on_attach = on_attach,
-          capabilities = lsp_status.capabilities,
+          capabilities = capabilities,
           flags = {
             debounce_text_changes = 140,
           },
@@ -414,9 +417,6 @@ require('packer').startup(function()
     'hrsh7th/nvim-cmp',
 
     requires = {
-      'hrsh7th/cmp-nvim-lsp',
-      'neovim/nvim-lspconfig',
-      'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
@@ -489,16 +489,6 @@ require('packer').startup(function()
           { name = 'cmdline' }
         }),
       })
-
-      -- Setup lspconfig.
-      local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-      local servers = {'tsserver', 'rust_analyzer', 'solargraph'}
-      local lspconfig = require('lspconfig')
-      for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup {
-          capabilities = capabilities
-        }
-      end
     end
   }
 
