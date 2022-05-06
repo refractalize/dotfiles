@@ -2,8 +2,13 @@
 
 set -e
 
+# exec >> /Users/tim/nvrtab.log                                                                      
+# exec 2>&1
+
+# echo nvrtab "$@"
+
 # kitty launch --type=background doesn't use the PATH env var as set in kitty.conf
-export PATH=/usr/local/bin:$PATH
+export PATH=/opt/homebrew/bin:$PATH
 
 zparseopts -D -A opts -window-id::
 
