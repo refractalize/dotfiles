@@ -13,10 +13,14 @@ local function uniq(items)
   return res
 end
 
+local function compact(items)
+  return vim.tbl_filter(function (d) return d end, items)
+end
+
 local function diagnostic_codes(diagnostics)
-  local diagnostic_codes = uniq(vim.tbl_map(function (d)
+  local diagnostic_codes = uniq(compact(vim.tbl_map(function (d)
     return d.code
-  end, diagnostics))
+  end, diagnostics)))
 
   table.sort(diagnostic_codes)
 
@@ -27,12 +31,12 @@ local function ignore_lint_line()
   local current_line = vim.api.nvim_win_get_cursor(0)[1]
   local diagnostics = vim.diagnostic.get(0, {lnum = current_line - 1})
 
-  if diagnostics then
-    local line = vim.api.nvim_get_current_line()
+  local line = vim.api.nvim_get_current_line()
 
-    local new_line
-    local codes = diagnostic_codes(diagnostics)
+  local new_line
+  local codes = diagnostic_codes(diagnostics)
 
+  if codes ~= '' then
     if string.match(line, "rubocop:disable") then
       new_line = line .. ", " .. codes
     else
@@ -72,11 +76,13 @@ local function ignore_lint_visual(start_line, end_line)
 
   local codes = diagnostic_codes(matching_diagnostics)
 
-  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, 1)
-  local indent = get_indent(lines)
+  if codes ~= '' then
+    local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, 1)
+    local indent = get_indent(lines)
 
-  vim.api.nvim_buf_set_lines(0, end_line, end_line, 1, {indent .. "# rubocop:enable " .. codes})
-  vim.api.nvim_buf_set_lines(0, start_line - 1, start_line - 1, 1, {indent .. "# rubocop:disable " .. codes})
+    vim.api.nvim_buf_set_lines(0, end_line, end_line, 1, {indent .. "# rubocop:enable " .. codes})
+    vim.api.nvim_buf_set_lines(0, start_line - 1, start_line - 1, 1, {indent .. "# rubocop:disable " .. codes})
+  end
 end
 
 local function ignore_lints(range, start_line, end_line)
