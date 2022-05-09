@@ -107,11 +107,12 @@ require('packer').startup(function()
   use 'AndrewRadev/splitjoin.vim'
   use 'AndrewRadev/linediff.vim'
   use 'direnv/direnv.vim'
+  use 'nvim-lua/lsp-status.nvim'
 
   use {
     'hoob3rt/lualine.nvim',
 
-    requires = {'nvim-lua/lsp-status.nvim'},
+    after = {'lsp-status.nvim'},
 
     config = function()
       local function filename()
@@ -181,10 +182,9 @@ require('packer').startup(function()
   use {
     'neovim/nvim-lspconfig',
 
-    requires = {
-      'nvim-lua/lsp-status.nvim',
-      'hrsh7th/nvim-cmp',
-      'hrsh7th/cmp-nvim-lsp',
+    after = {
+      'lsp-status.nvim',
+      'nvim-cmp',
     },
 
     config = function()
@@ -420,7 +420,8 @@ require('packer').startup(function()
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
-      'hrsh7th/cmp-vsnip'
+      'hrsh7th/cmp-vsnip',
+      'hrsh7th/cmp-nvim-lsp',
     },
 
     config = function()
