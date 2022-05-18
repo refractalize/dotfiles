@@ -6,7 +6,7 @@ function! SetTheme(theme)
     execute "colorscheme " . a:theme
   endif
 
-  execute "hi illuminatedWord gui=underline guibg=" . ReturnHighlightTerm("CursorLine", "guibg")
+  doautocmd User ThemeChanged
 endfunction
 
 function! EditTheme(theme)

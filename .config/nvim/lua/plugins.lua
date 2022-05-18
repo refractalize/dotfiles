@@ -101,7 +101,13 @@ require('packer').startup(function()
   use 'leafgarland/typescript-vim'
   use 'maxmellon/vim-jsx-pretty'
   use 'jparise/vim-graphql'
-  use 'RRethy/vim-illuminate'
+  use {
+    'RRethy/vim-illuminate',
+
+    config = function()
+      vim.cmd('source $HOME/.config/nvim/illuminate.vim')
+    end
+  }
   use 'vim-scripts/summerfruit256.vim'
   use 'tomtom/tlib_vim'
   use 'AndrewRadev/splitjoin.vim'

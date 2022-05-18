@@ -18,16 +18,3 @@ else
   highlight DiffDelete gui=NONE guibg=#FCF8E7 guifg=#D11C24
   highlight DiffAdd gui=NONE guifg=NONE guibg=#C7FFC6
 endif
-
-function! ReturnHighlightTerm(group, term)
-   " Store output of group to variable
-   let output = execute('hi ' . a:group)
-
-   " Find the term we're looking for
-   return matchstr(output, a:term.'=\zs\S*')
-endfunction
-
-augroup illuminate_augroup
-  autocmd!
-  autocmd VimEnter * execute "hi illuminatedWord gui=underline guibg=" . ReturnHighlightTerm("CursorLine", "guibg")
-augroup END
