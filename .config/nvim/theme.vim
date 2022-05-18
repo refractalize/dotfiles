@@ -23,10 +23,20 @@ command! -nargs=1 Theme call SetTheme(<f-args>)
 command! -nargs=1 ThemeEdit call EditTheme(<f-args>)
 command! -nargs=* ThemeAlias call AliasTheme(<f-args>)
 
-if empty($THEME)
-  source $HOME/.config/nvim/themes/default.vim
-else
+function! CurrentTheme()
+  if !empty($THEME)
+    return $THEME
+  elseif filereadable('.theme')
+    return readfile('.theme')[0]
+  else
+    return 'default'
+  endif
+endfunction
+
+function! SetupCurrentTheme()
   let themes = json_decode(readfile($HOME . "/.config/themes.json", ''))
-  let theme = themes[$THEME]["nvim"]
+  let theme = themes[CurrentTheme()]["nvim"]
   call SetTheme(theme)
-endif
+endfunction
+
+call SetupCurrentTheme()

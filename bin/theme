@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
-zparseopts -D -A opts -json=json -query=query -choose=choose -tab=tab
+zparseopts -D -A opts -json=json -query=query -choose=choose -tab=tab -save=save
 
-THEME=${1:-$THEME}
+THEME=${1:-$(current-theme)}
 
 THEME_CONFIG_FILE=~/.config/themes.json
 
@@ -33,6 +33,11 @@ then
   else
     kitty-theme $KITTY_THEME
   fi
+fi
+
+if [[ -n $save ]]
+then
+  echo $THEME > .theme
 fi
 
 if [[ -n $json ]]

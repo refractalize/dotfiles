@@ -1,4 +1,8 @@
 {
+  "default": {
+    "kitty": "horizon",
+    "nvim": "horizon"
+  },
   "light": {
     "kitty": "ayu_light",
     "nvim": "ayu_light"
