@@ -6,7 +6,7 @@ function set_win_title(){
 
   if [[ -n $BR ]]
   then
-    TITLE="$DIR ($BR)"
+    TITLE="$DIR  $BR"
   else
     TITLE="$DIR"
   fi

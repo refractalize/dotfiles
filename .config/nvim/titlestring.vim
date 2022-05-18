@@ -25,7 +25,7 @@ function! TitleString()
   if branch == ""
     return dir
   else
-    return dir . " (" . branch . ")"
+    return dir . "  " . branch
   endif
 endfunction
 
