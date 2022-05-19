@@ -131,6 +131,7 @@ source $HOME/.config/nvim/tabs.vim
 source $HOME/.config/nvim/windows.vim
 source $HOME/.config/nvim/ignorelint.vim
 source $HOME/.config/nvim/titlestring.vim
+source $HOME/.config/nvim/quickfix.vim
 
 autocmd VimResized * wincmd =
 
