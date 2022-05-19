@@ -40,6 +40,7 @@
 [core]
     attributesFile = ~/.gitattributes
     pager = delta --hyperlinks
+	excludesfile = ~/.gitignore
 [filter "lfs"]
     required = true
     clean = git-lfs clean -- %f
