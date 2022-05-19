@@ -1,20 +1,17 @@
 #!/usr/bin/env perl -n
 
 if (/^@@ -([0-9]+),([0-9]+) [+]([0-9]+),([0-9]+) @@/) {
-  $new_start = $3 - 1;
+  $line = $3 - 1;
 } elsif (/^\+\+\+ [^\/]+\/(.*)/) {
   $filename = $1;
 } elsif (! /^---/ && $filename) {
-  $line = substr($_, 1);
-
   if (/^-/) {
-    $old_start = $new_start + 1;
-    print "$filename:$old_start:1:\033[0;31m$_\033[0m";
+    $old_line = $line + 1;
+    print "$filename:$old_line:1:\033[0;31m$_\033[0m";
   } elsif (/^\+/) {
-    $new_start++;
-    print "$filename:$new_start:1:\033[0;32m$_\033[0m";
+    $line++;
+    print "$filename:$line:1:\033[0;32m$_\033[0m";
   } elsif (/^ (.*)/) {
-    $new_start++;
-    print "$filename:$new_start:1:$_";
+    $line++;
   }
 }
