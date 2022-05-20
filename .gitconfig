@@ -22,9 +22,11 @@
     default = simple
 [merge]
     conflictstyle = diff3
-    tool = vimdiff
+    tool = fugitive
 [mergetool "vimdiff"]
     path = nvim
+[mergetool "fugitive"]
+    cmd = nvim -f "$MERGED" -c GeditConflicts
 [core]
     editor = nvim
     trustctime = false
