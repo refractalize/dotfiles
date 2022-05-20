@@ -19,8 +19,6 @@ nmap <leader>cF :let @+=expand("%:p")<CR>
 
 filetype plugin indent on
 
-set exrc   " enable per-directory .vimrc files
-set secure " disable unsafe commands in local .vimrc files
 set undofile
 
 set hidden
