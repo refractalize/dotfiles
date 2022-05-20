@@ -206,6 +206,6 @@ command! -nargs=* Log call fzf#vim#buffer_commits(
   \ ),
 \ 0)
 
-command! -bang -nargs=1 Gdifffilename call fzf#vim#grep("{ git diff " . <q-args> . " } | git diff-filename", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
+command! -bang -nargs=1 Gdifffilename call fzf#vim#grep("{ git diff-filename " . <q-args> . " }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
 
 nnoremap <leader>b :Gdiffbranch<cr>
