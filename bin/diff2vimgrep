@@ -1,0 +1,18 @@
+#!/usr/bin/env perl -n
+
+if (/^@@ -([0-9]+),([0-9]+) [+]([0-9]+),([0-9]+) @@/) {
+  $line = $3 - 1;
+} elsif (/^\+\+\+ [^\/]+\/(.*)/) {
+  $filename = $1;
+} elsif (! /^---/ && $filename) {
+  chomp;
+  if (/^-/) {
+    $old_line = $line + 1;
+    print "$filename:$old_line:1:\033[0;31m$_\033[0m\n";
+  } elsif (/^\+/) {
+    $line++;
+    print "$filename:$line:1:\033[0;32m$_\033[0m\n";
+  } elsif (/^ (.*)/) {
+    $line++;
+  }
+}
