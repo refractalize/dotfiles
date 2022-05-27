@@ -184,7 +184,7 @@ command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
     \ ]
     \ }))
 
-command! Gdiffbranch call fzf#run(fzf#wrap('Gdiffbranch', {
+command! GdiffFiles call fzf#run(fzf#wrap('GdiffFiles', {
     \ 'source': 'git diff --name-only origin/master...',
     \ 'options': [
       \ '--preview', 'git diff --color origin/master... -- {}',
@@ -206,6 +206,6 @@ command! -nargs=* Log call fzf#vim#buffer_commits(
   \ ),
 \ 0)
 
-command! -bang -nargs=1 Gdifffilename call fzf#vim#grep("{ git diff " . <q-args> . " | diff2vimgrep }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
+command! -bang -nargs=* Gdiff call fzf#vim#grep("{ git diff " . <q-args> . " | diff2vimgrep }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
 
 nnoremap <leader>b :Gdiffbranch<cr>
