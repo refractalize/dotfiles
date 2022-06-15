@@ -184,8 +184,8 @@ command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
     \ ]
     \ }))
 
-command! GdiffFiles call fzf#run(fzf#wrap('GdiffFiles', {
-    \ 'source': 'git diff --name-only origin/master...',
+command! -nargs=* GdiffFiles call fzf#run(fzf#wrap('GdiffFiles', {
+    \ 'source': 'git diff --name-only ' . <q-args>,
     \ 'options': [
       \ '--preview', 'git diff --color origin/master... -- {}',
       \ '--no-sort',
