@@ -428,6 +428,7 @@ require('packer').startup(function()
       'hrsh7th/cmp-cmdline',
       'hrsh7th/cmp-vsnip',
       'hrsh7th/cmp-nvim-lsp',
+      'dmitmel/cmp-cmdline-history',
     },
 
     config = function()
@@ -474,6 +475,7 @@ require('packer').startup(function()
         },
       })
 
+      -- inoremap <C-x><C-o> <Cmd>lua require('cmp').complete()<CR>
       -- Use cmdline & path source for ':'.
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
@@ -491,11 +493,16 @@ require('packer').startup(function()
                 return vim.api.nvim_list_bufs()
               end
             }
-          }
-        }, {
-          { name = 'cmdline' }
+          },
+          { name = 'cmdline' },
+          { name = 'cmdline_history' },
         }),
       })
+
+
+      vim.cmd([[
+        cnoremap <C-n> <Cmd>lua require('cmp').complete()<CR>
+      ]])
     end
   }
 
