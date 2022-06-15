@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+# See https://github.com/kovidgoyal/kitty/issues/5190
+
+stty sane iutf8
