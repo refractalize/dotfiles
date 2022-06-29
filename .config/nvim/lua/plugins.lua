@@ -684,10 +684,6 @@ require('packer').startup(function()
   }
 
   use {
-    'github/copilot.vim'
-  }
-
-  use {
     'voldikss/vim-floaterm',
 
     config = function()
