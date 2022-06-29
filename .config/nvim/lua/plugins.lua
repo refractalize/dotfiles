@@ -191,6 +191,7 @@ require('packer').startup(function()
     after = {
       'lsp-status.nvim',
       'nvim-cmp',
+      'vim-matchup',
     },
 
     config = function()
@@ -254,7 +255,10 @@ require('packer').startup(function()
           flags = {
             debounce_text_changes = 140,
           },
-          root_dir = lspconfig.util.find_git_ancestor
+          root_dir = lspconfig.util.find_git_ancestor,
+          match = {
+            enable = true
+          }
         })
       end
 
@@ -281,6 +285,8 @@ require('packer').startup(function()
       -- require('github-theme').setup()
     end
   }
+
+  use 'andymass/vim-matchup'
 
   use {
     'nvim-treesitter/nvim-treesitter',
