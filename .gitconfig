@@ -1,6 +1,7 @@
 [user]
     name = Tim Macfarlane
     email = timmacfarlane@gmail.com
+	signingkey = A7B03AB9C7514D505937A3BB4E7673011F274613
 [color]
     ui = true
 [alias]
@@ -51,3 +52,5 @@
 [delta]
     features = side-by-side line-numbers
     syntax-theme = OneHalfDark
+[commit]
+	gpgsign = true
