@@ -121,5 +121,13 @@
     "body": [
       "${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}"
     ]
+  },
+  "hash_entry": {
+    "prefix": [
+      ":"
+    ],
+    "body": [
+      "$1: $1"
+    ]
   }
 }

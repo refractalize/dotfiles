@@ -33,5 +33,35 @@
     "body": [
       "console.log('trace: $RELATIVE_FILEPATH:$TM_LINE_NUMBER')"
     ]
+  },
+  "this=": {
+    "prefix": [
+      "this="
+    ],
+    "body": [
+      "this.$1 = $1"
+    ]
+  },
+  "describe": {
+    "prefix": [
+      "describe"
+    ],
+    "body": [
+      "describe('$1', () => {",
+      " $0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "it": {
+    "prefix": [
+      "it"
+    ],
+    "body": [
+      "it('$1', () => {",
+      " $0",
+      "})"
+    ],
+    "description": "Adds a test"
   }
 }
