@@ -11,6 +11,8 @@ nnoremap <M-v> <C-W>v
 nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
 nnoremap <M-t> :tabnew<cr>
+nnoremap <M-T> <C-W>T
+tnoremap <M-T> <C-\><C-N><C-W>Ti
 nnoremap <M-w> <C-W>c
 nnoremap <M-d> :Gdiffsplit!<cr>
 nnoremap <M-D> :Gdiffsplit! origin/master...<cr>
