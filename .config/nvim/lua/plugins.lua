@@ -46,6 +46,9 @@ require('packer').startup(function()
         xmap        <C-j>   <Plug>(vsnip-select-text)
         nmap        <C-J>   <Plug>(vsnip-cut-text)
         xmap        <C-J>   <Plug>(vsnip-cut-text)
+
+        let g:vsnip_filetypes = {}
+        let g:vsnip_filetypes.typescript = ['javascript']
       ]])
     end
   }
