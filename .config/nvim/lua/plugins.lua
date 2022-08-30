@@ -618,7 +618,6 @@ require('packer').startup(function()
   --   end
   -- }
   use 'will133/vim-dirdiff'
-  use 'nightsense/wonka'
 
   use {
     'mattn/emmet-vim',
