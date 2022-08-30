@@ -589,28 +589,6 @@ require('packer').startup(function()
       }
     end
   }
-  use {
-    'Pocco81/AutoSave.nvim',
-
-    config = function()
-      local autosave = require("autosave")
-
-      autosave.setup({
-        conditions = {
-          exists = false,
-          filetype_is_not = {
-            'fern-replacer'
-          },
-          filename_is_not = {
-            'plugins.lua'
-          },
-          modifiable = true,
-        },
-        execution_message = '',
-        on_off_commands = true,
-      })
-    end
-  }
 
   use 'kshenoy/vim-signature'
 
