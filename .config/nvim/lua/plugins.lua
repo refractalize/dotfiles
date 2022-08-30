@@ -72,6 +72,7 @@ require('packer').startup(function()
     config = function()
       vim.cmd([[
         autocmd FileType ruby let b:surround_45 = "do \r end"
+        let g:surround_no_insert_mappings = 1
       ]])
     end
   }
@@ -259,7 +260,7 @@ require('packer').startup(function()
             debounce_text_changes = 140,
           },
           root_dir = lspconfig.util.find_git_ancestor,
-          match = {
+          matchup = {
             enable = true
           }
         })
@@ -289,7 +290,19 @@ require('packer').startup(function()
     end
   }
 
-  use 'andymass/vim-matchup'
+  use {
+    'andymass/vim-matchup',
+
+    setup = function()
+      -- this is required so `config` is run _after_ the plugin is loaded
+    end,
+
+    config = function()
+      vim.cmd([[
+        iunmap <C-G>%
+      ]])
+    end
+  }
 
   use {
     'nvim-treesitter/nvim-treesitter',
