@@ -120,7 +120,7 @@ require('packer').startup(function()
   use 'nvim-lua/lsp-status.nvim'
 
   use {
-    'hoob3rt/lualine.nvim',
+    'nvim-lualine/lualine.nvim',
 
     after = {'lsp-status.nvim'},
 
@@ -145,7 +145,10 @@ require('packer').startup(function()
             {
               'filename',
               path = 1,
-              shorting_target = 0
+              shorting_target = 0,
+              symbols = {
+                modified = ' 😱😱😱'
+              }
             }
           },
           lualine_c = {
