@@ -320,15 +320,37 @@ require('packer').startup(function()
         indent = {
           enable = false
         },
+        matchup = {
+          enable = true
+        }
+      }
+    end
+  }
+
+  use {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    after = 'nvim-treesitter',
+
+    config = function()
+      require'nvim-treesitter.configs'.setup {
         textobjects = {
           select = {
             enable = true,
+            lookahead = true,
+
             keymaps = {
               -- You can use the capture groups defined in textobjects.scm
               ["af"] = "@function.outer",
               ["if"] = "@function.inner",
               ["ac"] = "@class.outer",
               ["ic"] = "@class.inner",
+            },
+
+            selection_modes = {
+              ['@function.outer'] = 'V',
+              ['@function.inner'] = 'V',
+              ['@class.outer'] = 'V',
+              ['@class.inner'] = 'V',
             },
           },
           move = {
@@ -363,7 +385,6 @@ require('packer').startup(function()
     end
   }
 
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
   use {
     'nvim-telescope/telescope.nvim',
     requires = {
