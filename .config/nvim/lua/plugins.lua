@@ -388,23 +388,52 @@ require('packer').startup(function()
   use {
     'nvim-telescope/telescope.nvim',
     requires = {
-      {'nvim-lua/popup.nvim'},
-      {'nvim-lua/plenary.nvim'}
+      { 'nvim-lua/popup.nvim' },
+      { 'nvim-lua/plenary.nvim' },
+      { 'nvim-telescope/telescope-file-browser.nvim' },
+      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
     },
 
     config = function()
-      require"telescope".load_extension("frecency")
+      require("telescope").setup {
+        extensions = {
+          file_browser = {
+            hijack_netrw = true,
+
+            mappings = {
+              ["i"] = {
+                ["<C-w>"] = function() vim.cmd('normal vbd') end,
+              },
+            },
+          },
+
+          fzf = {
+            fuzzy = false,                    -- false will only do exact matching
+            override_generic_sorter = true,  -- override the generic sorter
+            override_file_sorter = true,     -- override the file sorter
+            case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                             -- the default case_mode is "smart_case"
+          },
+
+        },
+
+        defaults = {
+          layout_strategy = 'bottom_pane',
+          layout_config = {
+            height = 0.4,
+            prompt_position = 'bottom'
+          },
+        },
+      }
+
       require("telescope").load_extension("file_browser")
+      require("telescope").load_extension("fzf")
+
+      vim.cmd([[
+        nnoremap - :Telescope file_browser path=%:p:h select_buffer=true<CR>
+      ]])
     end
   }
-
-  use {
-    "nvim-telescope/telescope-frecency.nvim",
-
-    requires = {"tami5/sqlite.lua"}
-  }
-
-  use { "nvim-telescope/telescope-file-browser.nvim" }
 
   use 'tpope/vim-unimpaired' -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
   use 'tpope/vim-eunuch' -- file unix commands, :Delete, :Move, etc
@@ -440,25 +469,6 @@ require('packer').startup(function()
     'KabbAmine/vCoolor.vim',
     setup = function()
       vim.g.vcoolor_disable_mappings = 1
-    end
-  }
-
-  use {
-    'lambdalisue/fern.vim',
-
-    requires = {
-      'lambdalisue/fern-git-status.vim',
-      'lambdalisue/nerdfont.vim',
-      'lambdalisue/fern-renderer-nerdfont.vim',
-      'lambdalisue/fern-hijack.vim'
-    },
-
-    config = function()
-      vim.cmd([[
-        let g:fern#renderer = "nerdfont"
-        nnoremap - :Fern %:h -reveal=%:t<cr>
-        nnoremap <leader>n :Fern . -reveal=%<cr>
-      ]])
     end
   }
 
