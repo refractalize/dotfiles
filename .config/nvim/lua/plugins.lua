@@ -262,10 +262,7 @@ require('packer').startup(function()
           flags = {
             debounce_text_changes = 140,
           },
-          root_dir = lspconfig.util.find_git_ancestor,
-          matchup = {
-            enable = true
-          }
+          root_dir = lspconfig.util.find_git_ancestor
         })
       end
 
