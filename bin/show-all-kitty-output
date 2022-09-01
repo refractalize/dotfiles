@@ -4,22 +4,23 @@ DIR=$(mktemp -d)
 
 cat | awk "
   BEGIN {
+    skip_line = 0;
     part = 1;
     file = sprintf(\"$DIR/%08d.tty\", part);
   }
 
-  /\033]133;C/ {
-    capture = 1;
+  /\033]133;A/ {
+    skip_line = 1;
     part++;
     file = sprintf(\"$DIR/%08d.tty\", part);
   }
 
-  /\033]133;A/ {
-    capture = 0;
+  !skip_line {
+    print >file;
   }
 
-  capture {
-    print >file;
+  {
+    skip_line = 0;
   }
 "
 

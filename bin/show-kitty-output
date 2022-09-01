@@ -10,11 +10,15 @@ LINE=$(( $INPUT_LINE_NUMBER + $WINDOW_HEIGHT ))
 
 FILE=$(mktemp)
 
-mv $FILE FILE.tty
+mv $FILE $FILE.tty
 
 FILE=$FILE.tty
 
 cat | awk "
+  BEGIN {
+    capture = 1;
+  }
+
   /\033]133;C/ && !(found) {
     capture = 1;
     line = 0;
