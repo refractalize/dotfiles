@@ -144,3 +144,4 @@ autocmd BufWritePost ~/.config/nvim/lua/plugins.lua source <afile> | PackerCompi
 " this doesn't seem to work with vim-test
 autocmd WinClosed * if &buftype == 'quickfix' | let g:quickfix_height = winheight(0) | endif
 autocmd FileType qf if exists('g:quickfix_height') | execute(g:quickfix_height . 'wincmd_') | endif
+autocmd FileType sql nnoremap <M-f> :%!sql-formatter<CR>
