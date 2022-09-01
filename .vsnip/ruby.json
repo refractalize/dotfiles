@@ -129,5 +129,15 @@
     "body": [
       "$1: $1"
     ]
+  },
+  "nocov": {
+    "prefix": [
+      "nocov"
+    ],
+    "body": [
+      "# :nocov:",
+      "$TM_SELECTED_TEXT",
+      "# :nocov:"
+    ]
   }
 }
