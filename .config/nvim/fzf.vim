@@ -23,7 +23,7 @@ let g:mru_file = $HOME . '/.config/nvim/mru'
 
 function! AddMruFile(buffer, bufnum)
   let filetype = getbufvar(str2nr(a:bufnum), '&filetype')
-  if len(a:buffer) > 0 && match(a:buffer, '\(^term:\)\|\(/\.git/index$\)') == -1 && filereadable(a:buffer) && filetype != 'fugitive'
+  if len(a:buffer) > 0 && match(a:buffer, '\(^term:\)\|\(/\.git/\)') == -1 && filereadable(a:buffer) && filetype != 'fugitive'
     call writefile([localtime() . ' ' . a:buffer], g:mru_file, 'a')
   endif
 endfunction
