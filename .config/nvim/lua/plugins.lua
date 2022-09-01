@@ -435,6 +435,18 @@ require('packer').startup(function()
     end
   }
 
+  use {
+    'm00qek/baleia.nvim',
+    tag = 'v1.2.0',
+
+    config = function()
+      vim.cmd([[
+        autocmd BufRead *.tty lua vim.b.baleia = false
+        autocmd BufWinEnter *.tty lua if not vim.b.baleia then require('baleia').setup { strip_ansi_codes = false }.once(vim.fn.bufnr('%')); vim.b.baleia = true; vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite') end
+      ]])
+    end
+  }
+
   use 'tpope/vim-unimpaired' -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
   use 'tpope/vim-eunuch' -- file unix commands, :Delete, :Move, etc
   use 'tpope/vim-jdaddy' -- JSON manipulation

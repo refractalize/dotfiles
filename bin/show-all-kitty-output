@@ -5,13 +5,13 @@ DIR=$(mktemp -d)
 cat | awk "
   BEGIN {
     part = 1;
-    file = sprintf(\"$DIR/%08d\", part);
+    file = sprintf(\"$DIR/%08d.tty\", part);
   }
 
   /\033]133;C/ {
     capture = 1;
     part++;
-    file = sprintf(\"$DIR/%08d\", part);
+    file = sprintf(\"$DIR/%08d.tty\", part);
   }
 
   /\033]133;A/ {
@@ -25,7 +25,7 @@ cat | awk "
 
 FILES=($DIR/*)
 
-sed -i '' -E 's/\x1b\[[0-9;:]*[mGKHF]|\x1b\].*\x1b\\//g' $FILES
+sed -i '' -E 's/\x1b\].*\x1b\\//g' $FILES
 
 nvim ${(O)FILES}
 

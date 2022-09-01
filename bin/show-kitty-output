@@ -8,15 +8,11 @@ WINDOW_SIZE=(${(@s/,/)KITTY_PIPE_DATA_SPLIT[3]})
 WINDOW_HEIGHT=$WINDOW_SIZE[1]
 LINE=$(( $INPUT_LINE_NUMBER + $WINDOW_HEIGHT ))
 
-function strip_escapes {
-  if [[ -n $STRIP_ESCAPES ]]
-  then
-    sed -E 's/\x1b\[[0-9;:]*[mGKHF]|\x1b\].*\x1b\\//g' | eval $CMD
-  else
-    eval $CMD
-  fi
-}
+FILE=$(mktemp)
 
+mv $FILE FILE.tty
+
+FILE=$FILE.tty
 
 cat | awk "
   /\033]133;C/ && !(found) {
@@ -41,4 +37,10 @@ cat | awk "
     for (i in lines)
       print lines[i]
   }
-" | strip_escapes
+" > $FILE
+
+sed -i '' -E 's/\x1b\].*\x1b\\//g' $FILE
+
+eval $CMD $FILE
+
+rm $FILE
