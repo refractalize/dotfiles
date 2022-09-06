@@ -442,10 +442,28 @@ require('packer').startup(function()
     tag = 'v1.2.0',
 
     config = function()
-      vim.cmd([[
-        autocmd BufRead *.tty lua vim.b.baleia = false
-        autocmd BufWinEnter *.tty lua if not vim.b.baleia then require('baleia').setup { strip_ansi_codes = false }.once(vim.fn.bufnr('%')); vim.b.baleia = true; vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite') end
-      ]])
+      vim.api.nvim_create_autocmd({ "BufRead" }, {
+        pattern = {"*.tty", "*.log"},
+
+        callback = function()
+          vim.b.baleia = false
+        end
+      })
+
+      vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+        pattern = {"*.tty", "*.log"},
+
+        callback = function()
+          if not vim.b.baleia then
+            local baleia = require('baleia')
+
+            baleia.setup().once(vim.fn.bufnr('%'))
+
+            vim.b.baleia = true
+            vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
+          end
+        end
+      })
     end
   }
 
