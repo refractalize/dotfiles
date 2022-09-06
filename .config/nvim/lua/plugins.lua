@@ -298,9 +298,11 @@ require('packer').startup(function()
     end,
 
     config = function()
-      vim.cmd([[
-        iunmap <C-G>%
-      ]])
+      if vim.fn.mapcheck('<C-G>%', 'i') ~= '' then
+        vim.cmd([[
+          iunmap <C-G>%
+        ]])
+      end
     end
   }
 
