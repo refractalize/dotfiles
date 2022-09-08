@@ -1,6 +1,6 @@
 nnoremap <M-1> 1gt
 nnoremap <M-2> 2gt
-nnoremap £ 3gt
+nnoremap <M-3> 3gt
 nnoremap <M-4> 4gt
 nnoremap <M-5> 5gt
 nnoremap <M-6> 6gt
