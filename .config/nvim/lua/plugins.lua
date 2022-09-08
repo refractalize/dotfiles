@@ -455,22 +455,10 @@ require('packer').startup(function()
         pattern = {"*.tty", "*.log"},
 
         callback = function()
-          vim.b.baleia = false
-        end
-      })
+          local baleia = require('baleia')
 
-      vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-        pattern = {"*.tty", "*.log"},
-
-        callback = function()
-          if not vim.b.baleia then
-            local baleia = require('baleia')
-
-            baleia.setup().once(vim.fn.bufnr('%'))
-
-            vim.b.baleia = true
-            vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
-          end
+          baleia.setup().once(vim.fn.bufnr('%'))
+          vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
         end
       })
     end
