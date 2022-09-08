@@ -98,5 +98,25 @@
   "terafox": {
     "kitty": "terafox",
     "nvim": "terafox"
+  },
+  "material-darker": {
+    "kitty": "MaterialDark",
+    "nvim": "material-darker"
+  },
+  "material-lighter": {
+    "kitty": "Material",
+    "nvim": "material-lighter"
+  },
+  "material-oceanic": {
+    "kitty": "MaterialDark",
+    "nvim": "material-oceanic"
+  },
+  "material-palenight": {
+    "kitty": "MaterialDark",
+    "nvim": "material-palenight"
+  },
+  "material-deep-ocean": {
+    "kitty": "MaterialDark",
+    "nvim": "material-deep-ocean"
   }
 }

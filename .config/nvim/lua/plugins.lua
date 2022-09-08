@@ -18,6 +18,7 @@ require('packer').startup(function()
   use 'morhetz/gruvbox'
   use 'rakr/vim-one'
   use 'glepnir/oceanic-material'
+  use 'marko-cerovac/material.nvim'
   use 'rakr/vim-two-firewatch'
   use 'NLKNguyen/papercolor-theme'
   use 'ayu-theme/ayu-vim'
