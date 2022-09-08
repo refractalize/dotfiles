@@ -57,6 +57,14 @@ require('packer').startup(function()
     after = 'vim-vsnip'
   }
 
+  use {
+    'folke/which-key.nvim',
+
+    config = function()
+      require("which-key").setup()
+    end
+  }
+
   use 'overcache/NeoSolarized'
   use 'mhartington/oceanic-next'
   use 'kyazdani42/nvim-web-devicons' -- for file icons
