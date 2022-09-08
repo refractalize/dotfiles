@@ -55,7 +55,6 @@ set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
 set termguicolors
-set selection=exclusive " visual mode pressing $ does not include character beyond end of line
 
 nnoremap <Leader>e :e %:h
 
