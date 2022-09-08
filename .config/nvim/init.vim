@@ -32,13 +32,10 @@ set path+=**     " allow searching all files and subdirectories in current direc
 set number
 set ruler
 set cursorline
-let g:rehash256 = 1
 set laststatus=2
 set scrolloff=3
 set ignorecase
 set smartcase
-silent! set guifont="Source Code Pro:h11"
-silent! set guifont=Source_Code_Pro:h10:cANSI
 set backspace=2
 set guioptions-=r
 set guioptions-=m
