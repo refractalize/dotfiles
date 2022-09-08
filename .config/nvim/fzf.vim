@@ -169,6 +169,17 @@ function! OpenFileInBranch(file, branch)
   exe 'Gedit ' . a:branch . ':' . a:file
 endfunction
 
+function! ShowFileDiff(file, branch)
+  let branch = substitute(a:branch, '^\.*\|\.*$', '', 'g')
+  exe 'tabnew'
+  exe 'Gedit ' . branch . ':' . a:file
+  exe 'Gdiffsplit %'
+endfunction
+
+function! ShowFileDiffs(files, branch)
+  call map(a:files, { index, file -> ShowFileDiff(file, a:branch) })
+endfunction
+
 command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
     \ 'source': 'git ls-tree --name-only -r ' . <q-args>,
     \ 'placeholder': '{1}',
@@ -184,10 +195,11 @@ command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
     \ ]
     \ }))
 
-command! -nargs=* GdiffFiles call fzf#run(fzf#wrap('GdiffFiles', {
+command! -nargs=* -complete=customlist,fugitive#EditComplete GdiffFiles call fzf#run(fzf#wrap('GdiffFiles', {
     \ 'source': 'git diff --name-only ' . <q-args>,
+    \ 'sink*': { files -> ShowFileDiffs(files, <q-args>) },
     \ 'options': [
-      \ '--preview', 'git diff --color origin/master... -- {}',
+      \ '--preview', 'git diff --color ' . <q-args> . ' -- {}',
       \ '--no-sort',
       \ '--multi',
       \ '--ansi',
@@ -206,6 +218,6 @@ command! -nargs=* Log call fzf#vim#buffer_commits(
   \ ),
 \ 0)
 
-command! -bang -nargs=* Gdiff call fzf#vim#grep("{ git diff " . <q-args> . " | diff2vimgrep }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
+command! -bang -nargs=* -complete=customlist,fugitive#EditComplete Gdiff call fzf#vim#grep("{ git diff " . <q-args> . " | diff2vimgrep }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
 
 nnoremap <leader>b :Gdiffbranch<cr>
