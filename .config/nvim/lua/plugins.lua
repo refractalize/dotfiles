@@ -209,6 +209,23 @@ require('packer').startup(function()
   }
 
   use {
+    'sindrets/diffview.nvim',
+    requires = 'nvim-lua/plenary.nvim',
+
+    config = function()
+      vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>DiffviewOpen<CR>', { noremap=true, silent=true })
+
+      require("diffview").setup({
+        view = {
+          merge_tool = {
+            layout = 'diff4_mixed'
+          }
+        }
+      })
+    end
+  }
+
+  use {
     'neovim/nvim-lspconfig',
 
     after = {
