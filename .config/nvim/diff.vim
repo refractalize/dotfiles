@@ -1,3 +1,5 @@
+set fillchars+=diff:╱
+
 nnoremap <silent> <Leader>d :call DiffToggle()<CR>
 function! DiffToggle()
   if &diff
@@ -35,8 +37,3 @@ function! EditConflicts()
 endfunction
 
 command! GeditConflicts call EditConflicts()
-
-if executable('ag')
-  set grepprg=ag\ --vimgrep
-  set grepformat=%f:%l:%c:%m
-endif
