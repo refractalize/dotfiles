@@ -379,6 +379,8 @@ require('packer').startup(function()
               ["if"] = "@function.inner",
               ["ac"] = "@class.outer",
               ["ic"] = "@class.inner",
+              ["aa"] = "@parameter.outer",
+              ["ia"] = "@parameter.inner"
             },
 
             selection_modes = {
@@ -406,6 +408,15 @@ require('packer').startup(function()
             goto_previous_end = {
               ["[M"] = "@function.outer",
               ["[]"] = "@class.outer",
+            },
+          },
+          swap = {
+            enable = true,
+            swap_next = {
+              ["+"] = "@parameter.inner",
+            },
+            swap_previous = {
+              ["_"] = "@parameter.inner",
             },
           },
           lsp_interop = {
@@ -731,6 +742,7 @@ require('packer').startup(function()
 
   use {
     'AndrewRadev/sideways.vim', -- move arguments left and right
+    disable = true,
     config = function()
       vim.cmd([[
         nnoremap _ :SidewaysLeft<cr>
