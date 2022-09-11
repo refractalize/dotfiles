@@ -187,7 +187,14 @@ require('packer').startup(function()
           lualine_y = {},
           lualine_z = {}
         },
-        -- tabline = {},
+        tabline = {
+          lualine_a = {
+            {
+              'tabs',
+              mode = 2
+            }
+          }
+        },
         extensions = {
           'fugitive',
           'quickfix',
