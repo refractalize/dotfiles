@@ -168,9 +168,16 @@ require('packer').startup(function()
             'diff',
             'diagnostics'
           },
-          lualine_x = {'encoding', 'fileformat', 'filetype', require'lsp-status'.status},
-          -- lualine_y = {'progress'},
-          -- lualine_z = {'location'}
+          lualine_x = {
+            'encoding',
+            'fileformat',
+            'filetype',
+            function()
+              return require('lsp-status').status_progress()
+            end
+          },
+          lualine_y = {'progress'},
+          lualine_z = {'location'}
         },
         inactive_sections = {
           lualine_b = {
@@ -238,14 +245,6 @@ require('packer').startup(function()
       local lspconfig = require('lspconfig')
       local lsp_status = require'lsp-status'
 
-      lsp_status.config {
-        indicator_errors = '🤬',
-        indicator_warnings = '🤔',
-        indicator_info = '🤓',
-        indicator_hint = '🥃',
-        indicator_ok = 'Ok',
-      }
-
       vim.cmd([[
         command! LspLogs execute("e " . luaeval('vim.lsp.get_log_path()'))
         sign define DiagnosticSignError text=🤬
@@ -285,8 +284,20 @@ require('packer').startup(function()
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
       end
 
-      local servers = {'tsserver', 'rust_analyzer', 'solargraph', 'jsonls', 'cssls', 'html', 'julials', 'yamlls'}
-      local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
+      local servers = {
+        'cssls',
+        'html',
+        'jsonls',
+        'julials',
+        'rust_analyzer',
+        'solargraph',
+        'sqls',
+        'tsserver',
+        'yamlls',
+      }
+
+      local capabilities = vim.tbl_extend('keep', {}, lsp_status.capabilities)
+      require('cmp_nvim_lsp').update_capabilities(capabilities)
 
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup({
