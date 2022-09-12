@@ -19,6 +19,14 @@ function ignore_buffer(options, buffer)
   return next(ignored) or (options.ignore_buffer and options.ignore_buffer(buffer))
 end
 
+function delay(fn, write_delay)
+  if write_delay then
+    vim.defer_fn(fn, write_delay)
+  else
+    fn()
+  end
+end
+
 function setup(options)
   options = vim.tbl_deep_extend('force', defaults, options or {})
 
@@ -31,7 +39,7 @@ function setup(options)
         local buf = vim.api.nvim_get_current_buf()
 
         if not ignore_buffer(options, buf) then
-          vim.defer_fn(function()
+          delay(function()
             if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_option(buf, 'modified') then
               vim.api.nvim_buf_call(buf, function () vim.cmd("silent! lockmarks write") end)
             end
