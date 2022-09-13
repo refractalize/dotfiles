@@ -1,5 +1,9 @@
 local buffers = {}
 
+local watch_autocmd_group = vim.api.nvim_create_augroup("Watch", {
+  clear = true,
+})
+
 local LiveBuffer = {}
 
 function LiveBuffer:new(o)
@@ -129,7 +133,8 @@ function LiveBuffer:start(cmd, source_buf, stdin)
 
   self:open_buffer()
 
-  self:attach_source_buffer(source_buf)
+  self:attach_source_buffer(source_buf, false)
+  self:startjob()
 end
 
 function LiveBuffer:stop()
@@ -153,6 +158,7 @@ function LiveBuffer:create_result_buffer()
 
   vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     buffer = self.result_buf,
+    group = watch_autocmd_group,
 
     callback = function()
       if self.result_stale then
@@ -196,7 +202,8 @@ end
 
 function LiveBuffer:existing_autocmd_events(buffer)
   local autocmds = vim.api.nvim_get_autocmds({
-    buffer = buffer
+    buffer = buffer,
+    group = watch_autocmd_group
   })
 
   return vim.tbl_map(function (autocmd)
@@ -214,21 +221,25 @@ end
 function LiveBuffer:add_on_change_autocmds(buffer)
   self.autocmds[buffer] = vim.api.nvim_create_autocmd(self:autocmd_events(buffer), {
     buffer = buffer,
+    group = watch_autocmd_group,
 
     callback = function()
-      print('changed')
       self:startjob()
     end
   })
 end
 
-function LiveBuffer:attach_source_buffer(buffer)
+function LiveBuffer:attach_source_buffer(buffer, startjob)
+  startjob = startjob == nil and true or false
+
   if self.result_buf ~= buffer and not self:has_correct_autocmds(buffer) then
     self:add_on_change_autocmds(buffer)
 
     buffers[buffer] = self
 
-    self:startjob()
+    if startjob then
+      self:startjob()
+    end
   end
 end
 
