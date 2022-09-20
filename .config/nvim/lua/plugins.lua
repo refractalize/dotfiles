@@ -611,25 +611,16 @@ require('packer').startup(function()
           autocomplete = false,
         },
 
+        sorting = {
+          comparators = {
+            cmp.config.compare.order,
+          }
+        },
+
         sources = cmp.config.sources({
-          { name = 'path' },
-          {
-            name = 'buffer',
-            option = {
-              get_bufnrs = function()
-                return vim.api.nvim_list_bufs()
-              end
-            }
-          },
-          { name = 'cmdline' },
           { name = 'cmdline_history' },
         }),
       })
-
-
-      vim.cmd([[
-        cnoremap <C-n> <Cmd>lua require('cmp').complete()<CR>
-      ]])
     end
   }
 
@@ -658,6 +649,20 @@ require('packer').startup(function()
           nearest_only = true,
       })
     end
+  }
+
+  use {
+    'gelguy/wilder.nvim',
+
+    config = function()
+      local wilder = require('wilder')
+      wilder.setup({modes = {':', '/', '?'}})
+
+      wilder.set_option('renderer', wilder.popupmenu_renderer({
+        -- highlighter applies highlighting to the candidates
+        highlighter = wilder.basic_highlighter(),
+      }))
+    end,
   }
 
   use {
@@ -812,18 +817,6 @@ require('packer').startup(function()
   }
 
   use 'folke/tokyonight.nvim'
-
-  use {
-    "folke/trouble.nvim",
-    requires = "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("trouble").setup {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        -- refer to the configuration section below
-      }
-    end
-  }
 
   use({
       "catppuccin/nvim",
