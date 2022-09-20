@@ -6,16 +6,17 @@ cat | awk "
   BEGIN {
     skip_line = 0;
     part = 1;
-    file = sprintf(\"$DIR/%08d.tty\", part);
+    file = sprintf(\"$DIR/%08d.tmp.log\", part);
   }
 
   /\033]133;A/ {
     skip_line = 1;
     part++;
-    file = sprintf(\"$DIR/%08d.tty\", part);
+    file = sprintf(\"$DIR/%08d.tmp.log\", part);
   }
 
   !skip_line {
+    gsub(/\033]133;C\033\\\\/, \"\");
     print >file;
   }
 
@@ -25,9 +26,17 @@ cat | awk "
 "
 
 FILES=($DIR/*)
+ORDERED_FILES=(${(n)FILES})
+REVERSE_FILES=(${(O)ORDERED_FILES})
 
-sed -i '' -E 's/\x1b\].*\x1b\\//g' $FILES
+for ((i = 1; i <= $#REVERSE_FILES; i++)) 
+do
+  FILE=${REVERSE_FILES[i]}
+  mv $FILE $DIR/${(l:8::0:)i}.log
+done
 
-nvim ${(O)FILES}
+VIM_FILES=($DIR/*.log)
+ORDERED_VIM_FILES=($VIM_FILES)
+nvim $ORDERED_VIM_FILES
 
 rm -rf $DIR
