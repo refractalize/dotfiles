@@ -84,11 +84,11 @@ inoremap <expr> <c-x><c-r> fzf#vim#complete(fzf#wrap({
   \ 'source': "rg --files <Bar> xargs realpath --relative-to " . expand("%:h"),
   \ 'reducer': { lines -> fnamemodify(lines[0], ':e') ==# expand("%:e") ? fnamemodify(lines[0], ':r') : lines[0] }}))
 
-
 " lookup recent command history
 inoremap <expr> <c-x><c-h> fzf#vim#complete(fzf#wrap({
       \   'source': "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 \| sed -E 's/[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
       \   'options': '--tiebreak index',
+      \   'reducer': { lines -> join(map(lines, { _index, line -> substitute(line, '\\n', '\n', 'g') }), '\n') },
       \ }))
 
 function! NodeRelativeFilename(filenames)
