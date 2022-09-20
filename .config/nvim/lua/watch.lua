@@ -36,16 +36,16 @@ function LiveBuffer:startjob()
   local finished = false
   local exit_code
   local std_err = {}
-  local std_out = {}
 
   function set_result()
     if finished then
       if exit_code ~= 0 then
-        set_buffer_lines(self.result_buf, std_err)
+        reload_buffer(self.result_buf)
+        append_buffer_lines(self.result_buf, std_err)
 
         self:notify(std_err, exit_code)
       else
-        set_buffer_lines(self.result_buf, std_out)
+        reload_buffer(self.result_buf)
       end
     end
   end
@@ -68,11 +68,6 @@ function LiveBuffer:startjob()
       std_err = lines
       set_result()
     end,
-
-    on_stdout = function(job, lines, event)
-      std_out = lines
-      set_result()
-    end
   })
 
   if self.source_buf and self.stdin then
@@ -83,21 +78,25 @@ function LiveBuffer:startjob()
 end
 
 function LiveBuffer:shell_command()
-  return vim.api.nvim_call_function('SubstituteCommand', { self.cmd, self.source_buf })
+  return vim.api.nvim_call_function('SubstituteCommand', { self.cmd, self.source_buf }) .. ' > ' .. self.out_file
 end
 
-function set_buffer_lines(buf, lines)
+function append_buffer_lines(buf, lines)
   if lines[#lines] == "" then
     table.remove(lines)
   end
 
   vim.api.nvim_buf_set_lines(
     buf,
-    0,
+    -1,
     -1,
     true,
     lines
   )
+end
+
+function reload_buffer(buf)
+  vim.api.nvim_buf_call(buf, function () vim.cmd("e!") end)
 end
 
 function LiveBuffer:find(buf)
@@ -111,7 +110,8 @@ function LiveBuffer:find_or_create(buf)
   
   if not live_buffer then
     live_buffer = LiveBuffer:new({
-      autocmds = {}
+      autocmds = {},
+      out_file = vim.fn.tempname()
     })
     buffers[buf] = live_buffer
   end
@@ -147,7 +147,10 @@ function is_buffer_hidden(buf)
 end
 
 function LiveBuffer:create_result_buffer()
-  self.result_buf = vim.api.nvim_create_buf(true, true)
+  self.result_buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_name(self.result_buf, self.out_file)
+  vim.api.nvim_buf_set_option(self.result_buf, 'autoread', true)
+  vim.api.nvim_buf_set_option(self.result_buf, 'buftype', 'nowrite')
 
   vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     buffer = self.result_buf,
@@ -157,6 +160,15 @@ function LiveBuffer:create_result_buffer()
       if self.result_stale then
         self:startjob()
       end
+    end
+  })
+
+  vim.api.nvim_create_autocmd({ "BufDelete" }, {
+    buffer = self.result_buf,
+    group = watch_autocmd_group,
+
+    callback = function()
+      self:stop()
     end
   })
 end
@@ -172,8 +184,6 @@ function LiveBuffer:open_buffer()
 
     self:show_buffer()
   end
-
-  vim.api.nvim_buf_set_name(self.result_buf, 'Watch (' .. self.result_buf .. '): ' .. self.cmd)
 end
 
 function LiveBuffer:detach_source_buffer(buffer)
@@ -271,8 +281,11 @@ return {
   end,
   info = function()
     local buf = vim.api.nvim_get_current_buf()
-    local live_buffer = LiveBuffer:find_or_create(buf)
-    print(vim.inspect(live_buffer))
+    local live_buffer = LiveBuffer:find(buf)
+
+    if live_buffer then
+      print(vim.inspect(live_buffer))
+    end
   end,
   status = function()
     local buf = vim.api.nvim_get_current_buf()
