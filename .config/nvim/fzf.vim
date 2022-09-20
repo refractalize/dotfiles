@@ -169,15 +169,26 @@ function! OpenFileInBranch(file, branch)
   exe 'Gedit ' . a:branch . ':' . a:file
 endfunction
 
+function RemoveDots(branch)
+  return substitute(a:branch, '^\.*\|\.*$', '', 'g')
+endfunction
+
 function! ShowFileDiff(file, branch)
-  let branch = substitute(a:branch, '^\.*\|\.*$', '', 'g')
+  let branch = RemoveDots(a:branch)
   exe 'tabnew'
   exe 'Gedit ' . branch . ':' . a:file
   exe 'Gdiffsplit %'
 endfunction
 
 function! ShowFileDiffs(files, branch)
-  call map(a:files, { index, file -> ShowFileDiff(file, a:branch) })
+  let action = remove(a:files, 0)
+  echom action
+  echom a:files
+  if action == ''
+    exe 'args' join(map(a:files, 'fnameescape(v:val)'), ' ')
+  elseif action == 'alt-d'
+    call map(a:files, { index, file -> ShowFileDiff(file, a:branch) })
+  endif
 endfunction
 
 command! -nargs=1 Gtree call fzf#run(fzf#wrap('GTree', {
@@ -201,9 +212,10 @@ command! -nargs=* -complete=customlist,fugitive#EditComplete GdiffFiles call fzf
     \ 'options': [
       \ '--preview', 'git diff --color ' . <q-args> . ' -- {}',
       \ '--no-sort',
+      \ '--expect', 'alt-d',
       \ '--multi',
       \ '--ansi',
-      \ '--prompt', 'Gdiffbranch> ',
+      \ '--prompt', 'GdiffFiles> ',
       \ '--tiebreak', 'end',
     \ ]
     \ }))
@@ -218,6 +230,25 @@ command! -nargs=* Log call fzf#vim#buffer_commits(
   \ ),
 \ 0)
 
-command! -bang -nargs=* -complete=customlist,fugitive#EditComplete Gdiff call fzf#vim#grep("{ git diff " . <q-args> . " | diff2vimgrep }", 0, fzf#vim#with_preview({'options': ['--tac']}), <bang>0)
+function! ShowBranchFile(line, branch)
+  echo line
+endfunction
 
-nnoremap <leader>b :Gdiffbranch<cr>
+function! ShowBranchFiles(lines, branch)
+  call map(a:lines, { index, line -> ShowBranchFile(line, a:branch) })
+endfunction
+
+command! -bang -nargs=* -complete=customlist,fugitive#EditComplete Gdiff call fzf#vim#grep(
+  \ '{ git diff ' . <q-args> . ' | diff2vimgrep }',
+  \ 0,
+  \ {
+    \ 'options': [
+      \ '--tac',
+      \ '--preview',
+      \ 'if [[ {4} == -* ]]; then git show ' . RemoveDots(<q-args>) . ':{1} | bat --file-name {1} --plain --number -H {2} --color=always; else bat {1} --plain --number -H {2} --color=always; fi',
+      \ '--preview-window',
+      \ '+{2}-5/2',
+    \ ],
+  \ },
+  \ <bang>0
+\ )
