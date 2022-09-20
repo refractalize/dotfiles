@@ -83,14 +83,7 @@ function LiveBuffer:startjob()
 end
 
 function LiveBuffer:shell_command()
-  return vim.fn.substitute(self.cmd, '\\\\\\?{}', function(m)
-    if m == '\\{}' then
-      return m
-    else
-      local buf_lines = vim.api.nvim_buf_get_lines(self.source_buf, 0, -1, true)
-      return vim.fn.shellescape(vim.fn.join(buf_lines, '\n'))
-    end
-  end, 'g')
+  return vim.api.nvim_call_function('SubstituteCommand', { self.cmd, self.source_buf })
 end
 
 function set_buffer_lines(buf, lines)
@@ -261,6 +254,9 @@ return {
       if current_buf ~= live_buffer.result_buf then
         live_buffer:attach_source_buffer(current_buf)
       end
+    else
+      print(bufname)
+      vim.api.nvim_err_writeln('no such buffer ' .. vim.fn.shellescape(bufname))
     end
   end,
   detach = function()
