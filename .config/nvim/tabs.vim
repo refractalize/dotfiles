@@ -10,6 +10,8 @@ nnoremap <M-9> 9gt
 nnoremap <M-0> :tablast<cr>
 nnoremap <M-{> :tabprevious<cr>
 nnoremap <M-}> :tabnext<cr>
+nnoremap <M-W> :tabclose<cr>
 
 au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <silent> <M-§> :exe "tabn ".g:lasttab<cr>
+nnoremap <silent> <M-`> :exe "tabn ".g:lasttab<cr>
+nnoremap <silent> <M-O> :tabonly<CR>
