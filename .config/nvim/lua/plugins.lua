@@ -246,7 +246,6 @@ require('packer').startup(function()
       local lsp_status = require'lsp-status'
 
       vim.cmd([[
-        command! LspLogs execute("e " . luaeval('vim.lsp.get_log_path()'))
         sign define DiagnosticSignError text=🤬
         sign define DiagnosticSignWarn text=🤔
         sign define DiagnosticSignInfo text=🤓
