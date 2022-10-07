@@ -29,3 +29,12 @@ nnoremap <silent> <M-J> :exe "resize -2"<CR>
 nnoremap <silent> <M-K> :exe "resize +2"<CR>
 nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
 nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
+
+" https://stackoverflow.com/a/14068971
+augroup CursorLine
+  au!
+  au VimEnter * setlocal cursorline
+  au WinEnter * setlocal cursorline
+  au BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END

@@ -14,6 +14,7 @@ vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", "g"),
 nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
 
 nmap <leader>cf :let @+=expand("%")<CR>
+nmap <leader>cd :cd %:h<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
@@ -31,7 +32,6 @@ syntax manual
 set path+=**     " allow searching all files and subdirectories in current directory
 set number
 set ruler
-set cursorline
 set laststatus=2
 set scrolloff=3
 set ignorecase
@@ -109,7 +109,6 @@ autocmd FileType conf set syntax=ON
 autocmd FileType git set syntax=ON
 
 nnoremap <Leader>sn :set number!<CR>
-nnoremap <Leader>sl :set cursorline!<CR>
 nnoremap <Leader>e :e %:h
 
 source $HOME/.config/nvim/functions.vim
