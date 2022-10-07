@@ -52,6 +52,9 @@ set mouse=a
 set inccommand=nosplit
 set signcolumn=yes:1
 set termguicolors
+set pumblend=20
+set nofoldenable
+set switchbuf=useopen
 
 nnoremap <Leader>e :e %:h
 
@@ -82,6 +85,8 @@ cnoremap <C-D>		<Del>
 cnoremap <C-E>		<End>
 " forward one character
 cnoremap <C-F>		<Right>
+" open the command buffer
+set cedit=
 " recall newer command-line
 cnoremap <C-N>		<Down>
 " recall previous (older) command-line
@@ -146,6 +151,4 @@ command! ProfileStop :profile stop
 autocmd BufWritePost ~/.config/nvim/lua/plugins.lua source <afile> | PackerCompile
 
 " this doesn't seem to work with vim-test
-autocmd WinClosed * if &buftype == 'quickfix' | let g:quickfix_height = winheight(0) | endif
-autocmd FileType qf if exists('g:quickfix_height') | execute(g:quickfix_height . 'wincmd_') | endif
 autocmd FileType sql nnoremap <M-f> :%!sql-formatter<CR>
