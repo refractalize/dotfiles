@@ -10,7 +10,6 @@ nnoremap <M-s> <C-W>s
 nnoremap <M-v> <C-W>v
 nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
-nnoremap <M-t> :tabnew<cr>
 tnoremap <M-T> <C-\><C-N><C-W>Ti
 nnoremap <M-w> <C-W>c
 nnoremap <M-d> :Gdiffsplit!<cr>
@@ -23,7 +22,7 @@ function! OpenBufferInNewTab()
   exe 'b ' . buf
 endfunction
 
-nnoremap <M-T> :call OpenBufferInNewTab()<CR>
+nnoremap <silent> <M-t> :call OpenBufferInNewTab()<CR>
 
 nnoremap <silent> <M-J> :exe "resize -2"<CR>
 nnoremap <silent> <M-K> :exe "resize +2"<CR>
