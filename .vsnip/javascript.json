@@ -17,6 +17,15 @@
     ],
     "description": "Wait for a given number of milliseconds"
   },
+  "console.error('var', var)": {
+    "prefix": [
+      "dbe"
+    ],
+    "body": [
+      "console.error('$1', $1)"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
   "console.log('text')": {
     "prefix": [
       "cl"
@@ -61,6 +70,15 @@
       "it('$1', () => {",
       " $0",
       "})"
+    ],
+    "description": "Adds a test"
+  },
+  "filename": {
+    "prefix": [
+      "filename"
+    ],
+    "body": [
+      "${TM_FILENAME_BASE}"
     ],
     "description": "Adds a test"
   }
