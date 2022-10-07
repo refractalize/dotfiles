@@ -68,9 +68,6 @@ function Range:clear()
 end
 
 function RangeLines:setup_buffer()
-  vim.api.nvim_buf_set_option(0, 'buftype', 'nofile')
-  vim.api.nvim_buf_set_option(0, 'bufhidden', 'wipe')
-  vim.api.nvim_buf_set_option(0, 'buflisted', false)
   vim.api.nvim_buf_set_option(0, 'filetype', vim.api.nvim_buf_get_option(self.range.buffer, 'filetype'))
   vim.api.nvim_buf_set_name(0, vim.api.nvim_buf_get_name(self.range.buffer) .. ':' .. self.start_line .. '-' .. self.end_line)
   vim.api.nvim_buf_set_lines(0, 0, -1, true, self.lines)

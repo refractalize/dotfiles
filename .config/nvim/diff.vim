@@ -37,3 +37,5 @@ function! EditConflicts()
 endfunction
 
 command! GeditConflicts call EditConflicts()
+
+command! -nargs=0 -range DiffPatch lua require('diffpatch').diff_patch(require('utils').getRangeLines(<range>, <line1>, <line2>))

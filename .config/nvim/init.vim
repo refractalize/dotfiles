@@ -127,6 +127,7 @@ source $HOME/.config/nvim/ignorelint.vim
 source $HOME/.config/nvim/titlestring.vim
 source $HOME/.config/nvim/quickfix.vim
 source $HOME/.config/nvim/watch.vim
+source $HOME/.config/nvim/difflines.vim
 lua << EOF
   require('auto-save').setup({
     ignore_files = { '.config/nvim/lua/plugins.lua' },
