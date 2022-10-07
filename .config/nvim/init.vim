@@ -134,6 +134,8 @@ lua << EOF
   })
 EOF
 
+lua require('quickfix').setup()
+
 autocmd VimResized * wincmd =
 
 nnoremap <leader>n :NvimTreeToggle<CR>
