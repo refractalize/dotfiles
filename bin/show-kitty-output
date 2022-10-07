@@ -1,20 +1,13 @@
 #!/usr/bin/env zsh
 
 INPUT_LINE_NUMBER=$1
-CMD=$2
 
 KITTY_PIPE_DATA_SPLIT=(${(@s/:/)KITTY_PIPE_DATA})
 WINDOW_SIZE=(${(@s/,/)KITTY_PIPE_DATA_SPLIT[3]})
 WINDOW_HEIGHT=$WINDOW_SIZE[1]
 LINE=$(( $INPUT_LINE_NUMBER + $WINDOW_HEIGHT ))
 
-FILE=$(mktemp)
-
-mv $FILE $FILE.tty
-
-FILE=$FILE.tty
-
-cat | awk "
+awk "
   BEGIN {
     capture = 1;
   }
@@ -41,10 +34,4 @@ cat | awk "
     for (i in lines)
       print lines[i]
   }
-" > $FILE
-
-sed -i '' -E 's/\x1b\].*\x1b\\//g' $FILE
-
-eval $CMD $FILE
-
-rm $FILE
+" /dev/stdin | less -R
