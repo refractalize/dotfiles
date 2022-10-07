@@ -24,6 +24,12 @@ require('packer').startup(function()
   use 'ayu-theme/ayu-vim'
   use 'Lokaltog/vim-monotone'
   use 'yashguptaz/calvera-dark.nvim'
+  use 'rebelot/kanagawa.nvim'
+  use({
+    'glepnir/zephyr-nvim',
+    requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
+  })
+
   use {
     'hrsh7th/vim-vsnip',
 
@@ -220,8 +226,6 @@ require('packer').startup(function()
     requires = 'nvim-lua/plenary.nvim',
 
     config = function()
-      vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>DiffviewOpen<CR>', { noremap=true, silent=true })
-
       require("diffview").setup({
         view = {
           merge_tool = {
@@ -231,6 +235,8 @@ require('packer').startup(function()
       })
     end
   }
+
+  use 'tapayne88/vim-mochajs'
 
   use {
     'neovim/nvim-lspconfig',
@@ -273,14 +279,11 @@ require('packer').startup(function()
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.format { async = true }<CR>', opts)
       end
 
       local servers = {
@@ -288,7 +291,24 @@ require('packer').startup(function()
         'html',
         'jsonls',
         'julials',
-        'rust_analyzer',
+        rust_analyzer = {
+          ["rust-analyzer"] = {
+            imports = {
+              granularity = {
+                group = "module",
+              },
+              prefix = "self",
+            },
+            cargo = {
+              buildScripts = {
+                enable = true,
+              },
+            },
+            procMacro = {
+              enable = true
+            },
+          }
+        },
         'solargraph',
         'sqls',
         'tsserver',
@@ -298,18 +318,22 @@ require('packer').startup(function()
       local capabilities = vim.tbl_extend('keep', {}, lsp_status.capabilities)
       require('cmp_nvim_lsp').update_capabilities(capabilities)
 
-      for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup({
+      for server, server_settings in pairs(servers) do
+        if type(server) == 'number' then
+          server = server_settings
+          server_settings = nil
+        end
+
+        lspconfig[server].setup({
           on_attach = on_attach,
           capabilities = capabilities,
           flags = {
             debounce_text_changes = 140,
           },
-          root_dir = lspconfig.util.find_git_ancestor
+          root_dir = lspconfig.util.find_git_ancestor,
+          setttins = server_settings
         })
       end
-
-      -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
     end
   }
 
@@ -350,8 +374,37 @@ require('packer').startup(function()
   }
 
   use {
+    'nvim-treesitter/playground',
+    after = 'nvim-treesitter',
+
+    config = function()
+      require "nvim-treesitter.configs".setup {
+        playground = {
+          enable = true,
+          disable = {},
+          updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+          persist_queries = false, -- Whether the query persists across vim sessions
+          keybindings = {
+            toggle_query_editor = 'o',
+            toggle_hl_groups = 'i',
+            toggle_injected_languages = 't',
+            toggle_anonymous_nodes = 'a',
+            toggle_language_display = 'I',
+            focus_language = 'f',
+            unfocus_language = 'F',
+            update = 'R',
+            goto_node = '<cr>',
+            show_help = '?',
+          },
+        }
+      }
+    end
+  }
+
+  use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
+
     config = function()
       local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "phpdoc" end, require('nvim-treesitter.parsers').available_parsers())
 
@@ -363,12 +416,24 @@ require('packer').startup(function()
           enable = true              -- false will disable the whole extension
         },
         indent = {
-          enable = false
+          enable = true
         },
         matchup = {
           enable = true
-        }
+        },
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = ')',
+            node_incremental = ')',
+            node_decremental = '(',
+          },
+        },
       }
+
+      vim.cmd([[
+        nnoremap ( <Nop>
+      ]])
     end
   }
 
@@ -480,6 +545,19 @@ require('packer').startup(function()
             prompt_position = 'bottom'
           },
         },
+
+        pickers = {
+          command_history = {
+            mappings = {
+              n = {
+                ['<CR>'] = 'edit_command_line',
+              },
+              i = {
+                ['<CR>'] = 'edit_command_line',
+              },
+            },
+          },
+        },
       }
 
       require("telescope").load_extension("file_browser")
@@ -487,6 +565,7 @@ require('packer').startup(function()
 
       vim.cmd([[
         nnoremap - :Telescope file_browser path=%:p:h select_buffer=true<CR>
+        cnoremap <M-r> <Cmd>lua require('telescope.builtin').command_history{default_text = vim.fn.getcmdline()}<cr>
       ]])
     end
   }
@@ -590,44 +669,42 @@ require('packer').startup(function()
       })
 
       -- Use buffer source for `/`.
-      cmp.setup.cmdline('/', {
-        mapping = cmp.mapping.preset.cmdline(),
+      -- cmp.setup.cmdline('/', {
+      --   mapping = cmp.mapping.preset.cmdline(),
 
-        completion = {
-          autocomplete = false,
-        },
+      --   completion = {
+      --     autocomplete = false,
+      --   },
 
-        sources = {
-          { name = 'buffer' }
-        },
-      })
+      --   sources = {
+      --     { name = 'buffer' }
+      --   },
+      -- })
 
       -- inoremap <C-x><C-o> <Cmd>lua require('cmp').complete()<CR>
       -- Use cmdline & path source for ':'.
-      cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
+      -- cmp.setup.cmdline(':', {
+      --   mapping = cmp.mapping.preset.cmdline(),
 
-        completion = {
-          autocomplete = false,
-        },
+      --   completion = {
+      --     autocomplete = false,
+      --   },
 
-        sorting = {
-          comparators = {
-            cmp.config.compare.order,
-          }
-        },
+      --   sorting = {
+      --     comparators = {
+      --       cmp.config.compare.order,
+      --     }
+      --   },
 
-        sources = cmp.config.sources({
-          { name = 'cmdline_history' },
-        }),
-      })
+      --   sources = cmp.config.sources({
+      --     { name = 'cmdline_history' },
+      --   }),
+      -- })
     end
   }
 
   use {
     'kevinhwang91/nvim-hlslens',
-
-    after = 'nvim-scrollbar',
 
     config = function()
       local kopts = {noremap = true, silent = true}
@@ -643,11 +720,21 @@ require('packer').startup(function()
       vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
       vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 
-      vim.api.nvim_set_keymap('n', '<Leader>l', ':noh<CR>', kopts)
+      -- print('setting up hlslens')
+      -- require("hlslens").setup({
+      --   nearest_only = true,
+        -- build_position_cb = function(plist, _, _, _)
+        --   print('build_position_cb: ', vim.inspect(plist.start_pos))
+        --   require("scrollbar.handlers.search").handler.show(plist.start_pos)
+        -- end,
+      -- })
 
-      require('hlslens').setup({
-          nearest_only = true,
-      })
+      -- vim.cmd([[
+      --     augroup scrollbar_search_hide
+      --         autocmd!
+      --         autocmd CmdlineLeave : lua require('scrollbar.handlers.search').handler.hide()
+      --     augroup END
+      -- ]])
     end
   }
 
@@ -656,11 +743,54 @@ require('packer').startup(function()
 
     config = function()
       local wilder = require('wilder')
-      wilder.setup({modes = {':', '/', '?'}})
+      wilder.setup({
+        modes = {':', '/', '?'},
+        -- next_key = '<C-p>',
+        -- previous_key = '<C-n>',
+      })
+
+      local hist_cmd = { wilder.history() }
+      vim.list_extend(hist_cmd, wilder.cmdline_pipeline())
+      -- print('hist_cmd')
+      -- print(vim.inspect(hist_cmd))
+
+      wilder.set_option('pipeline', {
+        wilder.branch(
+          {
+            wilder.check(function(_, x) return vim.fn.empty(x) end),
+            wilder.history(15),
+          },
+          wilder.cmdline_pipeline(),
+          {
+            wilder.history(50),
+            function(ctx, xs) return vim.fn.filter(xs, function(i, x) return vim.fn.match(x, ctx.input) end) end
+          }
+        )
+      })
+
+      -- wilder.set_option('pipeline', wilder.map(
+      --   function(ctx, x)
+      --     print('first: ' .. vim.inspect(x))
+      --     return { 'foo', 'bar' }
+      --   end,
+      --   function(ctx, x)
+      --     print('second: ' .. vim.inspect(x))
+      --     return { 'blah', 'blog' }
+      --   end
+      -- ))
+
+--       wilder.set_option('pipeline', {
+--         wilder.branch(
+--           hist_cmd,
+--           wilder.search_pipeline()
+--         )
+--       })
 
       wilder.set_option('renderer', wilder.popupmenu_renderer({
-        -- highlighter applies highlighting to the candidates
+        reverse = 1,
         highlighter = wilder.basic_highlighter(),
+        left = {' ', wilder.popupmenu_devicons()},
+        right = {' ', wilder.popupmenu_scrollbar()},
       }))
     end,
   }
@@ -668,8 +798,18 @@ require('packer').startup(function()
   use {
     'petertriho/nvim-scrollbar',
 
+    after = 'nvim-hlslens',
+
     config = function()
-      require("scrollbar").setup()
+      require("scrollbar").setup({
+        -- handlers = {
+        --   search = true
+        -- }
+      })
+
+      require('scrollbar.handlers.search').setup({
+        nearest_only = true,
+      })
     end
   }
 
@@ -686,11 +826,20 @@ require('packer').startup(function()
 
     config = function()
       local dap = require('dap')
-      dap.adapters.ruby = {
-        type = 'executable';
-        command = 'bundle';
-        args = {'exec', 'readapt', 'stdio'};
-      }
+      dap.set_log_level('TRACE')
+      dap.adapters.ruby = function(callback, config)
+        callback {
+          type = "server",
+          host = "127.0.0.1",
+          port = 38697,
+          executable = {
+            command = "bundle",
+            args = vim.list_extend({ "exec", "rdbg", "--open", "--port", 38697,
+              "-c", "--", "bundle", "exec", config.program,
+            }, config.programArgs),
+          },
+        }
+      end
 
       dap.configurations.ruby = {
         {
@@ -703,13 +852,24 @@ require('packer').startup(function()
         },
         {
           type = 'ruby';
-          request = 'launch';
+          request = 'attach';
+          localfs = true,
           name = 'Nearest Test';
-          program = 'bundle';
-          programArgs = {'exec', 'rails', 'test', '${file}:${lineNumber}'};
+          program = 'rails';
+          programArgs = {'test', '${file}'};
           useBundler = true;
         },
       }
+    end
+  }
+
+  use {
+    'suketa/nvim-dap-ruby',
+
+    after = 'nvim-dap',
+
+    config = function()
+      -- require('dap-ruby').setup()
     end
   }
 
