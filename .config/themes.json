@@ -118,5 +118,9 @@
   "material-deep-ocean": {
     "kitty": "MaterialDark",
     "nvim": "material-deep-ocean"
+  },
+  "kanagawa": {
+    "kitty": "kanagawa",
+    "nvim": "kanagawa"
   }
 }
