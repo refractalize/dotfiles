@@ -1,8 +1,8 @@
-function! Google(sel, searchTermArg)
+function! Google(selection, searchTermArg)
   let searchTerm = []
 
-  if a:sel != ''
-    call add(searchTerm, a:sel)
+  if a:selection isnot 0
+    call add(searchTerm, a:selection)
   endif
 
   if a:searchTermArg != ''
@@ -13,4 +13,4 @@ function! Google(sel, searchTermArg)
   call system("open http://www.google.fr/search\\?q=" . escapedSearchTerm)
 endfunction
 
-command! -nargs=* -range Google call Google(GetVisualSelection(<range>), <q-args>)
+command! -nargs=* -range Google call Google(GetVisualText(<range>), <q-args>)

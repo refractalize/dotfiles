@@ -62,7 +62,7 @@ function! Mru(onlyLocal, multi, query)
     \ ]
   \ }
 
-  if a:query != ''
+  if a:query isnot 0
     call add(options['options'], '--query')
     call add(options['options'], a:query)
   endif
@@ -111,8 +111,8 @@ nnoremap <silent> <Leader><Leader> :Mru<cr>
 vnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
 vnoremap <silent> <Leader>f :Mru!<cr>
-command! -bang -range Mru :call Mru(!<bang>0, 0, GetVisualSelection(<range>))
-command! -bang -range MMru :call Mru(!<bang>0, 1, GetVisualSelection(<range>))
+command! -bang -range Mru :call Mru(!<bang>0, 0, GetVisualText(<range>))
+command! -bang -range MMru :call Mru(!<bang>0, 1, GetVisualText(<range>))
 
 command! -bar -bang Mapsv call fzf#vim#maps("x", <bang>0)
 command! -bar -bang Mapsi call fzf#vim#maps("i", <bang>0)
@@ -130,19 +130,7 @@ function! SearchRegex(str)
     execute "Rg " . a:str
 endfunction
 
-function! SearchOperator(type)
-    if a:type ==# 'v'
-        normal! `<v`>y
-    elseif a:type ==# 'char'
-        normal! `[v`]y
-    else
-        return
-    endif
-
-    call SearchString(@@)
-endfunction
-
-vnoremap <leader>* :<c-u>call SearchOperator(visualmode())<cr>
+vnoremap <leader>* <Cmd>call SearchString(GetVisualText(0))<CR>
 
 nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
 
