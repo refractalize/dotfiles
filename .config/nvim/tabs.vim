@@ -8,8 +8,8 @@ nnoremap <M-7> 7gt
 nnoremap <M-8> 8gt
 nnoremap <M-9> 9gt
 nnoremap <M-0> :tablast<cr>
-nnoremap <M-{> :tabprevious<cr>
-nnoremap <M-}> :tabnext<cr>
+nnoremap <M-[> :tabprevious<cr>
+nnoremap <M-]> :tabnext<cr>
 nnoremap <M-W> :tabclose<cr>
 
 au TabLeave * let g:lasttab = tabpagenr()
