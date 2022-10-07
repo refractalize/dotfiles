@@ -120,6 +120,8 @@ command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! -bar -bang Mapsc call fzf#vim#maps("c", <bang>0)
 command! -bar -bang Mapst call fzf#vim#maps("t", <bang>0)
 
+nnoremap <silent> <Leader>w :Windows<cr>
+
 function! SearchString(str)
     call histadd("cmd", "Rgs " . a:str)
     execute "Rgs " . a:str
