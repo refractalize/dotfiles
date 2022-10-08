@@ -1,49 +1,16 @@
-use std::path::PathBuf;
 use std::io::{
     prelude::*,
     Result
 };
 use std::{
     self,
-    fs::File,
-    io::BufWriter
-};
+    io::BufWriter };
 use regex::Regex;
-
-pub struct TempOutFiles {
-    directory: PathBuf,
-    last_file_index: usize,
-    extension: String,
-    last_buffer: Option<BufWriter<File>>
-}
 
 pub trait OutFiles<T>
     where T: Write
 {
     fn next(&mut self) -> &mut BufWriter<T>;
-}
-
-impl TempOutFiles {
-    pub fn new(directory: PathBuf, extension: String) -> TempOutFiles {
-        TempOutFiles {
-            directory,
-            last_file_index: 0,
-            extension,
-            last_buffer: None
-        }
-    }
-}
-
-impl OutFiles<File> for TempOutFiles {
-    fn next(&mut self) -> &mut BufWriter<File> {
-        self.last_file_index += 1;
-        let path = self.directory
-            .join(format!("{:03}", self.last_file_index))
-            .with_extension(&self.extension);
-
-        self.last_buffer = Some(BufWriter::new(File::create(path).unwrap()));
-        return self.last_buffer.as_mut().unwrap()
-    }
 }
 
 pub fn split_lines<I, O, OType>(lines: I, out_files: &mut O) -> Result<()>

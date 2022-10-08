@@ -4,6 +4,7 @@ use std::{self, fs::File, io::BufReader};
 use structopt::StructOpt;
 
 mod split_lines;
+mod temp_out_files;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "example", about = "An example of StructOpt usage.")]
@@ -20,7 +21,7 @@ fn main() {
     let file = File::open(opt.filename).unwrap();
     let reader = BufReader::new(file);
 
-    let mut out_files = split_lines::TempOutFiles::new(opt.output_directory, "log".to_string());
+    let mut out_files = temp_out_files::TempOutFiles::new(opt.output_directory, "log".to_string());
     let lines: std::io::Lines<BufReader<File>> = reader.lines();
 
     split_lines::split_lines(lines.map(|l| l.unwrap()), &mut out_files).unwrap();
