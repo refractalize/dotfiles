@@ -1,0 +1,15 @@
+[package]
+name = "fzf-mru"
+version = "0.1.0"
+authors = ["Tim Macfarlane <timmacfarlane@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-std = "1.9.0"
+futures = "0.3.15"
+chrono-humanize = "0.2.1"
+colored = "2.0.0"
+structopt = "0.3.21"
+chrono = "0.4.19"
