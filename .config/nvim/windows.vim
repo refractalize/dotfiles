@@ -16,14 +16,6 @@ nnoremap <M-d> :Gdiffsplit!<cr>
 nnoremap <M-D> :Gdiffsplit! origin/master...<cr>
 nnoremap <M-g> :G<cr>
 
-function! OpenBufferInNewTab()
-  let buf = bufnr()
-  exe 'tabnew'
-  exe 'b ' . buf
-endfunction
-
-nnoremap <silent> <M-t> :call OpenBufferInNewTab()<CR>
-
 nnoremap <silent> <M-J> :exe "resize -2"<CR>
 nnoremap <silent> <M-K> :exe "resize +2"<CR>
 nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
