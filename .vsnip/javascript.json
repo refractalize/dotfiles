@@ -1,4 +1,36 @@
 {
+  "constructor": {
+    "prefix": [
+      "constructor"
+    ],
+    "body": [
+      "constructor($1) {",
+      "  $2",
+      "}"
+    ]
+  },
+  "function": {
+    "prefix": [
+      "fn"
+    ],
+    "body": [
+      "function $1($2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "arrow function": {
+    "prefix": [
+      "=>"
+    ],
+    "body": [
+      "($1) => {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
   "wait": {
     "prefix": [
       "wait"
@@ -56,8 +88,63 @@
       "describe"
     ],
     "body": [
-      "describe('$1', () => {",
-      " $0",
+      "describe('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "context": {
+    "prefix": [
+      "context"
+    ],
+    "body": [
+      "context('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "beforeEach": {
+    "prefix": [
+      "beforeEach"
+    ],
+    "body": [
+      "beforeEach(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "afterEach": {
+    "prefix": [
+      "afterEach"
+    ],
+    "body": [
+      "afterEach(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "after": {
+    "prefix": [
+      "after"
+    ],
+    "body": [
+      "after(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "before": {
+    "prefix": [
+      "before"
+    ],
+    "body": [
+      "before(function () {",
+      "\t$0",
       "})"
     ],
     "description": "Adds a test"
@@ -67,8 +154,8 @@
       "it"
     ],
     "body": [
-      "it('$1', () => {",
-      " $0",
+      "it('$1', function () {",
+      "\t$0",
       "})"
     ],
     "description": "Adds a test"
