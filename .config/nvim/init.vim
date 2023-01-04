@@ -99,6 +99,7 @@ cnoremap <M-f>	<S-Right>
 cnoremap <M-BS> <C-W>
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
+nnoremap g* :call setreg('/', '\<' . expand('<cword>') . '\>')<CR>
 
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
@@ -132,6 +133,10 @@ source $HOME/.config/nvim/titlestring.vim
 source $HOME/.config/nvim/quickfix.vim
 source $HOME/.config/nvim/watch.vim
 source $HOME/.config/nvim/difflines.vim
+source $HOME/.config/nvim/javascript.vim
+
+let g:vim_json_conceal=0
+
 lua << EOF
   require('auto-save').setup({
     ignore_files = { '.config/nvim/lua/plugins.lua' },
@@ -151,4 +156,12 @@ command! ProfileStop :profile stop
 autocmd BufWritePost ~/.config/nvim/lua/plugins.lua source <afile> | PackerCompile
 
 " this doesn't seem to work with vim-test
-autocmd FileType sql nnoremap <M-f> :%!sql-formatter<CR>
+autocmd FileType sql nnoremap <buffer> <M-f> :%!sql-formatter<CR>
+
+lua <<EOF
+
+function unload(name)
+  package.loaded[name] = nil
+end
+
+EOF

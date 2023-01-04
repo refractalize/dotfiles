@@ -150,7 +150,12 @@ function! RgReloadWithSort(query, fullscreen)
   let rgCommand = rgCommandBase . " -- " . shellescape(a:query)
   let rgCommandSort = rgCommandBase . " --sortr path -- " . shellescape(a:query)
 
-  call fzf#vim#grep(rgCommand, 1, fzf#vim#with_preview({'options': ['--tiebreak', 'index', '--bind', 'ctrl-s:reload:' . rgCommandSort]}), a:fullscreen)
+  call fzf#vim#grep(
+    \ rgCommand,
+    \ 1,
+    \ fzf#vim#with_preview({'options': ['--tiebreak', 'index', '--bind', 'ctrl-s:reload:' . rgCommandSort]}),
+    \ a:fullscreen
+  \ )
 endfunction
 
 command! -bang -nargs=* Rg call RgReloadWithSort(<q-args>, <bang>0)
@@ -166,8 +171,8 @@ endfunction
 function! ShowFileDiff(file, branch)
   let branch = RemoveDots(a:branch)
   exe 'tabnew'
-  exe 'Gedit ' . branch . ':' . a:file
-  exe 'Gdiffsplit %'
+  exe 'e ' . a:file
+  exe 'Gdiffsplit! ' . branch
 endfunction
 
 function! ShowFileDiffs(files, branch)

@@ -22,8 +22,19 @@ function! ProductionFilename(filename)
   return FindFirst(g:alternative_test_file_suffixes, { ending -> RemoveTestFilenamePart(a:filename, ending) })
 endfunction
 
+function! BaseName(filename)
+  let basename = fnamemodify(a:filename, ":t:r")
+  let productionBaseName = ProductionFilename(basename)
+
+  if productionBaseName ==# 'index'
+    return fnamemodify(a:filename, ":h:t") . '/' . basename
+  else
+    return basename
+  endif
+endfunction
+
 function! FindAlternative()
-  let basename = expand("%:t:r")
+  let basename = BaseName(expand("%"))
   let productionBaseName = ProductionFilename(basename)
 
   if productionBaseName isnot 0
@@ -59,5 +70,73 @@ autocmd FileType javascript inoremap <expr> <c-i> fzf#vim#complete(fzf#wrap({
 command! ToggleMochaOnly :lua require('toggle_mocha_only').toggle_mocha_only()<cr>
 autocmd FileType javascript nnoremap <Leader>o <Cmd>ToggleMochaOnly<CR>
 
-command! RunMochaTest :lua require('mocha_nearest_test').mocha_nearest_test()<cr>
+command! RunMochaTest :lua unload('mocha_nearest_test'); unload('ts_utils'); require('mocha_nearest_test').mocha_nearest_test()<cr>
 autocmd FileType javascript nnoremap <Leader>tl <Cmd>RunMochaTest<CR>
+
+function! FindNodeDependencyPath(directory, dependency)
+  if a:directory == '/'
+    return
+  endif
+
+  let dependencyDirectory = a:directory . "/node_modules/" . a:dependency
+
+  if isdirectory(dependencyDirectory)
+    return dependencyDirectory
+  else
+    return FindNodeDependencyPath(fnamemodify(a:directory, ':h'), a:dependency)
+  endif
+endfunction
+
+function! ModuleName(path)
+  let components = split(a:path, '/')
+  if a:path =~ '^@'
+    return join(components[0:1], '/')
+  else
+    return components[0]
+  endif
+endfunction
+
+function! ModuleMain(dirname)
+  let packageFilename = a:dirname . '/package.json'
+
+  if filereadable(packageFilename)
+    let package = json_decode(readfile(packageFilename))
+
+    if has_key(package, 'main')
+      return package['main']
+    endif
+  endif
+endfunction
+
+function! ResolveMain(dirname, moduleRelativeFilename)
+  if len(a:moduleRelativeFilename) > 0
+    return resolve(a:dirname . a:moduleRelativeFilename)
+  else
+    let main = ModuleMain(a:dirname)
+
+    if main isnot 0
+      return resolve(a:dirname . '/' . main)
+    else
+      return resolve(a:dirname)
+    endif
+  endif
+endfunction
+
+function! ResolveJavascriptImport(fname)
+  if a:fname !~ '^\.'
+    let fromFile = expand('%:p')
+    let dirname = fnamemodify(fromFile, ':h')
+    let moduleName = ModuleName(a:fname)
+    let moduleRelativeFilename = a:fname[len(moduleName):-1]
+    let found = FindNodeDependencyPath(dirname, moduleName)
+
+    if found isnot 0
+      return ResolveMain(found, moduleRelativeFilename)
+    endif
+  endif
+endfunction
+
+
+autocmd FileType javascript setlocal includeexpr=ResolveJavascriptImport(v:fname)
+autocmd FileType javascript setlocal isfname+=@-@
+autocmd FileType javascript command! InstallLspTools FloatermNew npm i -g @fsouza/prettierd typescript-language-server typescript vscode-langservers-extracted

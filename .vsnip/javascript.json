@@ -69,7 +69,8 @@
   },
   "console.log('filename:1')": {
     "prefix": [
-      "tr"
+      "tr",
+      "here"
     ],
     "body": [
       "console.log('trace: $RELATIVE_FILEPATH:$TM_LINE_NUMBER')"
@@ -80,7 +81,7 @@
       "this="
     ],
     "body": [
-      "this.$1 = $1"
+      "this.#$1 = $1"
     ]
   },
   "describe": {
@@ -168,5 +169,21 @@
       "${TM_FILENAME_BASE}"
     ],
     "description": "Adds a test"
+  },
+  "json": {
+    "prefix": [
+      "json"
+    ],
+    "body": [
+      "JSON.stringify(${1:$TM_SELECTED_TEXT}, null, 2)"
+    ]
+  },
+  "import assert": {
+    "prefix": [
+      "ia"
+    ],
+    "body": [
+      "import assert from 'assert'"
+    ]
   }
 }

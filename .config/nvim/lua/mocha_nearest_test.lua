@@ -4,7 +4,6 @@ function mocha_nearest_test()
   local buf = vim.api.nvim_get_current_buf()
 
   local regex = current_test_regex(buf)
-  -- print('strings: ' .. regex)
   vim.api.nvim_command('TestFile ' .. '--grep ' .. vim.fn.shellescape(regex))
 end
 
@@ -18,7 +17,7 @@ function string_child_to_regex(string_child, buf)
 end
 
 function string_fragment_to_regex(string_fragment, buf)
-  return vim.fn.escape(ts_utils.node_text(string_fragment, buf), '?+*\\^$.|{}[]()')
+  return vim.fn.escape(ts_utils.node_text(string_fragment, buf), '"?+*\\^$.|{}[]()')
 end
 
 function description_to_regex(description, buf)
@@ -35,15 +34,31 @@ function description_to_regex(description, buf)
   )
 end
 
-function descriptions_to_regex(descriptions, buf)
+function mocha_calls_to_regex(mocha_calls, buf)
   local strings = vim.tbl_map(
-    function (description)
-      return description_to_regex(description, buf)
+    function (mocha_call)
+      return description_to_regex(mocha_call.description, buf)
     end,
-    descriptions
+    mocha_calls
   )
 
-  return '^' .. vim.fn.join(strings, ' ') .. '$'
+  local end_pattern
+
+  if is_it_mocha_call(mocha_calls, buf) then
+    end_pattern = '$'
+  else
+    end_pattern = ''
+  end
+
+  return '^' .. vim.fn.join(strings, ' ') .. end_pattern
+end
+
+function is_it_mocha_call(mocha_calls, buf)
+  local last_call = mocha_calls[#mocha_calls]
+
+  local call_identifier = ts_utils.node_text(last_call.call, buf)
+
+  return call_identifier == 'it'
 end
 
 function escape_sequence_to_regex(escape_sequence, buf)
@@ -85,14 +100,17 @@ function current_test_regex(buf)
     mocha_matches
   )
 
-  local enclosing_descriptions = vim.tbl_map(
+  local enclosing_mocha_calls = vim.tbl_map(
     function(match)
-      return match.description
+      return {
+        description = match.description,
+        call = match.it_object or match.it_function
+      }
     end,
     enclosing_mocha_matches
   )
 
-  return descriptions_to_regex(enclosing_descriptions, buf)
+  return mocha_calls_to_regex(enclosing_mocha_calls, buf)
 end
 
 return {
