@@ -25,6 +25,7 @@ require('packer').startup(function()
   use 'Lokaltog/vim-monotone'
   use 'yashguptaz/calvera-dark.nvim'
   use 'rebelot/kanagawa.nvim'
+  use 'sam4llis/nvim-tundra'
   use({
     'glepnir/zephyr-nvim',
     requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
@@ -49,10 +50,8 @@ require('packer').startup(function()
         imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
         smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
-        nmap        <C-j>   <Plug>(vsnip-select-text)
-        xmap        <C-j>   <Plug>(vsnip-select-text)
-        nmap        <C-J>   <Plug>(vsnip-cut-text)
-        xmap        <C-J>   <Plug>(vsnip-cut-text)
+        nmap        <C-j>   <Plug>(vsnip-cut-text)
+        xmap        <C-j>   <Plug>(vsnip-cut-text)
 
         let g:vsnip_filetypes = {}
         let g:vsnip_filetypes.typescript = ['javascript']
@@ -76,6 +75,7 @@ require('packer').startup(function()
   use 'mhartington/oceanic-next'
   use 'kyazdani42/nvim-web-devicons' -- for file icons
   use 'tpope/vim-fugitive' -- git commands
+  use 'shumphrey/fugitive-gitlab.vim'
   use 'tpope/vim-rhubarb' -- github helpers for vim-fugitive
   use 'junegunn/gv.vim'
   use 'groenewege/vim-less'
@@ -239,6 +239,39 @@ require('packer').startup(function()
   use 'tapayne88/vim-mochajs'
 
   use {
+    'weilbith/nvim-code-action-menu',
+    cmd = 'CodeActionMenu',
+  }
+
+  use {
+    'kosayoda/nvim-lightbulb',
+    requires = 'antoinemadec/FixCursorHold.nvim',
+
+    config = function()
+      require('nvim-lightbulb').setup({autocmd = {enabled = true}})
+    end
+  }
+
+  use {
+    'mhartington/formatter.nvim',
+
+    config = function()
+      require('formatter').setup {
+        logging = true,
+        log_level = vim.log.levels.WARN,
+
+        filetype = {
+          javascript = {
+            require('formatter.filetypes.javascript').prettierd
+          }
+        }
+      }
+
+      vim.api.nvim_set_keymap('n', '<M-f>', '<cmd>Format<CR>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
     'neovim/nvim-lspconfig',
 
     after = {
@@ -258,7 +291,10 @@ require('packer').startup(function()
         sign define DiagnosticSignHint text=🤓
       ]])
 
-      local opts = { noremap=true, silent=true }
+      local opts = {
+        noremap=true,
+        silent=true
+      }
       vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
       vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
       vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
@@ -266,14 +302,11 @@ require('packer').startup(function()
 
       lsp_status.register_progress()
 
-      local on_attach = function(client, bufnr)
-        lsp_status.on_attach(client)
-
-        -- Enable completion triggered by <c-x><c-o>
-        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-        -- Mappings.
-        -- See `:help vim.lsp.*` for documentation on any of the below functions
+      local setup_lsp_mappings = function(
+        client,
+        bufnr,
+        server_mappings
+      )
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -283,7 +316,20 @@ require('packer').startup(function()
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.format { async = true }<CR>', opts)
+
+        if server_mappings.format then
+          if client.server_capabilities.documentFormattingProvider then
+            vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-f>', '<cmd>lua vim.lsp.buf.format { async = true }<CR>', opts)
+          end
+
+          if client.server_capabilities.documentRangeFormattingProvider then
+            vim.api.nvim_buf_set_keymap(bufnr, 'x', '<M-f>', '<cmd>lua vim.lsp.buf.range_formatting({})<CR>', opts)
+          end
+        end
+
+        if server_mappings.setup then
+          server_mappings.setup(client, bufnr)
+        end
       end
 
       local servers = {
@@ -311,12 +357,35 @@ require('packer').startup(function()
         },
         'solargraph',
         'sqls',
-        'tsserver',
+        tsserver = {
+          mappings = {
+            format = false
+          }
+        },
+        eslint = {
+          format = true,
+          mappings = {
+            format = false,
+            setup = function(client, bufnr)
+              vim.api.nvim_buf_set_keymap(bufnr, 'n', '<M-F>', '<cmd>EslintFixAll<CR>', opts)
+            end,
+          }
+        },
         'yamlls',
       }
 
       local capabilities = vim.tbl_extend('keep', {}, lsp_status.capabilities)
-      require('cmp_nvim_lsp').update_capabilities(capabilities)
+      require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+      function removekey(table, key)
+        local element = table[key]
+        table[key] = nil
+        return element
+      end
+
+      local server_mappings_default = {
+        format = true
+      }
 
       for server, server_settings in pairs(servers) do
         if type(server) == 'number' then
@@ -324,14 +393,22 @@ require('packer').startup(function()
           server_settings = nil
         end
 
+        local server_mappings = vim.tbl_extend(
+          'force',
+          server_mappings_default,
+          server_settings and removekey(server_settings, 'mappings') or {}
+        )
+
         lspconfig[server].setup({
-          on_attach = on_attach,
+          on_attach = function(client, bufnr)
+            lsp_status.on_attach(client)
+            setup_lsp_mappings(client, bufnr, server_mappings)
+          end,
           capabilities = capabilities,
           flags = {
             debounce_text_changes = 140,
           },
-          root_dir = lspconfig.util.find_git_ancestor,
-          setttins = server_settings
+          settings = server_settings
         })
       end
     end
@@ -506,6 +583,8 @@ require('packer').startup(function()
     end
   }
 
+  use 'tpope/vim-vinegar'
+
   use {
     'nvim-telescope/telescope.nvim',
     requires = {
@@ -519,8 +598,6 @@ require('packer').startup(function()
       require("telescope").setup {
         extensions = {
           file_browser = {
-            hijack_netrw = true,
-
             mappings = {
               ["i"] = {
                 ["<C-w>"] = function() vim.cmd('normal vbd') end,
@@ -564,7 +641,6 @@ require('packer').startup(function()
       require("telescope").load_extension("fzf")
 
       vim.cmd([[
-        nnoremap - :Telescope file_browser path=%:p:h select_buffer=true<CR>
         cnoremap <M-r> <Cmd>lua require('telescope.builtin').command_history{default_text = vim.fn.getcmdline()}<cr>
       ]])
     end
@@ -579,10 +655,12 @@ require('packer').startup(function()
         pattern = {"*.tty", "*.log"},
 
         callback = function()
-          local baleia = require('baleia')
+          if vim.api.nvim_buf_line_count(0) <= 1000 then
+            local baleia = require('baleia')
 
-          baleia.setup().once(vim.fn.bufnr('%'))
-          vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
+            baleia.setup().once(vim.fn.bufnr('%'))
+            vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
+          end
         end
       })
     end
@@ -650,10 +728,13 @@ require('packer').startup(function()
             -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
           end,
         },
-        mapping = cmp.mapping.preset.insert(),
+        mapping = cmp.mapping.preset.insert({
+          ['<CR>'] = cmp.mapping.confirm(),
+        }),
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
           { name = 'vsnip' }, -- For vsnip users.
+          { name = 'path' },
           -- { name = 'luasnip' }, -- For luasnip users.
           -- { name = 'ultisnips' }, -- For ultisnips users.
           -- { name = 'snippy' }, -- For snippy users.
@@ -740,6 +821,7 @@ require('packer').startup(function()
 
   use {
     'gelguy/wilder.nvim',
+    disable = true,
 
     config = function()
       local wilder = require('wilder')
@@ -810,14 +892,6 @@ require('packer').startup(function()
       require('scrollbar.handlers.search').setup({
         nearest_only = true,
       })
-    end
-  }
-
-  use {
-    'rcarriga/nvim-notify',
-
-    config = function()
-      vim.notify = require("notify")
     end
   }
 
