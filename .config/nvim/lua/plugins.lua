@@ -483,7 +483,7 @@ require('packer').startup(function()
     run = ':TSUpdate',
 
     config = function()
-      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "phpdoc" end, require('nvim-treesitter.parsers').available_parsers())
+      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "t32" end, require('nvim-treesitter.parsers').available_parsers())
 
       require"nvim-treesitter.parsers".filetype_to_parsername.zsh = 'bash'
 
@@ -591,7 +591,7 @@ require('packer').startup(function()
       { 'nvim-lua/popup.nvim' },
       { 'nvim-lua/plenary.nvim' },
       { 'nvim-telescope/telescope-file-browser.nvim' },
-      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     },
 
     config = function()
@@ -789,6 +789,7 @@ require('packer').startup(function()
 
     config = function()
       local kopts = {noremap = true, silent = true}
+      require("hlslens").setup()
 
       vim.api.nvim_set_keymap('n', 'n',
           [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
