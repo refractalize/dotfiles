@@ -570,14 +570,7 @@ require('packer').startup(function()
             swap_previous = {
               ["_"] = "@parameter.inner",
             },
-          },
-          lsp_interop = {
-            enable = true,
-            peek_definition_code = {
-              ["dm"] = "@function.outer",
-              ["dM"] = "@class.outer",
-            },
-          },
+          }
         },
       }
     end
@@ -655,7 +648,7 @@ require('packer').startup(function()
         pattern = {"*.tty", "*.log"},
 
         callback = function()
-          if vim.api.nvim_buf_line_count(0) <= 1000 then
+          if vim.api.nvim_buf_line_count(0) <= 5000 then
             local baleia = require('baleia')
 
             baleia.setup().once(vim.fn.bufnr('%'))
