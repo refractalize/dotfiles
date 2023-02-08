@@ -10,9 +10,6 @@ $env_var\
 $character
 """
 
-[aws]
-disabled = true
-
 [gcloud]
 disabled = true
 
