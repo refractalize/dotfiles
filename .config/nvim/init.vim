@@ -55,6 +55,7 @@ set termguicolors
 set pumblend=20
 set nofoldenable
 set switchbuf=useopen
+set listchars=trail:·,nbsp:+,tab:\|·>
 
 nnoremap <Leader>e :e %:h
 

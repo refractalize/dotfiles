@@ -8,7 +8,8 @@ function! OpenOneOrMoreSelectedFiles(files)
   if len(a:files) == 1
     exe 'e' a:files[0]
   else
-    exe 'args' join(map(a:files, 'fnameescape(v:val)'), ' ')
+    let files = map(a:files, { _index, file -> {'filename': file} })
+    call setqflist(files, 'r')
   endif
 endfunction
 
@@ -79,9 +80,9 @@ inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
   \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
 imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
 
-inoremap <expr> <c-x><c-f> fzf#vim#complete("rg --files <Bar> xargs realpath --relative-to " . expand("%:h"))
+inoremap <expr> <c-x><c-f> fzf#vim#complete("rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"))
 inoremap <expr> <c-x><c-r> fzf#vim#complete(fzf#wrap({
-  \ 'source': "rg --files <Bar> xargs realpath --relative-to " . expand("%:h"),
+  \ 'source': "rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"),
   \ 'reducer': { lines -> fnamemodify(lines[0], ':e') ==# expand("%:e") ? fnamemodify(lines[0], ':r') : lines[0] }}))
 
 " lookup recent command history
@@ -104,7 +105,7 @@ endfunction
 
 inoremap <expr> <c-x><c-j> fzf#vim#complete(fzf#wrap({
   \ 'reducer': function('NodeRelativeFilename'),
-  \ 'source': "rg --files <Bar> xargs realpath --relative-to " . expand("%:h"),
+  \ 'source': "rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"),
   \ }))
 
 nnoremap <silent> <Leader><Leader> :Mru<cr>

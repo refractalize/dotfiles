@@ -54,7 +54,7 @@ autocmd FileType javascript command! A call FindAlternative()
 function AddImport(lines)
   let path = a:lines[0]
   let basepath = fnamemodify(path, ":t:r")
-  let relativePath = substitute(system("realpath --relative-to " . expand("%:h") . " " . path), '\n\+$', '', '')
+  let relativePath = substitute(system("grealpath --relative-to " . expand("%:h") . " " . path), '\n\+$', '', '')
 
   if relativePath[0] !=# '.'
     let relativePath = './' . relativePath
