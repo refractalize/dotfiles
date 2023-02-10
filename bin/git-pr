@@ -1,0 +1,39 @@
+#!/usr/bin/env zsh
+
+set -e
+
+local ORIGIN_REMOTE=$(git remote get-url origin)
+local GIT_BRANCH=$(git branch --show-current 2> /dev/null)
+
+if [[ -z $GIT_BRANCH || -z $ORIGIN_REMOTE ]]
+then
+  return
+fi
+
+if [[ $ORIGIN_REMOTE = *gitlab* ]]
+then
+  local GITLAB_PROJECT=${ORIGIN_REMOTE%%.git}
+  GITLAB_PROJECT=${GITLAB_PROJECT##https://gitlab.com/}
+  GITLAB_PROJECT=${GITLAB_PROJECT:gs/\//%2F}
+  local GITLAB_PR_JSON=$(glab api projects/$GITLAB_PROJECT/merge_requests\?source_branch=$GIT_BRANCH | jq -c ".[] | select(.source_branch == \"$GIT_BRANCH\") | {reference, web_url, iid}")
+  local PR_NUMBER=$(echo $GITLAB_PR_JSON | jq -r .iid)
+  local PR_REFERENCE=$(echo $GITLAB_PR_JSON | jq -r .reference)
+  local PR_URL=$(echo $GITLAB_PR_JSON | jq -r .web_url)
+elif [[ $ORIGIN_REMOTE = *github* ]]
+then
+  local GITHUB_PR_JSON=$(gh pr view --json number,url)
+  local PR_NUMBER=$(echo $GITLAB_PR_JSON | jq -r .number)
+  local PR_REFERENCE="#$PR_NUMBER"
+  local PR_URL=$(echo $GITLAB_PR_JSON | jq -r .url)
+fi
+
+if [[ -n $PR_NUMBER ]]
+then
+  git config branch.$GIT_BRANCH.pr-reference $PR_REFERENCE
+  git config branch.$GIT_BRANCH.pr-number $PR_NUMBER
+  git config branch.$GIT_BRANCH.pr-url $PR_URL
+
+  echo reference: $PR_REFERENCE
+  echo number: $PR_NUMBER
+  echo url: $PR_URL
+fi

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+if git config branch.$(git branch --show-current).pr-number > /dev/null
+then
+  printf "\e]8;;$(git config branch.$(git branch --show-current).pr-url)\e\\$(git config branch.$(git branch --show-current).pr-reference)\e]8;;\e\\"
+else
+  exit 1
+fi
