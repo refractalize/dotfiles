@@ -1,5 +1,6 @@
 format = """
 $all\
+$kubernetes\
 $time\
 $line_break\
 $jobs\
@@ -12,6 +13,9 @@ $character
 
 [gcloud]
 disabled = true
+
+[kubernetes]
+disabled = false
 
 [env_var.PROMPT_ICON]
 format = "$env_value "
