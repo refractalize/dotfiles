@@ -121,6 +121,7 @@ nnoremap <Leader>e :e %:h
 source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/fzf.vim
+source $HOME/.config/nvim/git.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/theme.vim
 source $HOME/.config/nvim/google.vim
@@ -166,3 +167,5 @@ function unload(name)
 end
 
 EOF
+
+command! Jq :lua require('watch').start('jq {new:jq}', { stdin = true, filetype = 'json' })<cr>
