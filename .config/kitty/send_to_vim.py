@@ -14,7 +14,10 @@ def main():
     pass
 
 def is_nvim_process(p):
-    return re.search('n?vim', p['cmdline'][0], re.I)
+    cmdlines = p['cmdline']
+
+    if len(cmdlines) > 0:
+        return re.search('n?vim', cmdlines[0], re.I)
 
 def encode_key_mapping(key_mapping, window):
     mods, key = parse_shortcut(key_mapping)
