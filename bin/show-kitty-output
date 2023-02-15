@@ -1,37 +1,87 @@
 #!/usr/bin/env zsh
 
+# cat > ~/launch.out
+cat | tr -d '\n' | tr '\r' '\n' > ~/launch.out
+
 INPUT_LINE_NUMBER=$1
+FIRST_LINE=$2
+SCROLLED_BY=$3
 
 KITTY_PIPE_DATA_SPLIT=(${(@s/:/)KITTY_PIPE_DATA})
 WINDOW_SIZE=(${(@s/,/)KITTY_PIPE_DATA_SPLIT[3]})
 WINDOW_HEIGHT=$WINDOW_SIZE[1]
 LINE=$(( $INPUT_LINE_NUMBER + $WINDOW_HEIGHT ))
 
-awk "
-  BEGIN {
-    capture = 1;
-  }
+# LINES=$(awk '{ a++ } END { print a }' /dev/stdin)
 
-  /\033]133;C/ && !(found) {
-    capture = 1;
-    line = 0;
-    delete lines
-  }
+# echo $* $LINES | less
+# exit
 
-  /\033]133;A/ {
-    capture = 0
-  }
+# (
+#   echo $INPUT_LINE_NUMBER
+#   echo $LINE
+#   echo $(( $SCROLLED_BY + $WINDOW_HEIGHT ))
+#   echo $FIRST_LINE
+#   echo -----------------------
+#   awk "
+#     {
+#       diff = NR - $LINE
+#     }
 
-  capture {
-    lines[line++] = \$0
-  }
+#     diff < 5 && diff > -5 && diff != 0 {
+#       print \"  \" \$0
+#     }
 
-  NR == $LINE {
-    found = 1
-  }
+#     diff == 0 {
+#       print \"> \" \$0
+#     }
+#   " ~/launch.out
+# ) | less -R
+# exit
 
-  END {
-    for (i in lines)
-      print lines[i]
-  }
-" /dev/stdin | less -R
+OUTFILE=$(mktemp)
+
+LINE_NUMBER=$(
+  awk "
+    BEGIN {
+      capture = 1;
+      line = 0;
+    }
+
+    /\033]133;C/ && !(found) {
+      capture = 1;
+      line = 0;
+      delete lines;
+    }
+
+    /\033]133;A/ {
+      capture = 0
+    }
+
+    capture {
+      lines[line++] = \$0
+    }
+
+    NR == $LINE {
+      line_number = length(lines)
+      found = 1
+    }
+
+    END {
+      print \"lines: \" length(lines) > \"$OUTFILE\"
+      for (i in lines)
+        print lines[i] > \"$OUTFILE\"
+
+      if (!line_number) {
+        line_number = length(lines)
+      }
+
+      print line_number
+    }
+  " ~/launch.out
+)
+
+less -R +$LINE_NUMBER $OUTFILE
+exit
+
+rm $OUTFILE

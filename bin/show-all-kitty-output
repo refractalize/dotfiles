@@ -7,6 +7,6 @@ kittysplit /dev/stdin $DIR
 FILES=($DIR/*)
 ORDERED_FILES=(${(n)FILES})
 
-nvim +last $ORDERED_FILES
+nvim +"cd $DIR" +last $ORDERED_FILES
 
 rm -rf $DIR
