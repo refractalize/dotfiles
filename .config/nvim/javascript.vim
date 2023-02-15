@@ -73,6 +73,8 @@ autocmd FileType javascript nnoremap <Leader>o <Cmd>ToggleMochaOnly<CR>
 command! RunMochaTest :lua unload('mocha_nearest_test'); unload('ts_utils'); require('mocha_nearest_test').mocha_nearest_test()<cr>
 autocmd FileType javascript nnoremap <Leader>tl <Cmd>RunMochaTest<CR>
 
+command! ToggleImportRequre :lua unload('toggle_import_require'); unload('ts_utils'); require('toggle_import_require').toggle_import_require()<cr>
+
 function! FindNodeDependencyPath(directory, dependency)
   if a:directory == '/'
     return
