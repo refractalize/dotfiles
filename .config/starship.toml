@@ -32,7 +32,7 @@ disabled = false
 disabled = false
 
 [custom.pr]
-command = "git config branch.$(git branch --show-current).pr-number"
-when="git config branch.$(git branch --show-current).pr-number"
-symbol = " "
+command = "git pr-prompt"
+when="git pr-prompt"
+symbol = " "
 style = "bold blue"
