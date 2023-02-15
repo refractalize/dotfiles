@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-zparseopts -D -A opts -json=json -query=query -choose=choose -tab=tab -save=save
+zparseopts -D -A opts -- -all=all -json=json -query=query -choose=choose -tab=tab -save=save
 
 THEME=${1:-$(current-theme)}
 
@@ -26,10 +26,10 @@ JSON=$(echo '{}' | jq --arg theme $THEME --arg nvim $NVIM_THEME --arg kitty $KIT
 
 if [[ -z $query ]]
 then
-  if [[ -n $tab ]]
+  if [[ -n $tab || -n $all ]]
   then
-    kitty-theme --tab $KITTY_THEME
-    nvim-theme $NVIM_THEME
+    kitty-theme $tab $all $KITTY_THEME
+    nvim-theme $tab $all $NVIM_THEME
   else
     kitty-theme $KITTY_THEME
   fi

@@ -1,12 +1,24 @@
 #!/usr/bin/env zsh
 
+zparseopts -D -A opts -- -all=all -tab=tab
+
 THEME=$1
 
-NVIM_PID=($(kitty @ ls | jq ".[] | .tabs[] | select(.windows[] | select(.id == $KITTY_WINDOW_ID)) | .windows[] | .foreground_processes[] | select(.cmdline[] | . == \"nvim\") | .pid"))
+if [[ -n $tab ]]
+then
+  NVIM_PID=($(kitty @ ls | jq ".[] | .tabs[] | select(.windows[] | select(.id == $KITTY_WINDOW_ID)) | .windows[] | .foreground_processes[] | select(.cmdline[] | . == \"nvim\") | .pid"))
 
-for PID in $NVIM_PID
-do
-  NVIM_LISTEN_ADDRESS=$(lsof $(nvr --serverlist) | awk "{ if ( \$2 == \"$PID\") { print \$8 }}")
+  for PID in $NVIM_PID
+  do
+    NVIM_LISTEN_ADDRESS=$(lsof $(nvr --serverlist) | awk "{ if ( \$2 == \"$PID\") { print \$8 }}")
 
-  NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr +"Theme $THEME"
-done
+    NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr +"Theme $THEME"
+  done
+elif [[ -n $all ]]
+then
+  for NVIM_LISTEN_ADDRESS in $(nvr --serverlist)
+  do
+    NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr +"Theme $THEME"
+  done
+fi
+
