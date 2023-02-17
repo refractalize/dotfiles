@@ -136,6 +136,8 @@ function! ResolveJavascriptImport(fname)
       return ResolveMain(found, moduleRelativeFilename)
     endif
   endif
+
+  return a:fname
 endfunction
 
 
