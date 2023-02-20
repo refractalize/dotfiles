@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+
+if [[ -n $THEME ]]
+then
+  echo $THEME
+elif [[ -f .theme ]]
+then
+  cat .theme
+else
+  echo default
+fi

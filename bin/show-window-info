@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+WINDOW_ID=${1:-$KITTY_WINDOW_ID}
+# WINDOW_ID=$KITTY_WINDOW_ID
+# set | less -R
+kitty @ ls | jq -C ".[] | .tabs[] | .windows[] | select(.id == $WINDOW_ID)" | less -R

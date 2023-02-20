@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+WINDOW_ID=${1:-$KITTY_WINDOW_ID}
+WINDOW_PIDS=($(kitty @ ls | jq ".[] | .tabs[] | .windows[] | select(.id == $WINDOW_ID) | ([.pid] + [.foreground_processes[] | .pid])[]"))
+KILL_PIDS=($(ps -f -p ${(j:,:)WINDOW_PIDS} | tail -n +2 | fzf --multi | awk '{ print $2 }'))
+
+if [ $#KILL_PIDS -gt 0 ]
+then
+  echo this will kill
+  ps -f -p ${(j:,:)KILL_PIDS}
+  echo are you sure?
+  kill $KILL_PIDS
+fi
