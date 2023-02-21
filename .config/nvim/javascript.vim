@@ -53,18 +53,26 @@ autocmd FileType javascript command! A call FindAlternative()
 
 function AddImport(lines)
   let path = a:lines[0]
-  let basepath = fnamemodify(path, ":t:r")
-  let relativePath = substitute(system("grealpath --relative-to " . expand("%:h") . " " . path), '\n\+$', '', '')
 
-  if relativePath[0] !=# '.'
-    let relativePath = './' . relativePath
+  let basepath = fnamemodify(path, ":t:r")
+
+  if path[0] !=# '.'
+    let modulePath = path
+  else
+    let relativePath = substitute(system("grealpath --relative-to " . expand("%:h") . " " . path), '\n\+$', '', '')
+
+    if relativePath[0] !=# '.'
+      let modulePath = './' . relativePath
+    else
+      let modulePath = relativePath
+    endif
   endif
 
-  return "import " . basepath . " from '" . relativePath . "'"
+  return "import " . basepath . " from '" . modulePath . "'"
 endfunction
 
 autocmd FileType javascript inoremap <expr> <c-i> fzf#vim#complete(fzf#wrap({
-  \ 'source': "rg --files",
+  \ 'source': "rg --files \| sed 's/.*/.\\/&/' && [[ -f package.json ]] && jq -r '.dependencies + .devDependencies \| keys[]' package.json",
   \ 'reducer': { lines -> AddImport(lines) }}))
 
 command! ToggleMochaOnly :lua require('toggle_mocha_only').toggle_mocha_only()<cr>

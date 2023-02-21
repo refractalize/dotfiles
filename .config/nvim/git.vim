@@ -2,7 +2,7 @@ function! OpenFileInBranch(file, branch)
   exe 'Gedit ' . a:branch . ':' . a:file
 endfunction
 
-function RemoveDots(branch)
+function! RemoveDots(branch)
   return substitute(a:branch, '^\.*\|\.*$', '', 'g')
 endfunction
 
