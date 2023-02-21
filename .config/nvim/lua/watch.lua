@@ -395,7 +395,10 @@ return {
   stop = function()
     local buf = vim.api.nvim_get_current_buf()
     local live_buffer = LiveBuffer:find(buf)
-    live_buffer:stop()
+
+    if live_buffer then
+      live_buffer:stop()
+    end
   end,
   info = function()
     local buf = vim.api.nvim_get_current_buf()

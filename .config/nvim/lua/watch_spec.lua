@@ -2,7 +2,23 @@
 
 local watch = require('watch')
 
+function find_window_for_buffer(buf)
+  local windows = vim.tbl_filter(function(win)
+    return vim.api.nvim_win_get_buf(win) == buf
+  end, vim.api.nvim_list_wins())
+
+  return windows[1]
+end
+
+function select_buffer_window(buf)
+  local win = find_window_for_buffer(buf)
+
+  vim.api.nvim_set_current_win(win)
+end
+
 function buf_set_lines(buf, lines)
+  select_buffer_window(buf)
+
   vim.api.nvim_buf_set_lines(
     buf,
     0,
@@ -60,7 +76,7 @@ function assert_buffers_shown(expected_buffers)
 end
 
 describe("watch", function()
-  after_each(function()
+  before_each(function()
     watch.stop()
     delete_all_buffers()
   end)
@@ -105,5 +121,31 @@ describe("watch", function()
     assert.are.equal('json', vim.api.nvim_buf_get_option(json_buffer, 'filetype'))
 
     assert_buffers_shown({ watcher.result_buf, json_buffer, buf })
+  end)
+
+  it("can watch two buffers", function()
+    local buf1 = vim.api.nvim_get_current_buf()
+    vim.cmd('vnew')
+    local buf2 = vim.api.nvim_get_current_buf()
+
+    local watcher = start('echo {' .. buf1 .. '} {' .. buf2 .. '}')
+
+    assert_same_ignore_order({ buf1, buf2 }, watcher.attached_buffers)
+
+    coroutine.yield()
+
+    buf_set_lines(buf1, {
+      'beep'
+    })
+    coroutine.yield()
+
+    assert.are.same({ 'beep ' }, buf_get_lines(watcher.result_buf))
+
+    buf_set_lines(buf2, {
+      'boop'
+    })
+    coroutine.yield()
+
+    assert.are.same({ 'beep boop' }, buf_get_lines(watcher.result_buf))
   end)
 end)
