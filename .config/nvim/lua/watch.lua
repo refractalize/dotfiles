@@ -40,6 +40,10 @@ function LiveBuffer:startjob()
       else
         self:reload_buffer(self.result_buf)
       end
+
+      if self.on_updated then
+        self.on_updated()
+      end
     end
   end
 
@@ -193,6 +197,8 @@ function LiveBuffer:start(cmd, current_buf, options)
   if options.stdin then
     self.stdin_buf = current_buf
   end
+  self.on_updated = options.on_updated
+
   self:resolve_command(cmd, current_buf)
 
   self:open_buffer()
