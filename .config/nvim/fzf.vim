@@ -80,10 +80,8 @@ inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
   \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
 imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
 
-inoremap <expr> <c-x><c-f> fzf#vim#complete("rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"))
-inoremap <expr> <c-x><c-r> fzf#vim#complete(fzf#wrap({
-  \ 'source': "rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"),
-  \ 'reducer': { lines -> fnamemodify(lines[0], ':e') ==# expand("%:e") ? fnamemodify(lines[0], ':r') : lines[0] }}))
+inoremap <c-x><c-f> <plug>(fzf-complete-path)
+inoremap <expr> <c-x><c-r> fzf#vim#complete("rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"))
 
 " lookup recent command history
 inoremap <expr> <c-x><c-h> fzf#vim#complete(fzf#wrap({
