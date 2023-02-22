@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+cat > kitty.log
+echo "saved to kitty.log" | less
