@@ -74,8 +74,28 @@ function LiveBuffer:startjob()
   end
 end
 
+function substitute_command(cmd, fn)
+  return vim.fn.substitute(cmd, '\\\\\\?{\\(\\(\\d*\\)\\|\\(new\\(\\:\\(\\i\\+\\)\\)\\?\\)\\)}', fn, 'g')
+end
+
+function replace_placeholder(placeholder_text, buffer_number)
+  if placeholder_text == '\\{}' then
+    return '{}'
+  else
+    return vim.fn.shellescape(
+      vim.fn.join(vim.api.nvim_buf_get_lines(tonumber(buffer_number), 0, -1, true), '\n')
+    )
+  end
+end
+
+function render_command_with_arguments(cmd)
+  return substitute_command(cmd, function(m)
+    return replace_placeholder(m[1], m[3])
+  end)
+end
+
 function LiveBuffer:expand_shell_command()
-  return vim.api.nvim_call_function('RenderCommandWithArguments', { self.cmd })
+  return render_command_with_arguments(self.cmd)
 end
 
 function LiveBuffer:redirect_command(cmd)
@@ -153,8 +173,43 @@ function LiveBuffer:find_or_create(buf)
   return live_buffer
 end
 
+function resolve_command_argument_buffer(placeholder_text, buffer_number, buffer_new, current_buf, new_buffers)
+  if placeholder_text == '\\{}' then
+    return '{}'
+  elseif buffer_new ~= '' then
+    local buffer = table.remove(new_buffers, 1)
+    return '{' .. buffer .. '}'
+  elseif buffer_number ~= '' then
+    return '{' .. buffer_number .. '}'
+  else
+    return '{' .. current_buf .. '}'
+  end
+end
+
+function resolve_command_argument_buffers(cmd, current_buf, new_buffers)
+  return substitute_command(cmd, function(m)
+    return resolve_command_argument_buffer(m[1], m[3], m[4], current_buf, new_buffers)
+  end)
+end
+
+function find_command_argument_buffer(buffer_number, buffer_new, buffer_new_file_type, buffers)
+  if buffer_number ~= '' then
+    table.insert(buffers, tonumber(buffer_number))
+  elseif buffer_new ~= '' then
+    table.insert(buffers, buffer_new_file_type)
+  end
+end
+
+function find_command_argument_buffers(cmd)
+  local buffers = {}
+  substitute_command(cmd, function(m)
+    return find_command_argument_buffer(m[3], m[4], m[6], buffers)
+  end)
+  return buffers
+end
+
 function LiveBuffer:resolve_command(cmd, current_buf)
-  local buffers = vim.api.nvim_call_function('FindCommandArgumentBuffers', { cmd })
+  local buffers = find_command_argument_buffers(cmd)
   local new_buffer_types = vim.tbl_filter(function(b) return type(b) == 'string' end, buffers)
   local new_buffers = {}
 
@@ -167,13 +222,13 @@ function LiveBuffer:resolve_command(cmd, current_buf)
     table.insert(new_buffers, buffer)
   end
 
-  self.cmd = vim.api.nvim_call_function('ResolveCommandArgumentBuffers', { cmd, current_buf, new_buffers })
+  self.cmd = resolve_command_argument_buffers(cmd, current_buf, new_buffers)
 
   self:reattach_buffers()
 end
 
 function LiveBuffer:reattach_buffers()
-  local buffers = vim.api.nvim_call_function('FindCommandArgumentBuffers', { self.cmd })
+  local buffers = find_command_argument_buffers(self.cmd)
   for _, buffer in pairs(self:attached_buffers()) do
     self:detach_source_buffer(buffer)
   end

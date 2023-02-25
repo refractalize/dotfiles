@@ -11,7 +11,7 @@ then
   SCOPE=(--match-tab recent:0)
 elif [[ -n $all ]]
 then
-  SCOPE="--all"
+  SCOPE=(--all --configured)
 fi
 
 theme() {
