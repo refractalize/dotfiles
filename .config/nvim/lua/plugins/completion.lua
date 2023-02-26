@@ -48,6 +48,11 @@ return {
   },
 
   {
+    'hrsh7th/vim-vsnip-integ',
+    dependencies = 'vim-vsnip'
+  },
+
+  {
     'hrsh7th/vim-vsnip',
 
     config = function()

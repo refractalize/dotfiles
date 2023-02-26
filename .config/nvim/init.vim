@@ -155,7 +155,6 @@ source $HOME/.config/nvim/ignorelint.vim
 source $HOME/.config/nvim/titlestring.vim
 source $HOME/.config/nvim/quickfix.vim
 source $HOME/.config/nvim/watch.vim
-source $HOME/.config/nvim/difflines.vim
 source $HOME/.config/nvim/javascript.vim
 
 let g:vim_json_conceal=0

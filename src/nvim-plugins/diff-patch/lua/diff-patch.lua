@@ -1,3 +1,5 @@
+local utils = require('utils')
+
 function compact(items)
   return vim.tbl_filter(
     function (line)
@@ -35,7 +37,7 @@ function diff_patch(lines)
 
   vim.cmd('vertical new')
   setup_buffer(right, tab)
-  require('utils').close_tab_when_any_window_is_closed()
+  utils.close_tab_when_any_window_is_closed()
 end
 
 function buffers_in_tab()

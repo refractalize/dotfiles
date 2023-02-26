@@ -9,40 +9,31 @@ return {
   },
   {
     'plasticboy/vim-markdown',
-    ft: { 'markdown' },
+    ft = { 'markdown' },
   },
   {
     'leafgarland/typescript-vim',
-    ft: { 'typescript', 'typescriptreact' },
+    ft = { 'typescript', 'typescriptreact' },
   },
   {
     'maxmellon/vim-jsx-pretty',
-    ft: { 'javascriptreact' },
+    ft = { 'javascriptreact' },
   },
   {
     'jparise/vim-graphql',
-    ft: { 'graphql' },
+    ft = { 'graphql' },
   },
   {
     'tapayne88/vim-mochajs',
-    ft: { 'javascriptreact', 'javascript' },
+    ft = { 'javascriptreact', 'javascript' },
   },
   {
     'google/vim-jsonnet', -- jsonnet language support
-    ft: { 'jsonnet' },
+    ft = { 'jsonnet' },
   },
   'jxnblk/vim-mdx-js',
   {
     'rust-lang/rust.vim',
-    ft: { 'rust' },
-  },
-  {
-    'JuliaEditorSupport/julia-vim',
-
-    ft = { 'julia' },
-
-    config = function()
-      vim.g.latex_to_unicode_tab = "off"
-    end
+    ft = { 'rust' },
   },
 }

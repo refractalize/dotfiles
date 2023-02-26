@@ -2,11 +2,6 @@ return {
   'dstein64/vim-startuptime',
 
   {
-    'hrsh7th/vim-vsnip-integ',
-    dependencies = 'vim-vsnip'
-  },
-
-  {
     'folke/which-key.nvim',
 
     config = function()
@@ -15,11 +10,6 @@ return {
   },
 
   'kyazdani42/nvim-web-devicons', -- for file icons
-  'tpope/vim-fugitive', -- git commands
-  'shumphrey/fugitive-gitlab.vim',
-  'tpope/vim-rhubarb', -- github helpers for vim-fugitive
-  'junegunn/gv.vim',
-  'groenewege/vim-less',
   'tpope/vim-abolish',
 
   {
@@ -54,7 +44,6 @@ return {
       vim.cmd('source $HOME/.config/nvim/illuminate.vim')
     end
   },
-  'tomtom/tlib_vim',
   'AndrewRadev/splitjoin.vim',
   'AndrewRadev/linediff.vim',
   'direnv/direnv.vim',
@@ -239,23 +228,6 @@ return {
   'FooSoft/vim-argwrap', -- expanding and collapsing lists
   'wsdjeg/vim-fetch',
   'norcalli/nvim-colorizer.lua',
-
-  {
-    'lewis6991/gitsigns.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim'
-    },
-    config = function()
-      require('gitsigns').setup{
-        on_attach = function(bufnr)
-          vim.cmd([[
-            nnoremap <expr> ]c &diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'
-            nnoremap <expr> [c &diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'
-          ]])
-        end
-      }
-    end
-  },
 
   {
     'KabbAmine/vCoolor.vim',
