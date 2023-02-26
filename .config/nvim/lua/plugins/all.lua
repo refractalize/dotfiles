@@ -1,39 +1,37 @@
--- installed ~/.local/share/nvim/site/pack/packer/start
+return {
+  'tomasr/molokai',
+  {
+    'sonph/onehalf',
 
-require('packer').init({
-  max_jobs = 70,
-})
-
-require('packer').startup(function()
-  use 'wbthomason/packer.nvim'
-  use 'tomasr/molokai'
-  use { 'sonph/onehalf', rtp = 'vim/' }
-  use 'ntk148v/vim-horizon'
-  use 'joshdick/onedark.vim'
-  use({
-      'rose-pine/neovim',
-      as = 'rose-pine',
-  })
-  use 'EdenEast/nightfox.nvim'
-  use 'morhetz/gruvbox'
-  use 'rakr/vim-one'
-  use 'glepnir/oceanic-material'
-  use 'marko-cerovac/material.nvim'
-  use 'rakr/vim-two-firewatch'
-  use 'NLKNguyen/papercolor-theme'
-  use 'ayu-theme/ayu-vim'
-  use 'Lokaltog/vim-monotone'
-  use 'yashguptaz/calvera-dark.nvim'
-  use 'rebelot/kanagawa.nvim'
-  use 'sam4llis/nvim-tundra'
-  use({
+    config = function(plugin)
+      vim.opt.rtp:append(plugin.dir .. "/vim")
+    end
+  },
+  'ntk148v/vim-horizon',
+  'joshdick/onedark.vim',
+  {
+    'rose-pine/neovim',
+    name = 'rose-pine',
+  },
+  'EdenEast/nightfox.nvim',
+  'morhetz/gruvbox',
+  'rakr/vim-one',
+  'glepnir/oceanic-material',
+  'marko-cerovac/material.nvim',
+  'rakr/vim-two-firewatch',
+  'NLKNguyen/papercolor-theme',
+  'ayu-theme/ayu-vim',
+  'Lokaltog/vim-monotone',
+  'yashguptaz/calvera-dark.nvim',
+  'rebelot/kanagawa.nvim',
+  'sam4llis/nvim-tundra',
+  {
     'glepnir/zephyr-nvim',
-    requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
-  })
+  },
 
-  use 'dstein64/vim-startuptime'
+  'dstein64/vim-startuptime',
 
-  use {
+  {
     'hrsh7th/vim-vsnip',
 
     config = function()
@@ -59,31 +57,31 @@ require('packer').startup(function()
         let g:vsnip_filetypes.typescript = ['javascript']
       ]])
     end
-  }
-  use {
+  },
+  {
     'hrsh7th/vim-vsnip-integ',
-    after = 'vim-vsnip'
-  }
+    dependencies = 'vim-vsnip'
+  },
 
-  use {
+  {
     'folke/which-key.nvim',
 
     config = function()
       require("which-key").setup()
     end
-  }
+  },
 
-  use 'overcache/NeoSolarized'
-  use 'mhartington/oceanic-next'
-  use 'kyazdani42/nvim-web-devicons' -- for file icons
-  use 'tpope/vim-fugitive' -- git commands
-  use 'shumphrey/fugitive-gitlab.vim'
-  use 'tpope/vim-rhubarb' -- github helpers for vim-fugitive
-  use 'junegunn/gv.vim'
-  use 'groenewege/vim-less'
-  use 'tpope/vim-abolish'
+  'overcache/NeoSolarized',
+  'mhartington/oceanic-next',
+  'kyazdani42/nvim-web-devicons', -- for file icons
+  'tpope/vim-fugitive', -- git commands
+  'shumphrey/fugitive-gitlab.vim',
+  'tpope/vim-rhubarb', -- github helpers for vim-fugitive
+  'junegunn/gv.vim',
+  'groenewege/vim-less',
+  'tpope/vim-abolish',
 
-  use {
+  {
     'tpope/vim-surround', -- add/remove/change quotes, parens
     config = function()
       vim.cmd([[
@@ -91,12 +89,12 @@ require('packer').startup(function()
         let g:surround_no_insert_mappings = 1
       ]])
     end
-  }
-  use {
+  },
+  {
     'tpope/vim-rails',
     ft = { 'ruby' }
-  }
-  use {
+  },
+  {
     'junegunn/vim-easy-align',
 
     config = function()
@@ -108,37 +106,34 @@ require('packer').startup(function()
         nmap ga <Plug>(EasyAlign)
       ]])
     end
-  }
-  use {
-    'mbbill/undotree',
-    disable = true
-  }
+  },
 
-  use 'tpope/vim-cucumber'
-  use 'godlygeek/tabular' -- format tables of data
-  use 'plasticboy/vim-markdown'
-  use 'michaeljsmith/vim-indent-object' -- treat indented sections of code as vim objects
-  use 'leafgarland/typescript-vim'
-  use 'maxmellon/vim-jsx-pretty'
-  use 'jparise/vim-graphql'
-  use {
+  'tpope/vim-cucumber',
+  'godlygeek/tabular', -- format tables of data
+  'plasticboy/vim-markdown',
+  'michaeljsmith/vim-indent-object', -- treat indented sections of code as vim objects
+  'leafgarland/typescript-vim',
+  'maxmellon/vim-jsx-pretty',
+  'jparise/vim-graphql',
+  {
     'RRethy/vim-illuminate',
 
     config = function()
       vim.cmd('source $HOME/.config/nvim/illuminate.vim')
     end
-  }
-  use 'vim-scripts/summerfruit256.vim'
-  use 'tomtom/tlib_vim'
-  use 'AndrewRadev/splitjoin.vim'
-  use 'AndrewRadev/linediff.vim'
-  use 'direnv/direnv.vim'
-  use 'nvim-lua/lsp-status.nvim'
+  },
+  'vim-scripts/summerfruit256.vim',
+  'tomtom/tlib_vim',
+  'AndrewRadev/splitjoin.vim',
+  'AndrewRadev/linediff.vim',
+  'direnv/direnv.vim',
+  'nvim-lua/lsp-status.nvim',
 
-  use {
+  {
     'nvim-lualine/lualine.nvim',
 
-    after = {'lsp-status.nvim'},
+    enabled = true,
+    dependencies = {'lsp-status.nvim'},
 
     config = function()
       local function filename()
@@ -152,9 +147,6 @@ require('packer').startup(function()
       }
 
       lualine.setup {
-        options = {
-          theme = lualine.themes[vim.g.colors_name] or vim.g.colors_name
-        },
         sections = {
           lualine_a = {'mode'},
           lualine_b = {
@@ -220,11 +212,11 @@ require('packer').startup(function()
         autocmd ColorScheme * lua require'lualine'.setup { options = { theme = require'lualine'.themes[vim.g.colors_name] or vim.g.colors_name } }
       ]])
     end
-  }
+  },
 
-  use {
+  {
     'sindrets/diffview.nvim',
-    requires = 'nvim-lua/plenary.nvim',
+    dependencies = 'nvim-lua/plenary.nvim',
 
     config = function()
       require("diffview").setup({
@@ -235,25 +227,25 @@ require('packer').startup(function()
         }
       })
     end
-  }
+  },
 
-  use 'tapayne88/vim-mochajs'
+  'tapayne88/vim-mochajs',
 
-  use {
+  {
     'weilbith/nvim-code-action-menu',
     cmd = 'CodeActionMenu',
-  }
+  },
 
-  use {
+  {
     'kosayoda/nvim-lightbulb',
-    requires = 'antoinemadec/FixCursorHold.nvim',
+    dependencies = 'antoinemadec/FixCursorHold.nvim',
 
     config = function()
       require('nvim-lightbulb').setup({autocmd = {enabled = true}})
     end
-  }
+  },
 
-  use {
+  {
     'mhartington/formatter.nvim',
 
     config = function()
@@ -270,12 +262,12 @@ require('packer').startup(function()
 
       vim.api.nvim_set_keymap('n', '<M-f>', '<cmd>Format<CR>', { noremap = true, silent = true })
     end
-  }
+  },
 
-  use {
+  {
     'neovim/nvim-lspconfig',
 
-    after = {
+    dependencies = {
       'lsp-status.nvim',
       'nvim-cmp',
       'vim-matchup',
@@ -413,9 +405,9 @@ require('packer').startup(function()
         })
       end
     end
-  }
+  },
 
-  use {
+  {
     'folke/lsp-colors.nvim',
 
     config = function()
@@ -426,19 +418,19 @@ require('packer').startup(function()
         Hint = "#10B981"
       })
     end
-  }
+  },
 
-  use {
+  {
     'projekt0n/github-nvim-theme',
     config = function()
       -- require('github-theme').setup()
     end
-  }
+  },
 
-  use {
+  {
     'andymass/vim-matchup',
 
-    setup = function()
+    init = function()
       -- this is required so `config` is run _after_ the plugin is loaded
     end,
 
@@ -449,11 +441,11 @@ require('packer').startup(function()
         ]])
       end
     end
-  }
+  },
 
-  use {
+  {
     'nvim-treesitter/playground',
-    after = 'nvim-treesitter',
+    dependencies = 'nvim-treesitter',
 
     config = function()
       require "nvim-treesitter.configs".setup {
@@ -477,11 +469,10 @@ require('packer').startup(function()
         }
       }
     end
-  }
+  },
 
-  use {
+  {
     "cshuaimin/ssr.nvim",
-    module = "ssr",
     -- Calling setup is optional.
     config = function()
       require("ssr").setup {
@@ -501,11 +492,11 @@ require('packer').startup(function()
 
       vim.keymap.set({ "n", "x" }, "<leader>sr", function() require("ssr").open() end)
     end
-  }
+  },
 
-  use {
+  {
     'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
+    build = ':TSUpdate',
 
     config = function()
       local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "t32" end, require('nvim-treesitter.parsers').available_parsers())
@@ -537,11 +528,11 @@ require('packer').startup(function()
         nnoremap ( <Nop>
       ]])
     end
-  }
+  },
 
-  use {
+  {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    after = 'nvim-treesitter',
+    dependencies = 'nvim-treesitter',
 
     config = function()
       require'nvim-treesitter.configs'.setup {
@@ -599,17 +590,17 @@ require('packer').startup(function()
         },
       }
     end
-  }
+  },
 
-  use 'tpope/vim-vinegar'
+  'tpope/vim-vinegar',
 
-  use {
+  {
     'nvim-telescope/telescope.nvim',
-    requires = {
-      { 'nvim-lua/popup.nvim' },
-      { 'nvim-lua/plenary.nvim' },
-      { 'nvim-telescope/telescope-file-browser.nvim' },
-      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+    dependencies = {
+      'nvim-lua/popup.nvim',
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-file-browser.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }
     },
 
     config = function()
@@ -662,11 +653,11 @@ require('packer').startup(function()
         cnoremap <M-r> <Cmd>lua require('telescope.builtin').command_history{default_text = vim.fn.getcmdline()}<cr>
       ]])
     end
-  }
+  },
 
-  use {
+  {
     'm00qek/baleia.nvim',
-    tag = 'v1.2.0',
+    version = 'v1.2.0',
 
     config = function()
       vim.api.nvim_create_autocmd({ "BufRead" }, {
@@ -682,24 +673,24 @@ require('packer').startup(function()
         end
       })
     end
-  }
+  },
 
-  use 'tpope/vim-unimpaired' -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
-  use 'tpope/vim-eunuch' -- file unix commands, :Delete, :Move, etc
-  use 'tpope/vim-jdaddy' -- JSON manipulation
-  use 'tpope/vim-commentary' -- make lines comments or not
-  use 'tpope/vim-repeat' -- repeat complex commands with .
-  use 'tpope/vim-dadbod'
-  use 'FooSoft/vim-argwrap' -- expanding and collapsing lists
-  use 'google/vim-jsonnet' -- jsonnet language support
-  use 'jxnblk/vim-mdx-js'
-  use { 'junegunn/fzf', run = function() vim.fn['fzf#install']() end }
-  use 'junegunn/fzf.vim'
-  use 'wsdjeg/vim-fetch'
-  use 'norcalli/nvim-colorizer.lua'
-  use {
+  'tpope/vim-unimpaired', -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
+  'tpope/vim-eunuch', -- file unix commands, :Delete, :Move, etc
+  'tpope/vim-jdaddy', -- JSON manipulation
+  'tpope/vim-commentary', -- make lines comments or not
+  'tpope/vim-repeat', -- repeat complex commands with .
+  'tpope/vim-dadbod',
+  'FooSoft/vim-argwrap', -- expanding and collapsing lists
+  'google/vim-jsonnet', -- jsonnet language support
+  'jxnblk/vim-mdx-js',
+  { 'junegunn/fzf', build = function() vim.fn['fzf#install']() end },
+  'junegunn/fzf.vim',
+  'wsdjeg/vim-fetch',
+  'norcalli/nvim-colorizer.lua',
+  {
     'lewis6991/gitsigns.nvim',
-    requires = {
+    dependencies = {
       'nvim-lua/plenary.nvim'
     },
     config = function()
@@ -712,19 +703,19 @@ require('packer').startup(function()
         end
       }
     end
-  }
+  },
 
-  use {
+  {
     'KabbAmine/vCoolor.vim',
-    setup = function()
+    init = function()
       vim.g.vcoolor_disable_mappings = 1
     end
-  }
+  },
 
-  use {
+  {
     'hrsh7th/nvim-cmp',
 
-    requires = {
+    dependencies = {
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
@@ -800,9 +791,9 @@ require('packer').startup(function()
       --   }),
       -- })
     end
-  }
+  },
 
-  use {
+  {
     'kevinhwang91/nvim-hlslens',
 
     config = function()
@@ -836,70 +827,12 @@ require('packer').startup(function()
       --     augroup END
       -- ]])
     end
-  }
+  },
 
-  use {
-    'gelguy/wilder.nvim',
-    disable = true,
-
-    config = function()
-      local wilder = require('wilder')
-      wilder.setup({
-        modes = {':', '/', '?'},
-        -- next_key = '<C-p>',
-        -- previous_key = '<C-n>',
-      })
-
-      local hist_cmd = { wilder.history() }
-      vim.list_extend(hist_cmd, wilder.cmdline_pipeline())
-      -- print('hist_cmd')
-      -- print(vim.inspect(hist_cmd))
-
-      wilder.set_option('pipeline', {
-        wilder.branch(
-          {
-            wilder.check(function(_, x) return vim.fn.empty(x) end),
-            wilder.history(15),
-          },
-          wilder.cmdline_pipeline(),
-          {
-            wilder.history(50),
-            function(ctx, xs) return vim.fn.filter(xs, function(i, x) return vim.fn.match(x, ctx.input) end) end
-          }
-        )
-      })
-
-      -- wilder.set_option('pipeline', wilder.map(
-      --   function(ctx, x)
-      --     print('first: ' .. vim.inspect(x))
-      --     return { 'foo', 'bar' }
-      --   end,
-      --   function(ctx, x)
-      --     print('second: ' .. vim.inspect(x))
-      --     return { 'blah', 'blog' }
-      --   end
-      -- ))
-
---       wilder.set_option('pipeline', {
---         wilder.branch(
---           hist_cmd,
---           wilder.search_pipeline()
---         )
---       })
-
-      wilder.set_option('renderer', wilder.popupmenu_renderer({
-        reverse = 1,
-        highlighter = wilder.basic_highlighter(),
-        left = {' ', wilder.popupmenu_devicons()},
-        right = {' ', wilder.popupmenu_scrollbar()},
-      }))
-    end,
-  }
-
-  use {
+  {
     'petertriho/nvim-scrollbar',
 
-    after = 'nvim-hlslens',
+    dependencies = 'nvim-hlslens',
 
     config = function()
       require("scrollbar").setup({
@@ -912,9 +845,9 @@ require('packer').startup(function()
         nearest_only = true,
       })
     end
-  }
+  },
 
-  use {
+  {
     'mfussenegger/nvim-dap',
 
     config = function()
@@ -954,45 +887,32 @@ require('packer').startup(function()
         },
       }
     end
-  }
+  },
 
-  use {
+  {
     'suketa/nvim-dap-ruby',
 
-    after = 'nvim-dap',
+    dependencies = 'nvim-dap',
 
     config = function()
       -- require('dap-ruby').setup()
     end
-  }
+  },
 
-  -- use {
-  --   'elzr/vim-json',
-  --   config = function()
-  --     vim.g.vim_json_syntax_conceal = 0
-  --   end
-  -- }
-
-  use 'vim-scripts/indentpython.vim'
-  use 'rust-lang/rust.vim'
-  use 'racer-rust/vim-racer'
-  use {
+  'vim-scripts/indentpython.vim',
+  'rust-lang/rust.vim',
+  'racer-rust/vim-racer',
+  {
     'JuliaEditorSupport/julia-vim',
 
     config = function()
       vim.g.latex_to_unicode_tab = "off"
     end
-  }
+  },
 
-  -- use {
-  --   'w0rp/ale',
-  --   config = function()
-  --     vim.cmd('source $HOME/.config/nvim/ale.vim')
-  --   end
-  -- }
-  use 'will133/vim-dirdiff'
+  'will133/vim-dirdiff',
 
-  use {
+  {
     'mattn/emmet-vim',
     config = function()
       vim.g.user_emmet_settings = {
@@ -1004,35 +924,19 @@ require('packer').startup(function()
         }
       }
     end
-  }
+  },
 
-  use 'kshenoy/vim-signature'
+  'kshenoy/vim-signature',
 
-  use {
-    'AndrewRadev/sideways.vim', -- move arguments left and right
-    disable = true,
-    config = function()
-      vim.cmd([[
-        nnoremap _ :SidewaysLeft<cr>
-        nnoremap + :SidewaysRight<cr>
-
-        omap aa <Plug>SidewaysArgumentTextobjA
-        xmap aa <Plug>SidewaysArgumentTextobjA
-        omap ia <Plug>SidewaysArgumentTextobjI
-        xmap ia <Plug>SidewaysArgumentTextobjI
-      ]])
-    end
-  }
-
-  use {
+  {
     'tpope/vim-dispatch',
 
     config = function()
       -- we keep this here to make sure the `after` in vim-dispatch-neovim works
     end
-  }
+  },
 
-  use {
+  {
     'vim-test/vim-test',
 
     config = function()
@@ -1056,32 +960,21 @@ require('packer').startup(function()
         endfunction
       ]])
     end
-  }
+  },
 
-  use {
-    "rcarriga/vim-ultest",
-    disable = true,
+  'folke/tokyonight.nvim',
 
-    requires = {
-      "vim-test/vim-test"
-    },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin"
+  },
 
-    run = ":UpdateRemotePlugins"
-  }
-
-  use 'folke/tokyonight.nvim'
-
-  use({
-      "catppuccin/nvim",
-      as = "catppuccin"
-  })
-
-  use {
+  {
     'radenling/vim-dispatch-neovim',
-    after = 'vim-dispatch'
-  }
+    dependencies = 'vim-dispatch'
+  },
 
-  use {
+  {
     'voldikss/vim-floaterm',
 
     config = function()
@@ -1089,5 +982,15 @@ require('packer').startup(function()
         autocmd FileType json nnoremap <leader>j :FloatermNew --autoclose=2 --wintype=split jqfzf %<cr>
       ]])
     end
+  },
+
+  {
+    'refractalize/auto-save',
+    dev = true,
+    config = function()
+      require('auto-save').setup({
+        write_delay = 0
+      })
+    end
   }
-end)
+}

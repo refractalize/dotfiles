@@ -4,7 +4,28 @@ let mapleader=" "
 set nocompatible               " be iMproved
 filetype off                   " required!
 
-lua require('plugins')
+lua <<LUA
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+LUA
+
+lua <<LUA
+require("lazy").setup("plugins", {
+  dev = {
+    path = "~/src/nvim-plugins"
+  }
+})
+LUA
 
 command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
 
@@ -139,13 +160,6 @@ source $HOME/.config/nvim/javascript.vim
 
 let g:vim_json_conceal=0
 
-lua << EOF
-  require('auto-save').setup({
-    ignore_files = { '.config/nvim/lua/plugins.lua' },
-    write_delay = 0
-  })
-EOF
-
 lua require('quickfix').setup()
 
 autocmd VimResized * wincmd =
@@ -154,8 +168,6 @@ nnoremap <leader>n :NvimTreeToggle<CR>
 
 command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
 command! ProfileStop :profile stop
-
-autocmd BufWritePost ~/.config/nvim/lua/plugins.lua source <afile> | PackerCompile
 
 " this doesn't seem to work with vim-test
 autocmd FileType sql nnoremap <buffer> <M-f> :%!sql-formatter<CR>
