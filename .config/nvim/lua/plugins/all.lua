@@ -80,6 +80,8 @@ return {
   {
     'mhartington/formatter.nvim',
 
+    cmd = { 'Format' },
+
     config = function()
       require('formatter').setup {
         logging = true,
@@ -201,7 +203,6 @@ return {
 
   {
     'm00qek/baleia.nvim',
-    version = 'v1.2.0',
 
     config = function()
       vim.api.nvim_create_autocmd({ "BufRead" }, {
