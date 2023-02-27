@@ -78,10 +78,6 @@ return {
           'fzf'
         }
       }
-
-      vim.cmd([[
-        autocmd ColorScheme * lua require'lualine'.setup { options = { theme = require'lualine'.themes[vim.g.colors_name] or vim.g.colors_name } }
-      ]])
     end
   },
 }

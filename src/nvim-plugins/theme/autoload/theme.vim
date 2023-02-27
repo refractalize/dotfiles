@@ -1,4 +1,4 @@
-function! SetTheme(theme)
+function! theme#SetTheme(theme)
   let filename = $HOME . "/.config/nvim/themes/" . a:theme . ".vim"
   if filereadable(filename)
     execute "source " . $HOME . "/.config/nvim/themes/" . a:theme . ".vim"
@@ -6,33 +6,29 @@ function! SetTheme(theme)
     execute "colorscheme " . a:theme
   endif
 
-  doautocmd User ThemeChanged
+  " doautocmd User ThemeChanged
 endfunction
 
-function! EditTheme(theme)
+function! theme#EditTheme(theme)
   let originalFilename = system("readlink $HOME/.config/nvim/themes/" . a:theme . ".vim")
   let theme = originalFilename == '' ? a:theme . ".vim" : originalFilename
   execute "edit $HOME/.config/nvim/themes/" . theme
 endfunction
 
-function! AliasTheme(theme, alias)
+function! theme#AliasTheme(theme, alias)
   silent execute "!ln -sf " . a:theme . ".vim $HOME/.config/nvim/themes/" . a:alias . ".vim"
 endfunction
 
-function! ThemeNames()
+function! s:ThemeNames()
   let themeFiles = readdir($HOME . '/.config/nvim/themes/', { f -> f =~ '.vim$' })
   return map(themeFiles, { i, f -> fnamemodify(f, ':r') })
 endfunction
 
-function! CompleteTheme(argLead, cmdLine, cursorPos)
-  return filter(ThemeNames(), { i, t -> a:argLead ==# '' ? 1 : t[0:len(a:argLead) - 1] ==# a:argLead })
+function! theme#CompleteTheme(argLead, cmdLine, cursorPos)
+  return filter(s:ThemeNames(), { i, t -> a:argLead ==# '' ? 1 : t[0:len(a:argLead) - 1] ==# a:argLead })
 endfunction
 
-command! -nargs=1 -complete=customlist,CompleteTheme Theme call SetTheme(<f-args>)
-command! -nargs=1 -complete=customlist,CompleteTheme ThemeEdit call EditTheme(<f-args>)
-command! -nargs=* -complete=customlist,CompleteTheme ThemeAlias call AliasTheme(<f-args>)
-
-function! CurrentTheme()
+function! s:CurrentTheme()
   if !empty($THEME)
     return $THEME
   elseif filereadable('.theme')
@@ -42,10 +38,8 @@ function! CurrentTheme()
   endif
 endfunction
 
-function! SetupCurrentTheme()
+function! theme#SetupCurrentTheme()
   let themes = json_decode(readfile($HOME . "/.config/themes.json", ''))
-  let theme = themes[CurrentTheme()]["nvim"]
-  call SetTheme(theme)
+  let theme = themes[s:CurrentTheme()]["nvim"]
+  call theme#SetTheme(theme)
 endfunction
-
-call SetupCurrentTheme()

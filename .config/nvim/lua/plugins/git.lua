@@ -7,8 +7,7 @@ return {
     'refractalize/git-copy-lines',
     dependencies = { 
       'tpope/vim-fugitive'
-    },
-    dev = true
+    }
   },
 
   {

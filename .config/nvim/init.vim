@@ -22,7 +22,8 @@ LUA
 lua <<LUA
 require("lazy").setup("plugins", {
   dev = {
-    path = "~/src/nvim-plugins"
+    path = "~/src/nvim-plugins",
+    patterns = { "refractalize" }
   }
 })
 LUA
@@ -143,7 +144,6 @@ source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/fzf.vim
 source $HOME/.config/nvim/style.vim
-source $HOME/.config/nvim/theme.vim
 source $HOME/.config/nvim/google.vim
 source $HOME/.config/nvim/diff.vim
 source $HOME/.config/nvim/spelling.vim
@@ -177,7 +177,3 @@ function unload(name)
 end
 
 EOF
-
-command! WatchJq :lua require('watch').start('jq {new:jq}', { stdin = true, filetype = 'json' })<cr>
-command! WatchAwk :lua require('watch').start('awk {new:awk}', { stdin = true })<cr>
-command! WatchNode :lua require('watch').start('node --input-type=module', { stdin = true })<cr>

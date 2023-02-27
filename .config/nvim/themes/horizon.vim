@@ -1,6 +1,5 @@
 " horizons
 set background=dark
-let g:lightline.colorscheme = 'ayu_dark'
 let g:indentLine_color_gui = '#533A3B'
 colorscheme horizon
 

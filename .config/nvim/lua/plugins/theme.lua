@@ -1,5 +1,17 @@
 return {
   {
+    'refractalize/theme',
+
+    priotity = 1000,
+
+    config = function()
+      vim.cmd[[
+        call theme#SetupCurrentTheme()
+      ]]
+    end
+  },
+
+  {
     'tomasr/molokai',
     lazy = true
   },
@@ -14,7 +26,7 @@ return {
   },
   {
     'ntk148v/vim-horizon',
-    lazy = true
+    lazy = true,
   },
   {
     'joshdick/onedark.vim',

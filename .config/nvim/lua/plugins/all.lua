@@ -397,11 +397,14 @@ return {
 
   {
     'refractalize/auto-save',
-    dev = true,
     config = function()
       require('auto-save').setup({
         write_delay = 0
       })
     end
+  },
+
+  {
+    'refractalize/watch',
   },
 }
