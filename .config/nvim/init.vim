@@ -23,7 +23,7 @@ lua <<LUA
 require("lazy").setup("plugins", {
   dev = {
     path = "~/src/nvim-plugins",
-    patterns = { "refractalize" }
+    patterns = { "refractalize" },
   }
 })
 LUA

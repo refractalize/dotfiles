@@ -49,21 +49,6 @@ return {
   'direnv/direnv.vim',
 
   {
-    'sindrets/diffview.nvim',
-    dependencies = 'nvim-lua/plenary.nvim',
-
-    config = function()
-      require("diffview").setup({
-        view = {
-          merge_tool = {
-            layout = 'diff4_mixed'
-          }
-        }
-      })
-    end
-  },
-
-  {
     'weilbith/nvim-code-action-menu',
     cmd = 'CodeActionMenu',
   },
@@ -228,7 +213,13 @@ return {
   'tpope/vim-dadbod',
   'FooSoft/vim-argwrap', -- expanding and collapsing lists
   'wsdjeg/vim-fetch',
-  'norcalli/nvim-colorizer.lua',
+  {
+    'norcalli/nvim-colorizer.lua',
+    config = function()
+      vim.opt.termguicolors = true
+      require'colorizer'.setup()
+    end
+  },
 
   {
     'KabbAmine/vCoolor.vim',
