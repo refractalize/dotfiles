@@ -9,6 +9,8 @@ return {
       'hrsh7th/cmp-vsnip',
       'hrsh7th/cmp-nvim-lsp',
       'dmitmel/cmp-cmdline-history',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
+      'hrsh7th/cmp-nvim-lua',
     },
 
     config = function()
@@ -28,6 +30,7 @@ return {
           ['<CR>'] = cmp.mapping.confirm(),
         }),
         sources = cmp.config.sources({
+          { name = 'nvim_lsp_signature_help' },
           { name = 'nvim_lsp' },
           { name = 'vsnip' }, -- For vsnip users.
           { name = 'path' },
@@ -41,7 +44,8 @@ return {
                 return vim.api.nvim_list_bufs()
               end
             }
-          }
+          },
+          { name = 'nvim_lua' }
         })
       })
     end
@@ -58,12 +62,12 @@ return {
     config = function()
       vim.cmd([[
         " Expand
-        imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-        smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+        " imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+        " smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
 
         " Expand or jump
-        imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-        smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+        " imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+        " smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
         " Jump forward or backward
         imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
