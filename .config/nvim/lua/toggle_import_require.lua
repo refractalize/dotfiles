@@ -1,23 +1,23 @@
 local ts_utils = require('ts_utils')
 
 function toggle_import_require()
-  local buf = vim.api.nvim_get_current_buf()
-
   local import_query = vim.treesitter.query.parse_query('javascript', [[
-    (
-      import_statement (import_clause) @import_target source: (_) @import_source
-    ) @import
-    (
-      lexical_declaration (
-        variable_declarator
-          name: (_) @name
-          value: (
-            call_expression
-              function: (identifier) @require_fn (#eq? @require_fn "require")
-              arguments: (arguments (string) @module)
+    [
+      (
+        import_statement (import_clause) @import_target source: (_) @import_source
+      ) @import
+      (
+        lexical_declaration (
+          variable_declarator
+            name: (_) @name
+            value: (
+              call_expression
+                function: (identifier) @require_fn (#eq? @require_fn "require")
+                arguments: (arguments (string) @module)
+            )
           )
-        )
-    ) @require
+      ) @require
+    ] @node
   ]])
 
   ts_utils.find_and_replace_surrounding_node_text(import_query, function(match, node_text)

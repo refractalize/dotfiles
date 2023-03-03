@@ -5,8 +5,32 @@ end
 
 function find_enclosing(query, buf)
   local node = node_under_cursor(buf)
+  local all_matches = find_matches(node:root(), query, buf)
 
-  return match_enclosing(node, query, buf)
+  return find_matching_ancestor(node, all_matches)
+end
+
+function tbl_find(fn, table)
+  for _, item in pairs(table) do
+    if fn(item) then
+      return item
+    end
+  end
+end
+
+function find_matching_ancestor(node, all_matches)
+  local found_match = tbl_find(function(match)
+    return node == match.node
+  end, all_matches)
+
+  if found_match then
+    return found_match
+  else
+    local parent = node:parent()
+    if parent then
+      return find_matching_ancestor(parent, all_matches)
+    end
+  end
 end
 
 function find_all(query, buf)
@@ -39,7 +63,8 @@ end
 
 function replace_node_text(node, buf, text)
   local start_row, start_col, end_row, end_col = node:range()
-  vim.api.nvim_buf_set_text(buf, start_row, start_col, end_row, end_col, { text })
+  local lines = vim.split(text, '\n', true)
+  vim.api.nvim_buf_set_text(buf, start_row, start_col, end_row, end_col, lines)
 end
 
 function print_node(node, buf)
@@ -69,19 +94,6 @@ function node_children(node)
   end
 
   return children
-end
-
-function match_enclosing(node, query, buf)
-  local matches = find_matches(node, query, buf)
-
-  if #matches == 1 then
-    return matches[1]
-  else
-    local parent_node = node:parent()
-    if parent_node then
-      return match_enclosing(parent_node, query, buf)
-    end
-  end
 end
 
 function find_matches(node, query, buf)

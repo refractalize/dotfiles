@@ -83,6 +83,8 @@ autocmd FileType javascript nnoremap <Leader>tl <Cmd>RunMochaTest<CR>
 
 command! ToggleImportRequre :lua unload('toggle_import_require'); unload('ts_utils'); require('toggle_import_require').toggle_import_require()<cr>
 
+command! ToggleAsyncFunction :lua unload('toggle_async_function'); unload('ts_utils'); require('toggle_async_function').toggle_async_function()<cr>
+
 function! FindNodeDependencyPath(directory, dependency)
   if a:directory == '/'
     return
