@@ -66,6 +66,9 @@ return {
     'mhartington/formatter.nvim',
 
     cmd = { 'Format' },
+    keys = {
+      { "<M-f>", "<cmd>Format<cr>", desc = "Format" },
+    },
 
     config = function()
       require('formatter').setup {
@@ -78,8 +81,6 @@ return {
           }
         }
       }
-
-      vim.api.nvim_set_keymap('n', '<M-f>', '<cmd>Format<CR>', { noremap = true, silent = true })
     end
   },
 
@@ -390,7 +391,10 @@ return {
     'refractalize/auto-save',
     config = function()
       require('auto-save').setup({
-        write_delay = 0
+        write_delay = 0,
+        ignore_files = {
+          '.config/nvim/lua/plugins/*'
+        }
       })
     end
   },

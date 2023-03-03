@@ -24,7 +24,7 @@ return {
     ft = { 'graphql' },
   },
   {
-    'tapayne88/vim-mochajs',
+    'refractalize/vim-mochajs',
     ft = { 'javascriptreact', 'javascript' },
   },
   {

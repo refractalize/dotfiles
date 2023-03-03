@@ -24,6 +24,10 @@ require("lazy").setup("plugins", {
   dev = {
     path = "~/src/nvim-plugins",
     patterns = { "refractalize" },
+  },
+  change_detection = {
+    enabled = true,
+    notify = false,
   }
 })
 LUA

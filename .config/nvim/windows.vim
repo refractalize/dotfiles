@@ -12,8 +12,6 @@ nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
 tnoremap <M-T> <C-\><C-N><C-W>Ti
 nnoremap <M-w> <C-W>c
-nnoremap <M-d> :Gdiffsplit!<cr>
-nnoremap <M-D> :Gdiffsplit! origin/master...<cr>
 nnoremap <M-g> :G<cr>
 
 nnoremap <silent> <M-J> :exe "resize -2"<CR>

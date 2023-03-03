@@ -33,12 +33,11 @@ return {
     build = ':TSUpdate',
 
     config = function()
-      local all_except_broken_languages = vim.tbl_filter(function (e) return e ~= "t32" end, require('nvim-treesitter.parsers').available_parsers())
-
       require"nvim-treesitter.parsers".filetype_to_parsername.zsh = 'bash'
 
       require'nvim-treesitter.configs'.setup {
-        ensure_installed = all_except_broken_languages,
+        ensure_installed = 'all',
+        ignore_install = { 'java', 'smali', 't32' },
         highlight = {
           enable = true              -- false will disable the whole extension
         },

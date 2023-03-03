@@ -1,6 +1,17 @@
 return {
   'tpope/vim-rhubarb', -- github helpers for vim-fugitive
-  'tpope/vim-fugitive', -- git commands
+
+  {
+    'tpope/vim-fugitive', -- git commands
+
+    config = function()
+      vim.cmd[[
+        nnoremap <M-d> :Gdiffsplit!<cr>
+        nnoremap <M-D> :Gdiffsplit! origin/master<cr>
+      ]]
+    end
+  },
+
   'shumphrey/fugitive-gitlab.vim',
 
   {
@@ -12,9 +23,11 @@ return {
 
   {
     'lewis6991/gitsigns.nvim',
+
     dependencies = {
       'nvim-lua/plenary.nvim'
     },
+
     config = function()
       require('gitsigns').setup{
         on_attach = function(bufnr)
