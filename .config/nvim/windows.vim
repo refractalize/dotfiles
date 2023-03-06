@@ -12,7 +12,6 @@ nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
 tnoremap <M-T> <C-\><C-N><C-W>Ti
 nnoremap <M-w> <C-W>c
-nnoremap <M-g> :G<cr>
 
 nnoremap <silent> <M-J> :exe "resize -2"<CR>
 nnoremap <silent> <M-K> :exe "resize +2"<CR>

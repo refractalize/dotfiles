@@ -8,6 +8,7 @@ return {
       vim.cmd[[
         nnoremap <M-d> :Gdiffsplit!<cr>
         nnoremap <M-D> :Gdiffsplit! origin/master<cr>
+        nnoremap <M-g> :G<cr>
       ]]
     end
   },
