@@ -18,11 +18,20 @@ nnoremap <silent> <M-K> :exe "resize +2"<CR>
 nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
 nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
 
-" https://stackoverflow.com/a/14068971
-augroup CursorLine
-  au!
-  au VimEnter * setlocal cursorline
-  au WinEnter * setlocal cursorline
-  au BufWinEnter * setlocal cursorline
-  au WinLeave * setlocal nocursorline
-augroup END
+lua <<LUA
+  local id = vim.api.nvim_create_augroup("CursorLine", {})
+  vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter", "WinEnter"}, {
+    group = id,
+    callback = function()
+      vim.wo.cursorline = true
+    end
+  })
+  vim.api.nvim_create_autocmd({"WinLeave"}, {
+    group = id,
+    callback = function()
+      if vim.bo.filetype ~= 'neo-tree' then
+        vim.wo.cursorline = false
+      end
+    end
+  })
+LUA

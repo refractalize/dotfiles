@@ -184,5 +184,15 @@
     "body": [
       "import assert from 'assert'"
     ]
+  },
+  "suite": {
+    "prefix": ["suite"],
+    "body": [
+      "describe('$TM_FILENAME_BASE', function () {",
+      "  it('$1', function () {",
+      "    $2",
+      "  })",
+      "})"
+    ]
   }
 }
