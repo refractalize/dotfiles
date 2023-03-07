@@ -8,6 +8,7 @@ function toggle_async_function()
       (function_declaration)
       (arrow_function)
       (function)
+      (method_definition)
     ] @node
   ]])
 
