@@ -214,7 +214,7 @@ function LiveBuffer:resolve_command(cmd, current_buf)
   local new_buffers = {}
 
   for _, buf_type in pairs(new_buffer_types) do
-    vim.cmd('vertical new')
+    vim.cmd('rightbelow vertical new')
     local buffer = vim.api.nvim_get_current_buf()
     if buf_type ~= '' then
       vim.api.nvim_buf_set_option(buffer, 'filetype', buf_type)
@@ -277,7 +277,7 @@ end
 
 function LiveBuffer:show_buffer()
   local orig_win = vim.api.nvim_get_current_win()
-  vim.cmd('vsplit')
+  vim.cmd('rightbelow vertical split')
   local new_win = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_buf(new_win, self.result_buf)
   vim.api.nvim_set_current_win(orig_win)

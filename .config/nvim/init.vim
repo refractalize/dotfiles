@@ -69,8 +69,6 @@ set guioptions-=T
 set guicursor+=n-v-c-sm:block-Cursor,i-ci-ve:ver25-CursorIM
 set complete-=i
 set nofileignorecase " make sure we use exact case on macos
-set splitbelow
-set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical " diffs are always shown left/right
 set isfname-==
