@@ -1,1 +1,1 @@
-alias less="less -XSRi"
+export LESS="-XSRi"
