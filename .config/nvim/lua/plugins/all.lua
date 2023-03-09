@@ -78,6 +78,9 @@ return {
         filetype = {
           javascript = {
             require('formatter.filetypes.javascript').prettierd
+          },
+          json = {
+            require('formatter.filetypes.json').jq
           }
         }
       }
@@ -124,7 +127,7 @@ return {
     end
   },
 
-  'tpope/vim-vinegar',
+  -- 'tpope/vim-vinegar',
 
   {
     'nvim-telescope/telescope.nvim',
@@ -208,10 +211,8 @@ return {
 
   'tpope/vim-unimpaired', -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
   'tpope/vim-eunuch', -- file unix commands, :Delete, :Move, etc
-  'tpope/vim-jdaddy', -- JSON manipulation
   'tpope/vim-commentary', -- make lines comments or not
   'tpope/vim-repeat', -- repeat complex commands with .
-  'tpope/vim-dadbod',
   'FooSoft/vim-argwrap', -- expanding and collapsing lists
   'wsdjeg/vim-fetch',
   {
@@ -319,7 +320,6 @@ return {
     end
   },
 
-  'racer-rust/vim-racer',
   'will133/vim-dirdiff',
 
   {
@@ -412,21 +412,29 @@ return {
       "MunifTanjim/nui.nvim",
     },
 
-    cmd = { 'Neotree' },
+    lazy = false,
 
     keys = {
-      { "-", "<cmd>Neotree position=current reveal=true<cr>", desc = "Open Neotree" },
+      { "-", "<cmd>Neotree position=current reveal=true dir=%:h<cr>", desc = "Open Neotree" },
     },
 
     config = function()
       require("neo-tree").setup({
-        enable_git_status = false,
+        -- enable_git_status = false,
         filesystem = {
+          bind_to_cwd = false,
           use_libuv_file_watcher = true,
           follow_current_file = true,
+          hijack_netrw_behavior = "open_current",
         },
         buffers = {
           follow_current_file = true,
+        },
+        window = {
+          mappings = {
+            ['/'] = 'noop',
+            ['-'] = 'navigate_up',
+          }
         }
       })
     end

@@ -17,6 +17,7 @@ return {
 
   {
     'refractalize/git-copy-lines',
+    cmd = { 'GCopy' },
     dependencies = { 
       'tpope/vim-fugitive'
     }

@@ -31,7 +31,6 @@ return {
     'google/vim-jsonnet', -- jsonnet language support
     ft = { 'jsonnet' },
   },
-  'jxnblk/vim-mdx-js',
   {
     'rust-lang/rust.vim',
     ft = { 'rust' },
