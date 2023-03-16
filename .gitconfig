@@ -20,6 +20,7 @@
     helper = osxkeychain
 [push]
     default = simple
+    autoSetupRemote = true
 [merge]
     conflictstyle = diff3
     tool = nvimdiff
@@ -34,8 +35,6 @@
     cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
 [pull]
     rebase = true
-[hub]
-    protocol = https
 [mergetool]
     keepBackup = false
     prompt = false
