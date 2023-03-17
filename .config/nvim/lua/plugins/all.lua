@@ -1,3 +1,4 @@
+-- ~/.local/share/nvim/lazy
 return {
   'dstein64/vim-startuptime',
 
@@ -45,7 +46,6 @@ return {
     end
   },
   'AndrewRadev/splitjoin.vim',
-  'AndrewRadev/linediff.vim',
   'direnv/direnv.vim',
 
   {
@@ -265,48 +265,6 @@ return {
       require('scrollbar.handlers.search').setup({
         nearest_only = true,
       })
-    end
-  },
-
-  {
-    'mfussenegger/nvim-dap',
-
-    config = function()
-      local dap = require('dap')
-      dap.set_log_level('TRACE')
-      dap.adapters.ruby = function(callback, config)
-        callback {
-          type = "server",
-          host = "127.0.0.1",
-          port = 38697,
-          executable = {
-            command = "bundle",
-            args = vim.list_extend({ "exec", "rdbg", "--open", "--port", 38697,
-              "-c", "--", "bundle", "exec", config.program,
-            }, config.programArgs),
-          },
-        }
-      end
-
-      dap.configurations.ruby = {
-        {
-          type = 'ruby';
-          request = 'launch';
-          name = 'Rails';
-          program = 'bundle';
-          programArgs = {'exec', 'rails', 's'};
-          useBundler = true;
-        },
-        {
-          type = 'ruby';
-          request = 'attach';
-          localfs = true,
-          name = 'Nearest Test';
-          program = 'rails';
-          programArgs = {'test', '${file}'};
-          useBundler = true;
-        },
-      }
     end
   },
 
