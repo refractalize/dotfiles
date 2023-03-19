@@ -361,5 +361,28 @@ return {
         }
       })
     end
-  }
+  },
+
+  {
+    "AckslD/nvim-neoclip.lua",
+
+    dependencies = {
+      {'ibhagwan/fzf-lua'},
+    },
+
+    config = function()
+      require('neoclip').setup()
+    end,
+  },
+
+  {
+    'folke/persistence.nvim',
+    config = function()
+      require("persistence").setup()
+
+      vim.cmd[[
+        command! SessionLoad lua require("persistence").load()
+      ]]
+    end,
+  },
 }
