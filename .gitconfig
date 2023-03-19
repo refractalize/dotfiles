@@ -25,14 +25,10 @@
     conflictstyle = diff3
     tool = nvimdiff
 [mergetool "vimdiff"]
-    layout = "LOCAL,BASE,REMOTE / MERGED + BASE,LOCAL + BASE,REMOTE"
-[mergetool "fugitive"]
-    cmd = nvim -f "$MERGED" -c GeditConflicts
+    layout = "BASE,LOCAL + LOCAL,MERGED + BASE,LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED + BASE,REMOTE,MERGED"
 [core]
     editor = nvim
     trustctime = false
-[mergetool "tortoise"]
-    cmd = "TortoiseMerge.exe" -base:"$BASE" -theirs:"$REMOTE" -mine:"$LOCAL" -merged:"$MERGED"
 [pull]
     rebase = true
 [mergetool]
