@@ -33,6 +33,8 @@ function! s:CurrentTheme()
     return $THEME
   elseif filereadable('.theme')
     return readfile('.theme')[0]
+  elseif filereadable('~/.config/current-theme')
+    return readfile('~/.config/current-theme')[0]
   else
     return 'default'
   endif

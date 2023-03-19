@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-zparseopts -D -A opts -- -all=all -tab=tab -choose=choose
+zparseopts -D -A opts -- -all=all -tab=tab -choose=choose -save=save
 
 THEME=$1
 KITTY_CUSTOM_DIR=~/.config/kitty/themes
@@ -28,4 +28,9 @@ kitty @ set-colors $SCOPE <(theme)
 if [[ -n $choose ]]
 then
   echo $THEME
+fi
+
+if [[ -n $save && -n $all ]]
+then
+  theme > $KITTY_CUSTOM_DIR/current.conf
 fi
