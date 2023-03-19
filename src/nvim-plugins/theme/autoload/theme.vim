@@ -20,8 +20,8 @@ function! theme#AliasTheme(theme, alias)
 endfunction
 
 function! s:ThemeNames()
-  let themeFiles = readdir($HOME . '/.config/nvim/themes/', { f -> f =~ '.vim$' })
-  return map(themeFiles, { i, f -> fnamemodify(f, ':r') })
+  let themes = json_decode(readfile($HOME . "/.config/themes.json", ''))
+  return map(keys(themes), { i, k -> themes[k]["nvim"] })
 endfunction
 
 function! theme#CompleteTheme(argLead, cmdLine, cursorPos)
