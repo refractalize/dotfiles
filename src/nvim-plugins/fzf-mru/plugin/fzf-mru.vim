@@ -10,4 +10,4 @@ nnoremap <silent> <Leader><Leader> :Mru<cr>
 vnoremap <silent> <Leader><Leader> :Mru<cr>
 nnoremap <silent> <Leader>f :Mru!<cr>
 vnoremap <silent> <Leader>f :Mru!<cr>
-command! -bang -range Mru :call fzfmru#Mru(!<bang>0, GetVisualText(<range>))
+command! -bang -range Mru :lua unload('fzf-mru'); require'fzf-mru'.fzf_mru()

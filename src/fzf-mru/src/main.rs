@@ -1,17 +1,17 @@
-use async_std::fs::metadata;
+use async_std::fs::{canonicalize, metadata};
 use async_std::io::Result;
 use async_std::path::Path;
 use async_std::path::PathBuf;
-use chrono::{DateTime, TimeZone, Utc};
 use futures::executor::block_on;
 use futures::future::join_all;
 use futures::join;
 use std::cmp::Eq;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::hash::Hash;
 use std::io;
 use std::io::LineWriter;
+use std::time::UNIX_EPOCH;
 use std::{
     fs::File,
     io::{prelude::*, BufReader},
@@ -21,12 +21,6 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 #[structopt(name = "example", about = "An example of StructOpt usage.")]
 struct Opt {
-    #[structopt(short, long)]
-    cwd_only: bool,
-
-    #[structopt(long)]
-    always_include: Option<PathBuf>,
-
     #[structopt(long = "no-compress", parse(from_flag = std::ops::Not::not))]
     compress_mru_file: bool,
 
@@ -54,26 +48,45 @@ fn main() {
 }
 
 async fn load_entries(opt: &Opt) -> Result<Vec<MruEntry>> {
-    let (local_entries_result, mru_entries_result) = join!(entries_from_stdin(), load_mru_file(&opt));
+    let (input_entries_result, mru_entries_result) =
+        join!(entries_from_stdin(), load_mru_file(&opt));
 
-    let mut mru_entries = mru_entries_result?;
-    let mut local_entries = local_entries_result?;
+    let mru_entries = mru_entries_result?;
+    let unique_input_entries = unique_by_key(input_entries_result?, |mru_entry| {
+        mru_entry.filename.clone()
+    });
 
-    mru_entries.append(&mut local_entries);
+    let input_entries = update_last_used_times(unique_input_entries, mru_entries);
 
-    Ok(unique_by_key(mru_entries, |mru_entry| mru_entry.filename.clone()))
+    Ok(strip_cwd_from_filenames(input_entries)?)
+}
+
+fn update_last_used_times(
+    input_entries: Vec<MruEntry>,
+    mru_entries: Vec<MruEntry>,
+) -> Vec<MruEntry> {
+    let mru_map: HashMap<String, MruEntry> = mru_entries
+        .into_iter()
+        .map(|f| (f.filename.clone(), f))
+        .collect();
+
+    let mut updated_entries: Vec<MruEntry> = input_entries
+        .into_iter()
+        .map(|f| match mru_map.get(&f.filename) {
+            Some(mru_entry) => mru_entry.clone(),
+            None => f,
+        })
+        .collect();
+
+    updated_entries.sort_by_key(|f| -(f.time_last_used as i64));
+
+    return updated_entries;
 }
 
 async fn load_mru_file(opt: &Opt) -> Result<Vec<MruEntry>> {
     let mru_entries: Vec<MruEntry> = read_mru_file(&opt)?;
 
-    Ok(
-        filter_extant_entries(optionally_filter_out_non_local_filenames(
-            &opt,
-            strip_cwd_from_filenames(mru_entries)?,
-        )?)
-        .await
-    )
+    Ok(filter_extant_entries(mru_entries).await)
 }
 
 async fn mru_entry_exists(mru_entry: MruEntry) -> Option<MruEntry> {
@@ -86,16 +99,13 @@ async fn mru_entry_exists(mru_entry: MruEntry) -> Option<MruEntry> {
 
 async fn filter_extant_entries(mru_entries: Vec<MruEntry>) -> Vec<MruEntry> {
     let joined = join_all(mru_entries.into_iter().map(mru_entry_exists)).await;
-    return joined
-        .into_iter()
-        .filter_map(|e| e)
-        .collect();
+    return joined.into_iter().filter_map(|e| e).collect();
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 struct MruEntry {
     filename: String,
-    time_last_used: DateTime<Utc>,
+    time_last_used: u64,
 }
 
 fn read_mru_file(opt: &Opt) -> Result<Vec<MruEntry>> {
@@ -108,11 +118,16 @@ fn read_mru_file(opt: &Opt) -> Result<Vec<MruEntry>> {
 
             Ok(match line.split_once(" ") {
                 Some((time_str, filename)) => {
-                    let time: i64 = time_str.parse().map_err( |_err| std::io::Error::new(std::io::ErrorKind::Other, format!("Could not parse time from line: {}", line)) )?;
+                    let time: u64 = time_str.parse().map_err(|_err| {
+                        std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            format!("Could not parse time from line: {}", line),
+                        )
+                    })?;
 
                     MruEntry {
                         filename: String::from(filename),
-                        time_last_used: Utc.timestamp(time, 0),
+                        time_last_used: time,
                     }
                 }
                 None => {
@@ -139,14 +154,12 @@ fn read_mru_file(opt: &Opt) -> Result<Vec<MruEntry>> {
 fn compress_mru_file(opt: &Opt, mru_entries: &Vec<MruEntry>, mru_filename: &Path) -> Result<()> {
     let file = File::create(mru_filename)?;
     let mut line_writer = LineWriter::new(file);
-    Ok(for mru_entry in mru_entries.into_iter().take(opt.max_mru_size).rev() {
-        let line = format!(
-            "{:} {:}\n",
-            mru_entry.time_last_used.timestamp(),
-            mru_entry.filename
-        );
-        line_writer.write_all(line.as_bytes())?
-    })
+    Ok(
+        for mru_entry in mru_entries.into_iter().take(opt.max_mru_size).rev() {
+            let line = format!("{:} {:}\n", mru_entry.time_last_used, mru_entry.filename);
+            line_writer.write_all(line.as_bytes())?
+        },
+    )
 }
 
 fn lines_from_stdin() -> Result<Vec<String>> {
@@ -157,11 +170,12 @@ fn lines_from_stdin() -> Result<Vec<String>> {
 }
 
 async fn load_mru_entry(filename: String) -> Result<MruEntry> {
-    let md = metadata(&filename).await?;
+    let absolute_filename = canonicalize(&filename).await?;
+    let md = metadata(&absolute_filename).await?;
 
     Ok(MruEntry {
-        filename,
-        time_last_used: DateTime::from(md.modified()?),
+        filename: absolute_filename.to_string_lossy().to_string(),
+        time_last_used: md.modified()?.duration_since(UNIX_EPOCH).unwrap().as_secs(),
     })
 }
 
@@ -170,54 +184,33 @@ async fn entries_from_stdin() -> Result<Vec<MruEntry>> {
 
     let joined = join_all(filenames.into_iter().map(load_mru_entry)).await;
 
-    joined
-        .into_iter()
-        .collect()
+    joined.into_iter().collect()
 }
 
 fn strip_cwd_from_filenames<'a>(mru_entries: Vec<MruEntry>) -> Result<Vec<MruEntry>> {
     let current_dir = env::current_dir()?;
-    let cwd = format!("{:}/", current_dir.to_str().ok_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, format!("Could not convert current_dir into string")))?);
+    let cwd = format!(
+        "{:}/",
+        current_dir.to_str().ok_or_else(|| std::io::Error::new(
+            std::io::ErrorKind::Other,
+            format!("Could not convert current_dir into string")
+        ))?
+    );
     let cwd_length = cwd.len();
 
-    Ok(
-        mru_entries
-            .into_iter()
-            .map(|mru_entry| {
-                if mru_entry.filename.starts_with(&cwd) {
-                    MruEntry {
-                        filename: mru_entry.filename[cwd_length..].to_string(),
-                        ..mru_entry
-                    }
-                } else {
-                    mru_entry
+    Ok(mru_entries
+        .into_iter()
+        .map(|mru_entry| {
+            if mru_entry.filename.starts_with(&cwd) {
+                MruEntry {
+                    filename: mru_entry.filename[cwd_length..].to_string(),
+                    ..mru_entry
                 }
-            })
-            .collect()
-    )
-}
-
-fn optionally_filter_out_non_local_filenames<'a>(
-    opt: &Opt,
-    mru_entries: Vec<MruEntry>,
-) -> Result<Vec<MruEntry>> {
-    if opt.cwd_only {
-        let buffers = if opt.always_include.is_some() {
-            let buffer_strings: Vec<String> = lines_from_file(&opt.always_include.as_ref().unwrap())?;
-            Some(buffer_strings)
-        } else {
-            None
-        };
-
-        return Ok(filter_in_directory(
-            mru_entries,
-            buffers
-                .as_ref()
-                .map(|b| b.iter().map(String::as_ref).collect()),
-        ));
-    }
-
-    return Ok(mru_entries);
+            } else {
+                mru_entry
+            }
+        })
+        .collect())
 }
 
 fn unique_by_key<I, O: Hash + Eq>(items: Vec<I>, key: fn(&I) -> O) -> Vec<I> {
@@ -226,59 +219,4 @@ fn unique_by_key<I, O: Hash + Eq>(items: Vec<I>, key: fn(&I) -> O) -> Vec<I> {
         .into_iter()
         .filter(|i| already_added.insert(key(i)))
         .collect()
-}
-
-fn filter_in_directory<'a>(mru_entries: Vec<MruEntry>, keep: Option<Vec<&str>>) -> Vec<MruEntry> {
-    mru_entries
-        .into_iter()
-        .filter(|mru_entry| {
-            !mru_entry.filename.starts_with("/")
-                || (keep.is_some()
-                    && keep
-                        .as_ref()
-                        .unwrap()
-                        .iter()
-                        .any(|to_keep| &mru_entry.filename == to_keep))
-        })
-        .collect()
-}
-
-fn lines_from_file(filename: &Path) -> Result<Vec<String>> {
-    let file = File::open(filename)?;
-    let buf = BufReader::new(file);
-    buf.lines().collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_unique_by_key() {
-        let items = vec!["one", "two", "three", "two"];
-
-        assert_eq!(unique_by_key(items, |i| *i), vec!["one", "two", "three"]);
-    }
-
-    #[test]
-    fn test_filter_in_directory_filters_out_strings_not_starting_with_directory() {
-        let time_last_used = Utc::now();
-
-        let to_mru_entries = |filenames: Vec<&str>| -> Vec<MruEntry> {
-            filenames
-                .into_iter()
-                .map(|filename| MruEntry {
-                    filename: String::from(filename),
-                    time_last_used,
-                })
-                .collect()
-        };
-
-        let vec = to_mru_entries(vec!["/cwd/one", "two", "one", "/outside/keep"]);
-
-        assert_eq!(
-            filter_in_directory(vec, Some(vec!["/outside/keep"])),
-            to_mru_entries(vec!["two", "one", "/outside/keep"])
-        );
-    }
 }
