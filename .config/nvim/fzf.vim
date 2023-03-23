@@ -20,8 +20,6 @@ let g:fzf_action = {
   \ '': function("OpenOneOrMoreSelectedFiles")
   \ }
 
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-l> <plug>(fzf-complete-line)
 inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
   \ 'prefix': '^.*$',
   \ 'source': 'rg -n ^ --color always',
@@ -29,8 +27,7 @@ inoremap <expr> <c-x><c-l> fzf#vim#complete(fzf#wrap({
   \ 'reducer': { lines -> join(split(lines[0], ':\zs')[2:], '') }}))
 imap <c-x><c-b> <plug>(fzf-complete-buffer-line)
 
-inoremap <c-x><c-f> <plug>(fzf-complete-path)
-inoremap <expr> <c-x><c-r> fzf#vim#complete("rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"))
+" inoremap <expr> <c-x><c-r> fzf#vim#complete("rg --files <Bar> xargs grealpath --relative-to " . expand("%:h"))
 
 " lookup recent command history
 inoremap <expr> <c-x><c-h> fzf#vim#complete(fzf#wrap({
@@ -45,21 +42,19 @@ command! -bar -bang Mapso call fzf#vim#maps("o", <bang>0)
 command! -bar -bang Mapsc call fzf#vim#maps("c", <bang>0)
 command! -bar -bang Mapst call fzf#vim#maps("t", <bang>0)
 
-nnoremap <leader>l :BLines<cr>
-
 function! SearchString(str)
     call histadd("cmd", "Rgs " . a:str)
     execute "Rgs " . a:str
 endfunction
 
-vnoremap <leader>* <Cmd>call SearchString(GetVisualText(0))<CR>
+" vnoremap <leader>* <Cmd>call SearchString(GetVisualText(0))<CR>
 
 function! SearchRegex(str)
     call histadd("cmd", "Rg " . a:str)
     execute "Rg " . a:str
 endfunction
 
-nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
+" nnoremap <silent> <Leader>* :call SearchRegex("\\b" . expand('<cword>') .  "\\b")<cr>
 
 command! -bang -nargs=* Rgs
   \ call fzf#vim#grep(

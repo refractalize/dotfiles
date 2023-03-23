@@ -24,8 +24,51 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
 
+    keys = {
+      { "<Leader>l", "<cmd>FzfLua blines<cr>", desc = "Buffer lines" },
+      { "<Leader>*", "<cmd>FzfLua grep_visual<cr>", desc = "Search visual", mode = "v" },
+      {
+        "<Leader>*",
+        function()
+          require("fzf-lua").grep({
+            search = "\\b" .. vim.fn.expand("<cword>") .. "\\b",
+            no_esc = true,
+          })
+        end,
+        desc = "Search cword",
+      },
+      {
+        "<c-x><c-f>",
+        function()
+          require("fzf-lua.complete").path()
+        end,
+        mode = "i",
+        desc = "Complete path",
+      },
+      {
+        "<c-x><c-l>",
+        function()
+          require("fzf-lua").complete_line()
+        end,
+        mode = "i",
+        desc = "Complete line",
+      },
+      {
+        "<c-x><c-r>",
+        function()
+          require("fzf-lua").complete_path({
+            cmd = "rg --files | xargs grealpath --relative-to " .. vim.fn.expand("%:h"),
+          })
+        end,
+        mode = "i",
+        desc = "Complete relative path",
+      },
+    },
+
+    lazy = false,
+
     config = function()
-      local actions = require "fzf-lua.actions"
+      local actions = require("fzf-lua.actions")
       require("fzf-lua").setup({
         actions = {
           -- These override the default tables completely

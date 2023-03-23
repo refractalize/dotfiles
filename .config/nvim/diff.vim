@@ -18,5 +18,5 @@ function! DiffIgnoreWhitespaceToggle()
  endif
 endfunction
 
-command! GPatch silent exec "!git diff % | pbcopy"
+command! GPatch silent exec "!git diff HEAD " . expand("%") . " | pbcopy"
 command! GApply silent exec "!pbpaste | git apply"

@@ -7,7 +7,7 @@ function! CopyGitRange(line1, count, range, mods, arg, ...)
     let text = getline('.')
   endif
 
-  let @+ = "```" . lang . "\n" . text . "\n```\n\n" . url
+  let @+ = "```" . lang . "\n" . text . "\n```\n" . url
 endfunction
 
 function! ExtToLang(ext)
