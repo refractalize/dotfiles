@@ -376,13 +376,14 @@ return {
   },
 
   {
-    'folke/persistence.nvim',
-    config = function()
-      require("persistence").setup()
+    'rmagatti/auto-session',
 
-      vim.cmd[[
-        command! SessionLoad lua require("persistence").load()
-      ]]
-    end,
+    config = true
+  },
+
+  {
+    'williamboman/mason.nvim',
+
+    config = true
   },
 }

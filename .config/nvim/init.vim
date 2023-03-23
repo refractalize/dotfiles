@@ -32,15 +32,11 @@ require("lazy").setup("plugins", {
 })
 LUA
 
-command! Code :silent execute "!code -g " . expand('%') . ":" . line(".") | :redraw!
-
-" set the search patten to the visually highlighted text
+" set the search pattern to the visually highlighted text
 vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g")<CR><CR>
 
-nnoremap <silent> <Leader>v :e ~/.config/nvim/init.vim<cr>
-
 nmap <leader>cf :let @+=expand("%")<CR>
-nmap <leader>cd :cd %:h<CR>
+nmap <leader>cd :let @+=expand("%:h")<CR>
 nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
@@ -81,8 +77,6 @@ set nofoldenable
 set switchbuf=useopen
 set listchars=trail:·,nbsp:+,tab:\|·>
 
-nnoremap <Leader>e :e %:h
-
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
@@ -97,6 +91,7 @@ vnoremap gj j
 map <ScrollWheelUp> <C-Y>
 map <ScrollWheelDown> <C-E>
 
+" diffget on visual selection
 vnoremap <leader>o :diffget<cr>
 
 " from :help emacs-keys
@@ -164,13 +159,8 @@ lua require('quickfix').setup()
 
 autocmd VimResized * wincmd =
 
-nnoremap <leader>n :NvimTreeToggle<CR>
-
 command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
 command! ProfileStop :profile stop
-
-" this doesn't seem to work with vim-test
-autocmd FileType sql nnoremap <buffer> <M-f> :%!sql-formatter<CR>
 
 lua <<EOF
 
