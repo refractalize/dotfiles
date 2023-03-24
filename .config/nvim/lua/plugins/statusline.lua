@@ -68,6 +68,7 @@ return {
           lualine_a = {
             {
               'tabs',
+              max_length = function() return vim.o.columns end,
               mode = 2
             }
           }
