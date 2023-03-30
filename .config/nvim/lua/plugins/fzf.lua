@@ -70,6 +70,10 @@ return {
     config = function()
       local actions = require("fzf-lua.actions")
       require("fzf-lua").setup({
+        winopts = {
+          fullscreen = true,
+        },
+
         actions = {
           -- These override the default tables completely
           -- no need to set to `false` to disable an action
