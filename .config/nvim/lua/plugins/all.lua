@@ -1,29 +1,29 @@
 -- ~/.local/share/nvim/lazy
 return {
-  'dstein64/vim-startuptime',
+  "dstein64/vim-startuptime",
 
   {
-    'folke/which-key.nvim',
+    "folke/which-key.nvim",
 
     config = function()
       require("which-key").setup()
-    end
+    end,
   },
 
-  'nvim-tree/nvim-web-devicons', -- for file icons
-  'tpope/vim-abolish',
+  "nvim-tree/nvim-web-devicons", -- for file icons
+  "tpope/vim-abolish",
 
   {
-    'tpope/vim-surround', -- add/remove/change quotes, parens
+    "tpope/vim-surround", -- add/remove/change quotes, parens
     config = function()
       vim.cmd([[
         autocmd FileType ruby let b:surround_45 = "do \r end"
         let g:surround_no_insert_mappings = 1
       ]])
-    end
+    end,
   },
   {
-    'junegunn/vim-easy-align',
+    "junegunn/vim-easy-align",
 
     config = function()
       vim.cmd([[
@@ -33,85 +33,84 @@ return {
         " Start interactive EasyAlign for a motion/text object (e.g. gaip)
         nmap ga <Plug>(EasyAlign)
       ]])
-    end
+    end,
   },
 
-  'godlygeek/tabular', -- format tables of data
-  'michaeljsmith/vim-indent-object', -- treat indented sections of code as vim objects
+  "godlygeek/tabular", -- format tables of data
+  "michaeljsmith/vim-indent-object", -- treat indented sections of code as vim objects
   {
-    'RRethy/vim-illuminate',
+    "RRethy/vim-illuminate",
 
     config = function()
-      vim.cmd('source $HOME/.config/nvim/illuminate.vim')
-    end
+      vim.cmd("source $HOME/.config/nvim/illuminate.vim")
+    end,
   },
-  'AndrewRadev/splitjoin.vim',
-  'direnv/direnv.vim',
+  "AndrewRadev/splitjoin.vim",
+  "direnv/direnv.vim",
 
   {
-    'weilbith/nvim-code-action-menu',
-    cmd = 'CodeActionMenu',
+    "weilbith/nvim-code-action-menu",
+    cmd = "CodeActionMenu",
   },
 
   {
-    'kosayoda/nvim-lightbulb',
-    dependencies = 'antoinemadec/FixCursorHold.nvim',
+    "kosayoda/nvim-lightbulb",
+    dependencies = "antoinemadec/FixCursorHold.nvim",
 
     config = function()
-      require('nvim-lightbulb').setup({autocmd = {enabled = true}})
-    end
+      require("nvim-lightbulb").setup({ autocmd = { enabled = true } })
+    end,
   },
 
   {
-    'mhartington/formatter.nvim',
+    "mhartington/formatter.nvim",
 
-    cmd = { 'Format' },
+    cmd = { "Format" },
     keys = {
       { "<M-f>", "<cmd>Format<cr>", desc = "Format" },
     },
 
     config = function()
-      require('formatter').setup {
+      require("formatter").setup({
         logging = true,
         log_level = vim.log.levels.WARN,
 
         filetype = {
           javascript = {
-            require('formatter.filetypes.javascript').prettierd
+            require("formatter.filetypes.javascript").prettierd,
           },
           lua = {
-            require('formatter.filetypes.lua').stylua
+            require("formatter.filetypes.lua").stylua,
           },
           json = {
-            require('formatter.filetypes.json').jq
-          }
-        }
-      }
-    end
+            require("formatter.filetypes.json").jq,
+          },
+        },
+      })
+    end,
   },
 
   {
-    'andymass/vim-matchup',
+    "andymass/vim-matchup",
 
     init = function()
       -- this is required so `config` is run _after_ the plugin is loaded
     end,
 
     config = function()
-      if vim.fn.mapcheck('<C-G>%', 'i') ~= '' then
+      if vim.fn.mapcheck("<C-G>%", "i") ~= "" then
         vim.cmd([[
           iunmap <C-G>%
         ]])
       end
-    end
+    end,
   },
-
 
   {
     "cshuaimin/ssr.nvim",
     -- Calling setup is optional.
     config = function()
-      require("ssr").setup {
+      require("ssr").setup({
         border = "rounded",
         min_width = 50,
         min_height = 5,
@@ -124,49 +123,52 @@ return {
           replace_confirm = "<cr>",
           replace_all = "<leader><cr>",
         },
-      }
+      })
 
-      vim.keymap.set({ "n", "x" }, "<leader>sr", function() require("ssr").open() end)
-    end
+      vim.keymap.set({ "n", "x" }, "<leader>sr", function()
+        require("ssr").open()
+      end)
+    end,
   },
 
   -- 'tpope/vim-vinegar',
 
   {
-    'nvim-telescope/telescope.nvim',
+    "nvim-telescope/telescope.nvim",
     dependencies = {
-      'nvim-lua/popup.nvim',
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-file-browser.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }
+      "nvim-lua/popup.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     },
 
     config = function()
-      require("telescope").setup {
+      require("telescope").setup({
         extensions = {
           file_browser = {
             mappings = {
               ["i"] = {
-                ["<C-w>"] = function() vim.cmd('normal vbd') end,
+                ["<C-w>"] = function()
+                  vim.cmd("normal vbd")
+                end,
               },
             },
           },
 
           fzf = {
-            fuzzy = false,                    -- false will only do exact matching
-            override_generic_sorter = true,  -- override the generic sorter
-            override_file_sorter = true,     -- override the file sorter
-            case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                             -- the default case_mode is "smart_case"
+            fuzzy = false, -- false will only do exact matching
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true, -- override the file sorter
+            case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+            -- the default case_mode is "smart_case"
           },
-
         },
 
         defaults = {
-          layout_strategy = 'bottom_pane',
+          layout_strategy = "bottom_pane",
           layout_config = {
             height = 0.4,
-            prompt_position = 'bottom'
+            prompt_position = "bottom",
           },
         },
 
@@ -174,15 +176,15 @@ return {
           command_history = {
             mappings = {
               n = {
-                ['<CR>'] = 'edit_command_line',
+                ["<CR>"] = "edit_command_line",
               },
               i = {
-                ['<CR>'] = 'edit_command_line',
+                ["<CR>"] = "edit_command_line",
               },
             },
           },
         },
-      }
+      })
 
       require("telescope").load_extension("file_browser")
       require("telescope").load_extension("fzf")
@@ -190,87 +192,87 @@ return {
       vim.cmd([[
         cnoremap <M-r> <Cmd>lua require('telescope.builtin').command_history{default_text = vim.fn.getcmdline()}<cr>
       ]])
-    end
+    end,
   },
 
   {
-    'm00qek/baleia.nvim',
+    "m00qek/baleia.nvim",
 
     config = function()
       vim.api.nvim_create_autocmd({ "BufRead" }, {
-        pattern = {"*.tty", "*.log"},
+        pattern = { "*.tty", "*.log" },
 
         callback = function()
           if vim.api.nvim_buf_line_count(0) <= 5000 then
-            local baleia = require('baleia')
+            local baleia = require("baleia")
 
-            baleia.setup().once(vim.fn.bufnr('%'))
-            vim.api.nvim_buf_set_option(0, 'buftype', 'nowrite')
+            baleia.setup().once(vim.fn.bufnr("%"))
+            vim.api.nvim_buf_set_option(0, "buftype", "nowrite")
           end
-        end
+        end,
       })
-    end
+    end,
   },
 
-  'tpope/vim-unimpaired', -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
-  'tpope/vim-eunuch', -- file unix commands, :Delete, :Move, etc
-  'tpope/vim-commentary', -- make lines comments or not
-  'tpope/vim-repeat', -- repeat complex commands with .
-  'FooSoft/vim-argwrap', -- expanding and collapsing lists
-  'wsdjeg/vim-fetch',
+  "tpope/vim-unimpaired", -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
+  "tpope/vim-eunuch", -- file unix commands, :Delete, :Move, etc
+  "tpope/vim-commentary", -- make lines comments or not
+  "tpope/vim-repeat", -- repeat complex commands with .
+  "FooSoft/vim-argwrap", -- expanding and collapsing lists
+  "wsdjeg/vim-fetch",
   {
-    'norcalli/nvim-colorizer.lua',
+    "norcalli/nvim-colorizer.lua",
     config = function()
       vim.opt.termguicolors = true
-      require'colorizer'.setup()
-    end
+      require("colorizer").setup()
+    end,
   },
 
   {
-    'KabbAmine/vCoolor.vim',
+    "KabbAmine/vCoolor.vim",
     init = function()
       vim.g.vcoolor_disable_mappings = 1
-    end
+    end,
   },
 
   {
-    'suketa/nvim-dap-ruby',
+    "suketa/nvim-dap-ruby",
 
-    dependencies = 'nvim-dap',
+    dependencies = "nvim-dap",
 
     config = function()
       -- require('dap-ruby').setup()
-    end
+    end,
   },
 
-  'will133/vim-dirdiff',
+  "will133/vim-dirdiff",
 
   {
-    'mattn/emmet-vim',
+    "mattn/emmet-vim",
     config = function()
       vim.g.user_emmet_settings = {
         html = {
-          empty_element_suffix = ' />'
+          empty_element_suffix = " />",
         },
         mdx = {
-          extends = 'jsx',
-        }
+          extends = "jsx",
+        },
       }
-    end
+    end,
   },
 
-  'kshenoy/vim-signature',
+  "kshenoy/vim-signature",
 
   {
-    'tpope/vim-dispatch',
+    "tpope/vim-dispatch",
 
     config = function()
       -- we keep this here to make sure the `after` in vim-dispatch-neovim works
-    end
+    end,
   },
 
   {
-    'vim-test/vim-test',
+    "vim-test/vim-test",
 
     config = function()
       vim.cmd([[
@@ -292,44 +294,44 @@ return {
           endif
         endfunction
       ]])
-    end
+    end,
   },
 
   {
-    'radenling/vim-dispatch-neovim',
-    dependencies = 'vim-dispatch'
+    "radenling/vim-dispatch-neovim",
+    dependencies = "vim-dispatch",
   },
 
   {
-    'voldikss/vim-floaterm',
+    "voldikss/vim-floaterm",
 
     config = function()
       vim.cmd([[
         autocmd FileType json nnoremap <leader>j :FloatermNew --autoclose=2 --wintype=split jqfzf %<cr>
       ]])
-    end
+    end,
   },
 
   {
-    'refractalize/auto-save',
+    "refractalize/auto-save",
     config = function()
-      require('auto-save').setup({
+      require("auto-save").setup({
         write_delay = 0,
         ignore_files = {
-          '.config/nvim/lua/plugins/*'
-        }
+          ".config/nvim/lua/plugins/*",
+        },
       })
-    end
+    end,
   },
 
   {
-    'refractalize/watch',
+    "refractalize/watch",
   },
 
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
-    dependencies = { 
+    dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
@@ -355,40 +357,56 @@ return {
         },
         window = {
           mappings = {
-            ['/'] = 'noop',
-            ['-'] = 'navigate_up',
-          }
-        }
+            ["/"] = "noop",
+            ["-"] = "navigate_up",
+          },
+        },
       })
-    end
+    end,
   },
 
   {
     "AckslD/nvim-neoclip.lua",
 
     dependencies = {
-      {'ibhagwan/fzf-lua'},
+      { "ibhagwan/fzf-lua" },
     },
 
     config = function()
-      require('neoclip').setup()
+      require("neoclip").setup()
     end,
   },
 
   {
-    'rmagatti/auto-session',
+    "rmagatti/auto-session",
 
-    config = true
+    config = true,
   },
 
   {
-    'williamboman/mason.nvim',
+    "williamboman/mason.nvim",
 
-    config = true
+    config = true,
   },
 
   {
-    'Julian/vim-textobj-variable-segment',
-    dependencies = 'kana/vim-textobj-user'
-  }
+    "Julian/vim-textobj-variable-segment",
+    dependencies = "kana/vim-textobj-user",
+  },
+
+  {
+    "folke/zen-mode.nvim",
+
+    keys = {
+      { "<M-Enter>", "<cmd>ZenMode<cr>", desc = "ZenMode" },
+    },
+
+    config = function()
+      require("zen-mode").setup({
+        window = {
+          -- width = 1.0, -- width will be 85% of the editor width
+        },
+      })
+    end,
+  },
 }
