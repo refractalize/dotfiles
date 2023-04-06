@@ -18,6 +18,7 @@
   "diffview.nvim": { "branch": "main", "commit": "58035354fc79c6ec42fa7b218dab90bd3968615f" },
   "direnv.vim": { "branch": "master", "commit": "4c858b8cd8cbfac998534096e6ffb710d7a07358" },
   "emmet-vim": { "branch": "master", "commit": "def5d57a1ae5afb1b96ebe83c4652d1c03640f4d" },
+  "everforest": { "branch": "master", "commit": "3e259a9a606778cd9181ecb65301ec92af8a1681" },
   "formatter.nvim": { "branch": "master", "commit": "ed949c13e1a942db29ababa35e8c7864ced90eb6" },
   "fugitive-gitlab.vim": { "branch": "master", "commit": "b73a8e97de95d26280082abb7f51465a3d3b239e" },
   "fzf": { "branch": "master", "commit": "e5103d94290eb9d65807a9f1ecee673bd9ce7cc2" },
