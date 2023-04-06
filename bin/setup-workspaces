@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+setup-workspace() {
+  d=$1
+  kitty @ launch --type=tab --cwd $d --no-response
+  kitty @ send-text "nvim\n"
+  kitty @ launch --type=window --cwd $d --no-response
+}
+
+for d in $@
+do
+  setup-workspace $d
+done

@@ -1,8 +1,88 @@
+function mochaTestConfig(args)
+  args = args or {}
+
+  local runtimeArgs = {
+    "./node_modules/mocha/bin/mocha.js",
+    "--no-parallel",
+    "${file}",
+    unpack(args),
+  }
+
+  return {
+    type = "pwa-node",
+    request = "launch",
+    name = "Debug Mocha Tests",
+    -- trace = true, -- include debugger info
+    runtimeExecutable = "node",
+    runtimeArgs = runtimeArgs,
+    rootPath = "${workspaceFolder}",
+    cwd = "${workspaceFolder}",
+    console = "integratedTerminal",
+    internalConsoleOptions = "neverOpen",
+  }
+end
+
 return {
   {
     "microsoft/vscode-js-debug",
     lazy = true,
     build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
+  },
+
+  {
+    "mfussenegger/nvim-dap",
+
+    lazy = false,
+
+    keys = {
+      {
+        "<Leader>db",
+        function()
+          require("dap").toggle_breakpoint()
+        end,
+        "Toggle breakpoint",
+      },
+      {
+        "<Leader>dr",
+        function()
+          require("dap").continue()
+        end,
+        "Debugger continue",
+      },
+      {
+        "<Leader>dt",
+        function()
+          local args = require("mocha_nearest_test").mocha_nearest_test_grep()
+          require("dap").run(mochaTestConfig(args))
+        end,
+        "Debugger continue",
+      },
+      {
+        "<Leader>dl",
+        function()
+          require("dap").step_into()
+        end,
+        "Debugger step into",
+      },
+      {
+        "<Leader>dj",
+        function()
+          require("dap").step_over()
+        end,
+        "Debugger step over",
+      },
+      {
+        "<Leader>dh",
+        function()
+          require("dap").step_out()
+        end,
+        "Debugger step out",
+      },
+    },
+
+    config = function()
+      vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
+    end,
   },
 
   {
@@ -22,24 +102,7 @@ return {
       })
 
       for _, language in ipairs({ "typescript", "javascript" }) do
-        require("dap").configurations[language] = {
-          {
-            type = "pwa-node",
-            request = "launch",
-            name = "Debug Mocha Tests",
-            -- trace = true, -- include debugger info
-            runtimeExecutable = "node",
-            runtimeArgs = {
-              "./node_modules/mocha/bin/mocha.js",
-              "--no-parallel",
-              "${file}",
-            },
-            rootPath = "${workspaceFolder}",
-            cwd = "${workspaceFolder}",
-            console = "integratedTerminal",
-            internalConsoleOptions = "neverOpen",
-          },
-        }
+        require("dap").configurations[language] = { mochaTestConfig() }
       end
     end,
   },
@@ -47,6 +110,46 @@ return {
   {
     "rcarriga/nvim-dap-ui",
     dependencies = { "mfussenegger/nvim-dap" },
+
+    lazy = false,
+
+    keys = {
+      {
+        "<Leader>de",
+        function()
+          require("dapui").eval(nil, { enter = true })
+        end,
+        "Debug evaluate expression",
+      },
+      {
+        "<Leader>de",
+        function()
+          require("dapui").eval(nil, { enter = true })
+        end,
+        "Debug evaluate expression",
+        mode = "v",
+      },
+    },
+
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+      dapui.setup()
+
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+    end,
+  },
+
+  {
+    "theHamsta/nvim-dap-virtual-text",
+
     config = true,
   },
 }

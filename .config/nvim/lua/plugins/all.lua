@@ -317,9 +317,6 @@ return {
     config = function()
       require("auto-save").setup({
         write_delay = 0,
-        ignore_files = {
-          ".config/nvim/lua/plugins/*",
-        },
       })
     end,
   },
@@ -368,6 +365,18 @@ return {
   {
     "AckslD/nvim-neoclip.lua",
 
+    keys = {
+      {
+        "<C-p>",
+        function()
+          require("neoclip.fzf")()
+        end,
+        desc = "Neoclip",
+      },
+    },
+
+    lazy = false,
+
     dependencies = {
       { "ibhagwan/fzf-lua" },
     },
@@ -379,6 +388,10 @@ return {
 
   {
     "rmagatti/auto-session",
+
+    opts = {
+      log_level = "error",
+    },
 
     config = true,
   },
@@ -398,14 +411,41 @@ return {
     "folke/zen-mode.nvim",
 
     keys = {
-      { "<M-Enter>", "<cmd>ZenMode<cr>", desc = "ZenMode" },
+      {
+        "<M-Enter>",
+        function()
+          require("zen-mode").toggle()
+        end,
+        desc = "ZenMode",
+      },
+      {
+        "<M-Enter>",
+        function()
+          require("zen-mode").toggle()
+        end,
+        desc = "ZenMode",
+        mode = "i",
+      },
     },
 
     config = function()
       require("zen-mode").setup({
         window = {
-          -- width = 1.0, -- width will be 85% of the editor width
+          backdrop = 1,
+          width = 200,
         },
+      })
+    end,
+  },
+
+  {
+    "ethanholz/nvim-lastplace",
+
+    config = function()
+      require("nvim-lastplace").setup({
+        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+        lastplace_ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" },
+        lastplace_open_folds = true,
       })
     end,
   },

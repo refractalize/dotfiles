@@ -1,20 +1,20 @@
 return {
   {
-    'hrsh7th/nvim-cmp',
+    "hrsh7th/nvim-cmp",
 
     dependencies = {
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-cmdline',
-      'hrsh7th/cmp-vsnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'dmitmel/cmp-cmdline-history',
-      'hrsh7th/cmp-nvim-lsp-signature-help',
-      'hrsh7th/cmp-nvim-lua',
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-vsnip",
+      "hrsh7th/cmp-nvim-lsp",
+      "dmitmel/cmp-cmdline-history",
+      "hrsh7th/cmp-nvim-lsp-signature-help",
+      "hrsh7th/cmp-nvim-lua",
     },
 
     config = function()
-      local cmp = require'cmp'
+      local cmp = require("cmp")
 
       cmp.setup({
         snippet = {
@@ -27,37 +27,53 @@ return {
           end,
         },
         mapping = cmp.mapping.preset.insert({
-          ['<CR>'] = cmp.mapping.confirm(),
+          ["<CR>"] = cmp.mapping.confirm(),
         }),
         sources = cmp.config.sources({
-          { name = 'nvim_lsp_signature_help' },
-          { name = 'nvim_lsp' },
-          { name = 'vsnip' }, -- For vsnip users.
-          { name = 'path' },
+          { name = "nvim_lsp_signature_help" },
+          { name = "nvim_lsp" },
+          { name = "vsnip" }, -- For vsnip users.
+          { name = "path" },
           -- { name = 'luasnip' }, -- For luasnip users.
           -- { name = 'ultisnips' }, -- For ultisnips users.
           -- { name = 'snippy' }, -- For snippy users.
           {
-            name = 'buffer',
+            name = "buffer",
             option = {
               get_bufnrs = function()
                 return vim.api.nvim_list_bufs()
-              end
-            }
+              end,
+            },
           },
-          { name = 'nvim_lua' }
-        })
+          { name = "nvim_lua" },
+        }),
       })
-    end
+    end,
   },
 
   {
-    'hrsh7th/vim-vsnip-integ',
-    dependencies = 'vim-vsnip'
+    "hrsh7th/vim-vsnip-integ",
+    dependencies = "vim-vsnip",
   },
 
   {
-    'hrsh7th/vim-vsnip',
+    "rcarriga/cmp-dap",
+
+    dependencies = {
+      "hrsh7th/nvim-cmp",
+    },
+
+    config = function()
+      require("cmp").setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+        sources = {
+          { name = "dap" },
+        },
+      })
+    end,
+  },
+
+  {
+    "hrsh7th/vim-vsnip",
 
     config = function()
       vim.cmd([[
@@ -81,6 +97,6 @@ return {
         let g:vsnip_filetypes = {}
         let g:vsnip_filetypes.typescript = ['javascript']
       ]])
-    end
+    end,
   },
 }

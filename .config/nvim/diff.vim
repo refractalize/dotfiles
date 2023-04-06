@@ -1,6 +1,6 @@
 set fillchars+=diff:╱
 
-nnoremap <silent> <Leader>d :call DiffToggle()<CR>
+nnoremap <silent> <Leader>dd :call DiffToggle()<CR>
 function! DiffToggle()
   if &diff
     diffoff
@@ -9,7 +9,7 @@ function! DiffToggle()
   endif
 endfunction
 
-nnoremap <silent> <Leader>w :call DiffIgnoreWhitespaceToggle()<CR>
+nnoremap <silent> <Leader>dw :call DiffIgnoreWhitespaceToggle()<CR>
 function! DiffIgnoreWhitespaceToggle()
  if &diffopt =~ 'iwhite'
    set diffopt-=iwhite
@@ -18,5 +18,5 @@ function! DiffIgnoreWhitespaceToggle()
  endif
 endfunction
 
-command! GPatch silent exec "!git diff HEAD " . expand("%") . " | pbcopy"
+command! GCopyPatch silent exec "!git diff HEAD " . expand("%") . " | pbcopy"
 command! GApply silent exec "!pbpaste | git apply"

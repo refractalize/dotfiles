@@ -74,7 +74,6 @@ set signcolumn=yes:1
 set termguicolors
 set pumblend=20
 set nofoldenable
-set switchbuf=useopen
 set listchars=trail:·,nbsp:+,tab:\|·>
 
 " navigate long, wrapping lines
@@ -139,12 +138,10 @@ nnoremap <Leader>e :e %:h
 
 source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/copypaste.vim
-source $HOME/.config/nvim/fzf.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/google.vim
 source $HOME/.config/nvim/diff.vim
 source $HOME/.config/nvim/spelling.vim
-source $HOME/.config/nvim/terminal.vim
 source $HOME/.config/nvim/tabs.vim
 source $HOME/.config/nvim/windows.vim
 source $HOME/.config/nvim/ignorelint.vim

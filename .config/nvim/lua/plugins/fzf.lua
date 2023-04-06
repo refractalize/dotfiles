@@ -11,6 +11,40 @@ return {
 
   {
     "refractalize/fzf-mru",
+    auto = false,
+
+    keys = {
+      {
+        "<Leader><Leader>",
+        function()
+          require("fzf-mru").fzf_mru()
+        end,
+        desc = "Search MRU files",
+        mode = "n",
+      },
+      {
+        "<Leader><Leader>",
+        function()
+          local utils = require("fzf-lua.utils")
+          require("fzf-mru").fzf_mru({
+            fzf_opts = {
+              ["--query"] = utils.get_visual_selection(),
+            },
+          })
+        end,
+        desc = "Search MRU files with visual",
+        mode = "v",
+      },
+      {
+        "<Leader>f",
+        function()
+          require("fzf-mru").fzf_mru({
+            all = true,
+          })
+        end,
+        desc = "Search MRU all files",
+      },
+    },
   },
 
   {
@@ -22,6 +56,10 @@ return {
 
     dependencies = {
       "nvim-tree/nvim-web-devicons",
+    },
+
+    cmds = {
+      "Rg",
     },
 
     keys = {
@@ -63,31 +101,69 @@ return {
         mode = "i",
         desc = "Complete relative path",
       },
+      {
+        "<c-x><c-h>",
+        function()
+          local actions = require("fzf-lua.actions")
+
+          require("fzf-lua").fzf_complete(
+            "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 | sed -E 's/^[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
+            {
+              fzf_opts = {
+                ["--tiebreak"] = "index",
+              },
+            }
+          )
+        end,
+        mode = "i",
+        desc = "Complete historical command",
+      },
+      {
+        "<Leader>dv",
+        function()
+          require("fzf-lua").dap_variables()
+        end,
+        desc = "Debug show variables",
+      },
+      {
+        "<Leader>G",
+        ":Rg ",
+        desc = "Start search",
+      },
+      {
+        "gr",
+        function()
+          require("fzf-lua").lsp_finder()
+        end,
+        desc = "Find references",
+      },
     },
 
     lazy = false,
 
     config = function()
       local actions = require("fzf-lua.actions")
-      require("fzf-lua").setup({
+      local fzf_lua = require("fzf-lua")
+
+      fzf_lua.setup({
         winopts = {
           fullscreen = true,
+
+          preview = {
+            flip_columns = 200,
+          },
+        },
+
+        lsp = {
+          code_actions = {
+            winopts = {
+              fullscreen = false,
+            },
+          },
         },
 
         actions = {
-          -- These override the default tables completely
-          -- no need to set to `false` to disable an action
-          -- delete or modify is sufficient
           files = {
-            -- providers that inherit these actions:
-            --   files, git_files, git_status, grep, lsp
-            --   oldfiles, quickfix, loclist, tags, btags
-            --   args
-            -- default action opens a single selection
-            -- or sends multiple selection to quickfix
-            -- replace the default action with the below
-            -- to open all files whether single or multiple
-            -- ["default"]     = actions.file_edit,
             ["default"] = actions.file_edit_or_qf,
             ["alt-s"] = actions.file_split,
             ["alt-v"] = actions.file_vsplit,
@@ -96,8 +172,6 @@ return {
             ["alt-l"] = actions.file_sel_to_ll,
           },
           buffers = {
-            -- providers that inherit these actions:
-            --   buffers, tabs, lines, blines
             ["default"] = actions.buf_edit,
             ["alt-s"] = actions.buf_split,
             ["alt-v"] = actions.buf_vsplit,
@@ -105,6 +179,28 @@ return {
           },
         },
       })
+
+      -- fzf_lua.register_ui_select()
+
+      vim.api.nvim_create_user_command("Rg", function(opts)
+        require("fzf-lua").grep({
+          search = opts.args,
+          no_esc = true,
+        })
+      end, { nargs = "?" })
+
+      vim.api.nvim_create_user_command("Rgs", function(opts)
+        require("fzf-lua").grep({
+          search = opts.args,
+        })
+      end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("SearchCurrentFilename", function(opts)
+        require("fzf-lua").grep({
+          search = "\\b" .. vim.fn.expand("%:t:r") .. "\\b",
+          no_esc = true,
+        })
+      end, { nargs = 0 })
     end,
   },
 }

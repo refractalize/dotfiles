@@ -24,6 +24,9 @@ struct Opt {
     #[structopt(long = "no-compress", parse(from_flag = std::ops::Not::not))]
     compress_mru_file: bool,
 
+    #[structopt(long = "all")]
+    all: bool,
+
     #[structopt(long, default_value = "1000")]
     max_mru_size: usize,
 
@@ -48,6 +51,18 @@ fn main() {
 }
 
 async fn load_entries(opt: &Opt) -> Result<Vec<MruEntry>> {
+    let input_entries = if opt.all {
+        let mut mru_entries = load_mru_file(&opt).await?;
+        mru_entries.sort_by_key(|f| -(f.time_last_used as i64));
+        mru_entries
+    } else {
+        filter_mru_entries(opt).await?
+    };
+
+    Ok(strip_cwd_from_filenames(input_entries)?)
+}
+
+async fn filter_mru_entries(opt: &Opt) -> Result<Vec<MruEntry>> {
     let (input_entries_result, mru_entries_result) =
         join!(entries_from_stdin(), load_mru_file(&opt));
 
@@ -56,12 +71,13 @@ async fn load_entries(opt: &Opt) -> Result<Vec<MruEntry>> {
         mru_entry.filename.clone()
     });
 
-    let input_entries = update_last_used_times(unique_input_entries, mru_entries);
-
-    Ok(strip_cwd_from_filenames(input_entries)?)
+    Ok(sort_by_most_recently_used(
+        unique_input_entries,
+        mru_entries,
+    ))
 }
 
-fn update_last_used_times(
+fn sort_by_most_recently_used(
     input_entries: Vec<MruEntry>,
     mru_entries: Vec<MruEntry>,
 ) -> Vec<MruEntry> {
