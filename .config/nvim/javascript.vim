@@ -71,9 +71,9 @@ function AddImport(lines)
   return "import " . basepath . " from '" . modulePath . "'"
 endfunction
 
-autocmd FileType javascript inoremap <expr> <c-i> fzf#vim#complete(fzf#wrap({
-  \ 'source': "rg --files \| sed 's/.*/.\\/&/' && [[ -f package.json ]] && jq -r '.dependencies + .devDependencies \| keys[]' package.json",
-  \ 'reducer': { lines -> AddImport(lines) }}))
+" autocmd FileType javascript inoremap <expr> <c-i> fzf#vim#complete(fzf#wrap({
+"   \ 'source': "rg --files \| sed 's/.*/.\\/&/' && [[ -f package.json ]] && jq -r '.dependencies + .devDependencies \| keys[]' package.json",
+"   \ 'reducer': { lines -> AddImport(lines) }}))
 
 command! ToggleMochaOnly :lua require('toggle_mocha_only').toggle_mocha_only()<cr>
 autocmd FileType javascript nnoremap <Leader>o <Cmd>ToggleMochaOnly<CR>

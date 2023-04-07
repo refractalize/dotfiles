@@ -21,7 +21,7 @@ endfunction
 
 function! s:ThemeNames()
   let themes = json_decode(readfile($HOME . "/.config/themes.json", ''))
-  return map(keys(themes), { i, k -> themes[k]["nvim"] })
+  return map(keys(themes), { i, k -> themes[k]["nvim"] }) + getcompletion('', 'color')
 endfunction
 
 function! theme#CompleteTheme(argLead, cmdLine, cursorPos)

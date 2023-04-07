@@ -92,6 +92,46 @@ return {
         desc = "Complete line",
       },
       {
+        "<c-i>",
+        function()
+          local actions = require("fzf-lua.actions")
+
+          require("fzf-lua").fzf_complete(
+            "rg --files | sed 's/.*/.\\/&/' && [[ -f package.json ]] && jq -r '.dependencies + .devDependencies | keys[]' package.json",
+            {
+              actions = {
+                ["default"] = function(selected, opts)
+                  local path = selected[1]
+                  local basepath = vim.fn.fnamemodify(path, ":t:r")
+
+                  if path[1] ~= "." then
+                    module_path = path
+                  else
+                    local relative_path = vim.fn.substitute(
+                      vim.fn.system("grealpath --relative-to " .. expand("%:h") .. " " .. path),
+                      "\n+$",
+                      "",
+                      ""
+                    )
+
+                    if relative_path[0] ~= "." then
+                      module_path = "./" .. relative_path
+                    else
+                      module_path = relative_path
+                    end
+                  end
+
+                  local import_statement = "import " .. basepath .. " from '" .. module_path .. "'"
+                  return actions.complete_insert({ import_statement }, opts)
+                end,
+              },
+            }
+          )
+        end,
+        mode = "i",
+        desc = "Complete line",
+      },
+      {
         "<c-x><c-r>",
         function()
           require("fzf-lua").complete_path({
@@ -104,8 +144,6 @@ return {
       {
         "<c-x><c-h>",
         function()
-          local actions = require("fzf-lua.actions")
-
           require("fzf-lua").fzf_complete(
             "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 | sed -E 's/^[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
             {
@@ -126,8 +164,18 @@ return {
         desc = "Debug show variables",
       },
       {
+        "<Leader>g",
+        function()
+          require("fzf-lua").grep({
+            search = "\\b" .. vim.fn.expand("<cword>") .. "\\b",
+            no_esc = true,
+          })
+        end,
+        desc = "Start search",
+      },
+      {
         "<Leader>G",
-        ":Rg ",
+        "<Cmd>Rg ",
         desc = "Start search",
       },
       {
