@@ -67,6 +67,7 @@ set complete-=i
 set nofileignorecase " make sure we use exact case on macos
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical " diffs are always shown left/right
+set diffopt+=linematch:60
 set isfname-==
 set mouse=a
 set inccommand=nosplit

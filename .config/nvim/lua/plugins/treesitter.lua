@@ -33,7 +33,7 @@ return {
     build = ':TSUpdate',
 
     config = function()
-      require"nvim-treesitter.parsers".filetype_to_parsername.zsh = 'bash'
+      vim.treesitter.language.register('bash', 'zsh')
 
       require'nvim-treesitter.configs'.setup {
         ensure_installed = 'all',

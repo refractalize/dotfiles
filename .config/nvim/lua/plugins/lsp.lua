@@ -78,7 +78,7 @@ return {
           },
         },
         "solargraph",
-        "sqls",
+        "sqlls",
         tsserver = {
           mappings = {
             format = false,

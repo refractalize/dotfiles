@@ -175,7 +175,7 @@ return {
       },
       {
         "<Leader>G",
-        "<Cmd>Rg ",
+        ":Rg ",
         desc = "Start search",
       },
       {
