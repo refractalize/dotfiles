@@ -1,6 +1,6 @@
 function node_under_cursor(buf)
   local position = vim.api.nvim_win_get_cursor(0)
-  return vim.treesitter.get_node_at_pos(buf, position[1] - 1, position[2], {})
+  return vim.treesitter.get_node({ bufnr = buf, pos = { position[1] - 1, position[2] } })
 end
 
 function find_enclosing(query, buf)
@@ -58,7 +58,7 @@ function find_and_replace_surrounding_node_text(query, replace_fn)
 end
 
 function node_text(node, buf)
-  return vim.treesitter.query.get_node_text(node, buf)
+  return vim.treesitter.get_node_text(node, buf)
 end
 
 function replace_node_text(node, buf, text)
@@ -68,7 +68,7 @@ function replace_node_text(node, buf, text)
 end
 
 function print_node(node, buf)
-  print(node:type(), node:sexpr(), vim.treesitter.query.get_node_text(node, buf))
+  print(node:type(), node:sexpr(), vim.treesitter.get_node_text(node, buf))
 end
 
 function cursor_range(buf)

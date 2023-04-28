@@ -47,3 +47,5 @@
     syntax-theme = OneHalfDark
 [init]
 	defaultBranch = main
+[fetch]
+	prune = true

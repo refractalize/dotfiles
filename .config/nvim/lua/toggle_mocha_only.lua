@@ -7,7 +7,7 @@ function toggle_mocha_only()
 end
 
 function remove_onlys(buf)
-  local only_query = vim.treesitter.query.parse_query('javascript', [[
+  local only_query = vim.treesitter.query.parse('javascript', [[
     (
       call_expression
         function: [

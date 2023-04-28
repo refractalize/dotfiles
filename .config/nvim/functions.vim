@@ -71,7 +71,3 @@ function! Blah(range)
   echom GetVisualText(a:range)
   echom GetVisualText(a:range)
 endfunction
-
-vmap gj <Cmd>echom GetVisualText(0)<CR>
-imap <expr> gj GetVisualText(0)
-command! -range Blah call Blah(<range>)

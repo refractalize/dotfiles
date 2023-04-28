@@ -72,7 +72,7 @@ function tbl_compact(table)
 end
 
 function current_test_regex(buf)
-  local mocha_query = vim.treesitter.query.parse_query(
+  local mocha_query = vim.treesitter.query.parse(
     "javascript",
     [[
     (

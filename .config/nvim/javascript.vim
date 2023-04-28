@@ -49,7 +49,6 @@ function! FindAlternative()
 endfunction
 
 autocmd FileType javascript set wildignore+=**/node_modules/** 
-autocmd FileType javascript command! A call FindAlternative()
 
 function AddImport(lines)
   let path = a:lines[0]

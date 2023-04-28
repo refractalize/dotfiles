@@ -1,7 +1,7 @@
 local ts_utils = require('ts_utils')
 
 function toggle_import_require()
-  local import_query = vim.treesitter.query.parse_query('javascript', [[
+  local import_query = vim.treesitter.query.parse('javascript', [[
     [
       (
         import_statement (import_clause) @import_target source: (_) @import_source

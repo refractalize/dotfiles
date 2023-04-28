@@ -1,15 +1,5 @@
 return {
   {
-    "junegunn/fzf",
-
-    build = function()
-      vim.fn["fzf#install"]()
-    end,
-  },
-
-  "junegunn/fzf.vim",
-
-  {
     "refractalize/fzf-mru",
     auto = false,
 
@@ -86,7 +76,17 @@ return {
       {
         "<c-x><c-l>",
         function()
-          require("fzf-lua").complete_line()
+          local actions = require("fzf-lua.actions")
+          require("fzf-lua").grep({
+            search = vim.fn.getline("."),
+            actions = {
+              -- ["default"] = actions.complete_insert,
+              ["default"] = function(selected, opts)
+                vim.fn.setline('.', vim.fn.substitute(selected[1], "^.\\{-}:.\\{-}:", "", ""))
+                vim.cmd [[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]]
+              end,
+            },
+          })
         end,
         mode = "i",
         desc = "Complete line",
@@ -104,17 +104,13 @@ return {
                   local path = selected[1]
                   local basepath = vim.fn.fnamemodify(path, ":t:r")
 
-                  if path[1] ~= "." then
+                  if string.sub(path, 1, 1) ~= "." then
                     module_path = path
                   else
-                    local relative_path = vim.fn.substitute(
-                      vim.fn.system("grealpath --relative-to " .. expand("%:h") .. " " .. path),
-                      "\n+$",
-                      "",
-                      ""
-                    )
+                    local relative_path =
+                      vim.fn.systemlist("grealpath --relative-to " .. vim.fn.expand("%:h") .. " " .. path)[1]
 
-                    if relative_path[0] ~= "." then
+                    if string.sub(relative_path, 1, 1) ~= "." then
                       module_path = "./" .. relative_path
                     else
                       module_path = relative_path
@@ -129,7 +125,7 @@ return {
           )
         end,
         mode = "i",
-        desc = "Complete line",
+        desc = "Import module",
       },
       {
         "<c-x><c-r>",
@@ -236,6 +232,23 @@ return {
           no_esc = true,
         })
       end, { nargs = "?" })
+
+      vim.api.nvim_create_user_command("A", function(opts)
+        local filename = vim.fn.expand("%")
+        local basename = vim.fn.substitute(filename, "\\.[^/]*", "", "")
+        local files_with_same_basename = vim.fn.glob(basename .. ".*", false, true)
+        local alternate_files = vim.tbl_filter(function(f)
+          return f ~= filename
+        end, files_with_same_basename)
+
+        if #alternate_files == 1 then
+          vim.cmd("e " .. alternate_files[1])
+        else
+          require("fzf-lua").fzf_exec(alternate_files, {
+            actions = require("fzf-lua").defaults.actions.files,
+          })
+        end
+      end, { nargs = 0 })
 
       vim.api.nvim_create_user_command("Rgs", function(opts)
         require("fzf-lua").grep({

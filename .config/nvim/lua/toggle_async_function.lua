@@ -3,7 +3,7 @@ local ts_utils = require('ts_utils')
 local async_pattern = '^%s*async%s+'
 
 function toggle_async_function()
-  local query = vim.treesitter.query.parse_query('javascript', [[
+  local query = vim.treesitter.query.parse('javascript', [[
     [
       (function_declaration)
       (arrow_function)

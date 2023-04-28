@@ -15,7 +15,7 @@ then
   local GITLAB_PROJECT=${ORIGIN_REMOTE%%.git}
   GITLAB_PROJECT=${GITLAB_PROJECT##https://gitlab.com/}
   GITLAB_PROJECT=${GITLAB_PROJECT:gs/\//%2F}
-  local GITLAB_PR_JSON=$(glab api projects/$GITLAB_PROJECT/merge_requests\?source_branch=$GIT_BRANCH | jq -c ".[] | select(.source_branch == \"$GIT_BRANCH\") | {reference, web_url, iid}")
+  local GITLAB_PR_JSON=$(glab api projects/$GITLAB_PROJECT/merge_requests\?source_branch=$GIT_BRANCH | jq -c ".[0] | {reference, web_url, iid}")
   local PR_NUMBER=$(echo $GITLAB_PR_JSON | jq -r .iid)
   local PR_REFERENCE=$(echo $GITLAB_PR_JSON | jq -r .reference)
   local PR_URL=$(echo $GITLAB_PR_JSON | jq -r .web_url)
