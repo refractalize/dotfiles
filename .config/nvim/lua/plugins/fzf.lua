@@ -80,9 +80,9 @@ return {
           require("fzf-lua").grep({
             search = vim.fn.getline("."),
             actions = {
-              -- ["default"] = actions.complete_insert,
               ["default"] = function(selected, opts)
-                vim.fn.setline('.', vim.fn.substitute(selected[1], "^.\\{-}:.\\{-}:", "", ""))
+                local line = vim.fn.substitute(selected[1], "^.\\{-}:.\\{-}:.\\{-}:", "", "")
+                vim.fn.setline('.', line)
                 vim.cmd [[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]]
               end,
             },

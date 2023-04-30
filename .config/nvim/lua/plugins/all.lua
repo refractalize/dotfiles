@@ -326,6 +326,16 @@ return {
   },
 
   {
+    "refractalize/reg",
+
+    config = function()
+      vim.api.nvim_create_user_command("Reg", function(opts)
+        require("reg").edit_register(opts.args)
+      end, { nargs = 1 })
+    end,
+  },
+
+  {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
     dependencies = {
