@@ -326,11 +326,11 @@ return {
   },
 
   {
-    "refractalize/reg",
+    "refractalize/editreg",
 
     config = function()
-      vim.api.nvim_create_user_command("Reg", function(opts)
-        require("reg").edit_register(opts.args)
+      vim.api.nvim_create_user_command("EditReg", function(opts)
+        require("editreg").edit_register(opts.args)
       end, { nargs = 1 })
     end,
   },
