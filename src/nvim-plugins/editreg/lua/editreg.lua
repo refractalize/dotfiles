@@ -6,6 +6,7 @@ function edit_register(register_name)
   end
 
   local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'delete')
   buf_set_register_contents(buf, reginfo)
 
   local title = 'register "' .. register_name .. ", type " .. render_regtype(reginfo.regtype)
