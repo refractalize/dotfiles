@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -e
+
 zparseopts -D -A opts -- -all=all -tab=tab -save=save
 
 THEME=$1

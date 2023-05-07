@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -e
+
 zparseopts -D -A opts -- -all=all -tab=tab -choose=choose -save=save
 
 THEME=$1
@@ -15,6 +17,7 @@ then
 fi
 
 theme() {
+  set -e
   [[ -f $KITTY_CUSTOM_DIR/$THEME.conf ]] && cat $KITTY_CUSTOM_DIR/$THEME.conf || unzip -p $KITTY_THEME_ZIP kitty-themes-master/themes/$THEME.conf
 }
 

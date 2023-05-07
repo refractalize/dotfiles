@@ -82,8 +82,8 @@ return {
             actions = {
               ["default"] = function(selected, opts)
                 local line = vim.fn.substitute(selected[1], "^.\\{-}:.\\{-}:.\\{-}:", "", "")
-                vim.fn.setline('.', line)
-                vim.cmd [[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]]
+                vim.fn.setline(".", line)
+                vim.cmd([[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]])
               end,
             },
           })
@@ -255,6 +255,15 @@ return {
           search = opts.args,
         })
       end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("Gdiff", function(opts)
+        local actions = require("fzf-lua.actions")
+        require("fzf-lua").fzf_exec("git diff " .. opts.args .. " | diff2vimgrep", {
+          actions = {
+            ["default"] = actions.file_edit_or_qf,
+          },
+        })
+      end, { nargs = "*" })
 
       vim.api.nvim_create_user_command("SearchCurrentFilename", function(opts)
         require("fzf-lua").grep({

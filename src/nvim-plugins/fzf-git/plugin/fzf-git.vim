@@ -72,19 +72,3 @@ endfunction
 function! ShowBranchFiles(lines, branch)
   call map(a:lines, { index, line -> ShowBranchFile(line, a:branch) })
 endfunction
-
-command! -bang -nargs=* -complete=customlist,fugitive#EditComplete Gdiff call fzf#vim#grep(
-  \ '{ git diff ' . <q-args> . ' | diff2vimgrep }',
-  \ 0,
-  \ {
-    \ 'options': [
-      \ '--tac',
-      \ '--preview',
-      \ 'if [[ {4} == -* ]]; then git show ' . RemoveDots(<q-args>) . ':{1} | bat --file-name {1} --plain --number -H {2} --color=always; else bat {1} --plain --number -H {2} --color=always; fi',
-      \ '--preview-window',
-      \ '+{2}-5/2',
-    \ ],
-  \ },
-  \ <bang>0
-\ )
-
