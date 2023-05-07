@@ -64,19 +64,19 @@
     "nvim": "rose-pine-light"
   },
   "tokyonight-night": {
-    "kitty": "tokyonight_night",
+    "kitty": "tokyo_night_night",
     "nvim": "tokyonight-night"
   },
   "tokyonight-storm": {
-    "kitty": "tokyonight_storm",
+    "kitty": "tokyo_night_storm",
     "nvim": "tokyonight-storm"
   },
   "tokyonight-moon": {
-    "kitty": "tokyonight_moon",
+    "kitty": "tokyo_night_moon",
     "nvim": "tokyonight-moon"
   },
   "tokyonight-day": {
-    "kitty": "tokyonight_day",
+    "kitty": "tokyo_night_day",
     "nvim": "tokyonight-day"
   },
   "oceanic-material-dark": {
