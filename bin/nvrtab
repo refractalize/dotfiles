@@ -2,26 +2,14 @@
 
 set -e
 
-# exec >& /Users/tim/nvrtab.log                                                                      
-# exec 2>&1
-
-# echo nvrtab "$@"
-
-# kitty launch --type=background doesn't use the PATH env var as set in kitty.conf
 export PATH=/opt/homebrew/bin:$PATH
 
 zparseopts -D -A opts -window-id::
 
 WINDOW_ID=${opts[--window-id]:-$KITTY_WINDOW_ID}
 
-# echo WINDOW_ID=$WINDOW_ID
+NVIM_WINDOW_ID=$(kitty @ --to unix:$(ls ${TMPDIR}/kitty-*) ls | jq "[.[] | .tabs[] | select(.windows[] | select(.id == $WINDOW_ID)) | .windows[] |  select(.foreground_processes[] | .cmdline[] | . == \"nvim\")][0] | .id")
 
-PID=$(kitty @ --to unix:$(ls ${TMPDIR}/kitty-*) ls | jq "[.[] | .tabs[] | select(.windows[] | select(.id == $WINDOW_ID)) | .windows[] | .foreground_processes[] | select(.cmdline[] | . == \"nvim\") | .pid][0]")
+REMOTE=$HOME/.local/state/nvim/kitty-remotes/window-$NVIM_WINDOW_ID
 
-# echo PID=$PID
-
-NVIM_LISTEN_ADDRESS=$(lsof -p $PID -a -U | awk '$8 ~ /\// { print $8 }')
-
-# echo NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS
-
-NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr $@
+nvim --server $REMOTE --remote $@

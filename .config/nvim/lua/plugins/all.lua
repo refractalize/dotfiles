@@ -459,4 +459,10 @@ return {
       })
     end,
   },
+
+  {
+    "refractalize/kitty-open-file",
+
+    config = true,
+  },
 }
