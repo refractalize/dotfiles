@@ -81,7 +81,7 @@ return {
             search = vim.fn.getline("."),
             actions = {
               ["default"] = function(selected, opts)
-                local line = vim.fn.substitute(selected[1], "^.\\{-}:.\\{-}:.\\{-}:", "", "")
+                local line = vim.fn.substitute(selected[1], "^.\\{-}:\\d\\+:\\(\\d\\+:\\)\\?", "", "")
                 vim.fn.setline(".", line)
                 vim.cmd([[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]])
               end,
