@@ -88,6 +88,9 @@ return {
           sh = {
             require("formatter.filetypes.sh").shfmt,
           },
+          python = {
+            require("formatter.filetypes.python").black,
+          },
           lua = {
             require("formatter.filetypes.lua").stylua,
           },
