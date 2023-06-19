@@ -79,6 +79,15 @@ return {
           javascript = {
             require("formatter.filetypes.javascript").prettierd,
           },
+          markdown = {
+            require("formatter.filetypes.markdown").prettierd,
+          },
+          bash = {
+            require("formatter.filetypes.sh").shfmt,
+          },
+          sh = {
+            require("formatter.filetypes.sh").shfmt,
+          },
           lua = {
             require("formatter.filetypes.lua").stylua,
           },
@@ -199,14 +208,18 @@ return {
     "m00qek/baleia.nvim",
 
     config = function()
+      local baleia = require("baleia").setup()
+
+      vim.api.nvim_create_user_command("Baleia", function(opts)
+        baleia.once(vim.fn.bufnr("%"))
+      end, { nargs = 0 })
+
       vim.api.nvim_create_autocmd({ "BufRead" }, {
         pattern = { "*.tty", "*.log" },
 
         callback = function()
           if vim.api.nvim_buf_line_count(0) <= 5000 then
-            local baleia = require("baleia")
-
-            baleia.setup().once(vim.fn.bufnr("%"))
+            baleia.once(vim.fn.bufnr("%"))
             vim.api.nvim_buf_set_option(0, "buftype", "nowrite")
           end
         end,

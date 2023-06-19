@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+set -e
+
+TAB=$1
+
+if [[ -z $TAB ]]
+then
+  KITTY_SWITCH_TABS=${0:a}
+
+  kitty @ --to unix:$(ls ${TMPDIR}/kitty-*) ls | jq -r '
+    .[]
+    | select(.is_active)
+    | .tabs[]
+    | select(.is_active | not)
+    | "\(.id)\t\(.title) (\(( .windows[] | select(.is_active) | .cwd)))"
+    ' | fzf --bind "enter:execute($KITTY_SWITCH_TABS {1})+accept" > /dev/null
+else
+  kitty @ --to unix:$(ls ${TMPDIR}/kitty-*) focus-tab -m id:$TAB
+fi
