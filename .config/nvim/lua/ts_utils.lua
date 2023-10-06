@@ -43,12 +43,9 @@ function find_and_replace_surrounding_node_text(query, replace_fn)
   local match = find_enclosing(query, buf)
 
   if match then
-    local replacement_node, replacement_text = replace_fn(
-      match,
-      function(node)
-        return node_text(node, buf)
-      end
-    )
+    local replacement_node, replacement_text = replace_fn(match, function(node)
+      return node_text(node, buf)
+    end)
 
     if replacement_node and replacement_text then
       replace_node_text(replacement_node, buf, replacement_text)
@@ -63,7 +60,7 @@ end
 
 function replace_node_text(node, buf, text)
   local start_row, start_col, end_row, end_col = node:range()
-  local lines = vim.split(text, '\n', true)
+  local lines = vim.split(text, "\n", true)
   vim.api.nvim_buf_set_text(buf, start_row, start_col, end_row, end_col, lines)
 end
 
@@ -77,7 +74,7 @@ function cursor_range(buf)
     position[1] - 1,
     position[2],
     position[1] - 1,
-    position[2] + 1
+    position[2] + 1,
   }
 end
 
@@ -94,6 +91,23 @@ function node_children(node)
   end
 
   return children
+end
+
+function sort_matches_by_lexical_order(matches, key)
+  local copy = vim.tbl_extend("keep", {}, matches)
+  table.sort(copy, function(a, b)
+    local start_row_a, start_col_a = key(a):range()
+    local start_row_b, start_col_b = key(b):range()
+
+    if start_row_a < start_row_b then
+      return true
+    elseif start_row_a == start_row_b then
+      return start_col_a < start_col_b
+    else
+      return false
+    end
+  end)
+  return copy
 end
 
 function find_matches(node, query, buf)
@@ -121,5 +135,6 @@ return {
   cursor_range = cursor_range,
   node_contains_cursor = node_contains_cursor,
   print_node = print_node,
-  node_children = node_children
+  node_children = node_children,
+  sort_matches_by_lexical_order = sort_matches_by_lexical_order,
 }
