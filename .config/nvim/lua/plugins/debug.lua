@@ -40,66 +40,77 @@ return {
         function()
           require("dap").toggle_breakpoint()
         end,
-        "Toggle breakpoint",
+        desc = "Toggle breakpoint",
       },
       {
         "<Leader>dr",
         function()
           require("dap").continue()
         end,
-        "Debugger continue",
-      },
-      {
-        "<Leader>dt",
-        function()
-          local args = require("mocha_nearest_test").mocha_nearest_test_grep()
-          require("dap").run(mochaTestConfig(args))
-        end,
-        "Debugger continue",
+        desc = "Debugger continue",
       },
       {
         "<Leader>dl",
         function()
           require("dap").step_into()
         end,
-        "Debugger step into",
+        desc = "Debugger step into",
       },
       {
         "<Leader>dj",
         function()
           require("dap").step_over()
         end,
-        "Debugger step over",
+        desc = "Debugger step over",
       },
       {
         "<Leader>dh",
         function()
           require("dap").step_out()
         end,
-        "Debugger step out",
+        desc = "Debugger step out",
       },
     },
 
     config = function()
+      local dap = require("dap")
+
+      dap.set_log_level("DEBUG")
+
+      dap.adapters.netcoredbg = {
+        type = "executable",
+        command = vim.fn.expand("~/src/netcoredbg/bin/netcoredbg"),
+        args = { "--interpreter=vscode" },
+      }
+
+      dap.configurations.cs = {
+        {
+          type = "netcoredbg",
+          name = "launch - netcoredbg",
+          request = "launch",
+          program = "dotnet",
+        },
+      }
+
       vim.api.nvim_set_hl(0, "DapBreakpoint", { ctermbg = 0, fg = "#993939", bg = "#31353f" })
       vim.api.nvim_set_hl(0, "DapLogPoint", { ctermbg = 0, fg = "#61afef", bg = "#31353f" })
       vim.api.nvim_set_hl(0, "DapStopped", { ctermbg = 0, fg = "#98c379", bg = "#31353f" })
 
       vim.fn.sign_define(
         "DapBreakpoint",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
       )
       vim.fn.sign_define(
         "DapBreakpointCondition",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
       )
       vim.fn.sign_define(
         "DapBreakpointRejected",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
       )
       vim.fn.sign_define(
         "DapLogPoint",
-        { text = "", texthl = "DapLogPoint", linehl = "DapLogPoint", numhl = "DapLogPoint" }
+        { text = "", texthl = "DapLogPoint", linehl = "DapLogPoint", numhl = "DapLogPoint" }
       )
       vim.fn.sign_define(
         "DapStopped",
@@ -116,9 +127,15 @@ return {
       require("dap-vscode-js").setup({
         -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
         -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
-        debugger_path = "/Users/tim/.local/share/nvim/lazy/vscode-js-debug", -- Path to vscode-js-debug installation.
+        debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug", -- Path to vscode-js-debug installation.
         -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-        adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" }, -- which adapters to register in nvim-dap
+        adapters = {
+          "pwa-node",
+          "pwa-chrome",
+          "pwa-msedge",
+          "node-terminal",
+          "pwa-extensionHost",
+        }, -- which adapters to register in nvim-dap
         -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
         -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
         -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
@@ -142,14 +159,14 @@ return {
         function()
           require("dapui").eval(nil, { enter = true })
         end,
-        "Debug evaluate expression",
+        desc = "Debug evaluate expression",
       },
       {
         "<Leader>de",
         function()
           require("dapui").eval(nil, { enter = true })
         end,
-        "Debug evaluate expression",
+        desc = "Debug evaluate expression",
         mode = "v",
       },
     },

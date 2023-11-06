@@ -6,8 +6,8 @@ nnoremap <M-;> <C-W>p
 nnoremap <M-r> <C-W>r
 nnoremap <M-x> <C-W>x
 nnoremap <M-R> <C-W>R
-nnoremap <silent> <M-s> :rightbelow horizontal split<CR>
-nnoremap <silent> <M-v> :rightbelow vertical split<CR>
+nnoremap <silent> <M-s> :split<CR>
+nnoremap <silent> <M-v> :vsplit<CR>
 nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
 tnoremap <M-T> <C-\><C-N><C-W>Ti

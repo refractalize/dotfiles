@@ -6,11 +6,13 @@ return {
       "lsp-status.nvim",
       "nvim-cmp",
       "vim-matchup",
+      "SmiteshP/nvim-navic",
     },
 
     config = function()
       local lspconfig = require("lspconfig")
       local lsp_status = require("lsp-status")
+      local navic = require("nvim-navic")
 
       vim.cmd([[
         sign define DiagnosticSignError text=🤬
@@ -24,13 +26,20 @@ return {
         silent = true,
       }
       vim.api.nvim_set_keymap("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-      vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
-      vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+      vim.api.nvim_set_keymap("n", "[d",
+        "<cmd>lua vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } })<CR>", opts)
+      vim.api.nvim_set_keymap("n", "]d",
+        "<cmd>lua vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } })<CR>", opts)
       vim.api.nvim_set_keymap("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
       lsp_status.register_progress()
 
       local setup_lsp_mappings = function(client, bufnr, server_mappings)
+        lsp_status.on_attach(client)
+        if client.server_capabilities.documentSymbolProvider then
+          navic.attach(client, bufnr)
+        end
+
         vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
         vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
         vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
@@ -59,6 +68,7 @@ return {
         "html",
         "jsonls",
         "julials",
+        "pyright",
         rust_analyzer = {
           ["rust-analyzer"] = {
             imports = {
@@ -122,7 +132,6 @@ return {
 
         lspconfig[server].setup({
           on_attach = function(client, bufnr)
-            lsp_status.on_attach(client)
             setup_lsp_mappings(client, bufnr, server_mappings)
           end,
           capabilities = capabilities,
@@ -132,6 +141,60 @@ return {
           settings = server_settings,
         })
       end
+
+      lspconfig.omnisharp.setup({
+        on_attach = function(client, bufnr)
+          setup_lsp_mappings(client, bufnr, {
+            format = true,
+          })
+        end,
+        capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 140,
+        },
+        cmd = { "dotnet", "/Users/tim/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll" },
+        enable_editorconfig_support = true,
+        enable_roslyn_analyzers = true,
+        analyze_open_documents_only = true,
+      })
+
+      lspconfig.lua_ls.setup {
+        on_init = function(client)
+          local path = client.workspace_folders[1].name
+          if not vim.loop.fs_stat(path .. '/.luarc.json') and not vim.loop.fs_stat(path .. '/.luarc.jsonc') then
+            client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+              Lua = {
+                runtime = {
+                  -- Tell the language server which version of Lua you're using
+                  -- (most likely LuaJIT in the case of Neovim)
+                  version = 'LuaJIT'
+                },
+                -- Make the server aware of Neovim runtime files
+                workspace = {
+                  checkThirdParty = false,
+                  library = {
+                    vim.env.VIMRUNTIME
+                    -- "${3rd}/luv/library"
+                    -- "${3rd}/busted/library",
+                  }
+                  -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
+                  -- library = vim.api.nvim_get_runtime_file("", true)
+                }
+              }
+            })
+
+            client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+          end
+          return true
+        end
+      }
+
+      vim.diagnostic.config({
+        virtual_text = { severity = { min = vim.diagnostic.severity.INFO } },
+        signs = { severity = { min = vim.diagnostic.severity.INFO } },
+        underline = { severity = { min = vim.diagnostic.severity.INFO } },
+        float = { severity = { min = vim.diagnostic.severity.INFO } },
+      })
     end,
   },
   {
@@ -153,7 +216,11 @@ return {
     cmds = { "CodeActionMenu" },
 
     keys = {
-      { "<Leader>ca", "<Cmd>CodeActionMenu<CR>", "Code action menu" },
+      {
+        "<Leader>ca",
+        "<Cmd>CodeActionMenu<CR>",
+        desc = "Code action menu",
+      },
     },
   },
 }

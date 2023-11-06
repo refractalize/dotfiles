@@ -1,0 +1,14 @@
+{
+  "statement": {
+    "prefix": "<",
+    "body": [
+      "<% $0 %>"
+    ]
+  },
+  "expression": {
+    "prefix": "<=",
+    "body": [
+      "<%= $0 %>"
+    ]
+  }
+}

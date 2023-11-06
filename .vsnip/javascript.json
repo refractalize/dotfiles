@@ -160,12 +160,14 @@
     ],
     "description": "Adds a test"
   },
-  "filename": {
+  "test": {
     "prefix": [
-      "filename"
+      "test"
     ],
     "body": [
-      "${TM_FILENAME_BASE}"
+      "test('$1', function () {",
+      "\t$0",
+      "})"
     ],
     "description": "Adds a test"
   },

@@ -37,12 +37,16 @@ return {
   },
 
   "godlygeek/tabular", -- format tables of data
-  "michaeljsmith/vim-indent-object", -- treat indented sections of code as vim objects
+  {
+    "michaeljsmith/vim-indent-object", -- treat indented sections of code as vim objects
+  },
   {
     "RRethy/vim-illuminate",
 
     config = function()
-      vim.cmd("source $HOME/.config/nvim/illuminate.vim")
+      require("illuminate").configure({
+        large_file_cutoff = 50000,
+      })
     end,
   },
   "AndrewRadev/splitjoin.vim",
@@ -55,7 +59,6 @@ return {
 
   {
     "kosayoda/nvim-lightbulb",
-    dependencies = "antoinemadec/FixCursorHold.nvim",
 
     config = function()
       require("nvim-lightbulb").setup({ autocmd = { enabled = true } })
@@ -73,11 +76,17 @@ return {
     config = function()
       require("formatter").setup({
         logging = true,
-        log_level = vim.log.levels.WARN,
+        log_level = vim.log.levels.DEBUG,
 
         filetype = {
           javascript = {
             require("formatter.filetypes.javascript").prettierd,
+          },
+          typescript = {
+            require("formatter.filetypes.typescript").prettierd,
+          },
+          typescriptreact = {
+            require("formatter.filetypes.typescriptreact").prettierd,
           },
           markdown = {
             require("formatter.filetypes.markdown").prettierd,
@@ -96,6 +105,9 @@ return {
           },
           json = {
             require("formatter.filetypes.json").jq,
+          },
+          sql = {
+            require("formatter.filetypes.sql").pgformat,
           },
         },
       })
@@ -146,68 +158,6 @@ return {
   -- 'tpope/vim-vinegar',
 
   {
-    "nvim-telescope/telescope.nvim",
-    dependencies = {
-      "nvim-lua/popup.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope-file-browser.nvim",
-      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    },
-
-    config = function()
-      require("telescope").setup({
-        extensions = {
-          file_browser = {
-            mappings = {
-              ["i"] = {
-                ["<C-w>"] = function()
-                  vim.cmd("normal vbd")
-                end,
-              },
-            },
-          },
-
-          fzf = {
-            fuzzy = false, -- false will only do exact matching
-            override_generic_sorter = true, -- override the generic sorter
-            override_file_sorter = true, -- override the file sorter
-            case_mode = "smart_case", -- or "ignore_case" or "respect_case"
-            -- the default case_mode is "smart_case"
-          },
-        },
-
-        defaults = {
-          layout_strategy = "bottom_pane",
-          layout_config = {
-            height = 0.4,
-            prompt_position = "bottom",
-          },
-        },
-
-        pickers = {
-          command_history = {
-            mappings = {
-              n = {
-                ["<CR>"] = "edit_command_line",
-              },
-              i = {
-                ["<CR>"] = "edit_command_line",
-              },
-            },
-          },
-        },
-      })
-
-      require("telescope").load_extension("file_browser")
-      require("telescope").load_extension("fzf")
-
-      vim.cmd([[
-        cnoremap <M-r> <Cmd>lua require('telescope.builtin').command_history{default_text = vim.fn.getcmdline()}<cr>
-      ]])
-    end,
-  },
-
-  {
     "m00qek/baleia.nvim",
 
     config = function()
@@ -232,7 +182,19 @@ return {
 
   "tpope/vim-unimpaired", -- [c ]c ]l [l etc, for navigating git changes, lint errors, search results, etc
   "tpope/vim-eunuch", -- file unix commands, :Delete, :Move, etc
-  "tpope/vim-commentary", -- make lines comments or not
+  {
+    "tpope/vim-commentary", -- make lines comments or not
+    enabled = false,
+  },
+
+  {
+    "numToStr/Comment.nvim",
+    opts = {
+      -- add any options here
+    },
+    lazy = false,
+  },
+
   "tpope/vim-repeat", -- repeat complex commands with .
   "FooSoft/vim-argwrap", -- expanding and collapsing lists
   "wsdjeg/vim-fetch",
@@ -246,6 +208,7 @@ return {
 
   {
     "KabbAmine/vCoolor.vim",
+    enabled = false,
     init = function()
       vim.g.vcoolor_disable_mappings = 1
     end,
@@ -265,7 +228,9 @@ return {
 
   {
     "mattn/emmet-vim",
-    config = function()
+
+    init = function()
+      vim.g.user_emmet_mode = "i"
       vim.g.user_emmet_settings = {
         html = {
           empty_element_suffix = " />",
@@ -277,7 +242,7 @@ return {
     end,
   },
 
-  "kshenoy/vim-signature",
+  -- "kshenoy/vim-signature",
 
   {
     "tpope/vim-dispatch",
@@ -288,7 +253,90 @@ return {
   },
 
   {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      -- "antoinemadec/FixCursorHold.nvim", -- disabled due to perf, but apparently still needed?
+      "Issafalcon/neotest-dotnet",
+      "nvim-neotest/neotest-python",
+      "nvim-neotest/neotest-jest",
+    },
+
+    keys = {
+      {
+        "<leader>tl",
+        function()
+          require("neotest").run.run()
+        end,
+        desc = "Run nearest test",
+      },
+      {
+        "<leader>td",
+        function()
+          require("neotest").run.run_last({ strategy = "dap" })
+        end,
+        desc = "Run nearest test",
+      },
+      {
+        "<leader>tf",
+        function()
+          require("neotest").run.run(vim.fn.expand("%"))
+        end,
+        desc = "Run test file",
+      },
+      {
+        "<leader>tt",
+        function()
+          require("neotest").run.run_last()
+        end,
+        desc = "Run test file",
+      },
+      {
+        "<leader>to",
+        function()
+          require("neotest").output.open({ enter = true })
+        end,
+        desc = "Run test file",
+      },
+      {
+        "<leader>tO",
+        function()
+          require("neotest").output_panel.open()
+        end,
+        desc = "Run test file",
+      },
+      {
+        "<leader>ts",
+        function()
+          require("neotest").summary.open()
+        end,
+        desc = "Run test file",
+      },
+    },
+
+    config = function()
+      local neotest = require("neotest")
+      neotest.setup({
+        log_level = vim.log.levels.DEBUG,
+        adapters = {
+          require("neotest-dotnet"),
+          require("neotest-python"),
+          require("neotest-jest"),
+        },
+        -- quickfix = {
+        --   enabled = false,
+        -- },
+        -- consumers = {
+        --   myquickfix = require("neotest_quickfix_stacktrace"),
+        -- },
+      })
+    end,
+  },
+
+  {
     "vim-test/vim-test",
+    enabled = false,
 
     config = function()
       vim.cmd([[
@@ -298,6 +346,8 @@ return {
         nmap <leader>tv :TestVisit<CR>
         nmap <leader>to :copen<CR>
         let test#strategy = 'dispatch'
+        let test#custom_runners = {'csharp': ['dotnettest2']}
+        let test#csharp#runner = 'dotnettest2'
 
         " autocmd FileType qf call AdjustWindowHeight(30, 40)
         function! AdjustWindowHeight(percent_full_width, percent_full_height)
@@ -333,12 +383,80 @@ return {
     config = function()
       require("auto-save").setup({
         write_delay = 0,
+        ignore_buffer = function(bufnr)
+          return vim.api.nvim_buf_line_count(bufnr) > 50000
+        end,
       })
     end,
   },
 
   {
     "refractalize/watch",
+  },
+
+  {
+    "refractalize/line-notes",
+
+    keys = {
+      {
+        "<leader>nl",
+        function()
+          require("line_notes").add()
+        end,
+        desc = "Add note to line",
+      },
+      {
+        "<leader>nc",
+        function()
+          require("line_notes").clear()
+        end,
+        desc = "Clear line notes",
+      },
+      {
+        "<leader>nq",
+        function()
+          require("line_notes").quickfix()
+        end,
+        desc = "Show line notes in quickfix window",
+      },
+      {
+        "<leader>nf",
+        function()
+          local notes = vim.diagnostic.get(nil, { namespace = require("line_notes").namespace })
+
+          local fzf_lua = require("fzf-lua")
+
+          local files = vim.tbl_map(function(item)
+            local filename = vim.fn.bufname(item.bufnr)
+            local line_number = item.lnum
+            local line = vim.api.nvim_buf_get_lines(item.bufnr, line_number, line_number + 1, false)[1]
+
+            local file = filename .. ":" .. line_number + 1 .. ":" .. line
+            return fzf_lua.make_entry.file(file, { file_icons = true, color_icons = true })
+          end, notes)
+
+          fzf_lua.fzf_exec(files, {
+            actions = fzf_lua.config.globals.actions.files,
+            previewer = "builtin",
+          })
+        end,
+        desc = "Show line notes in quickfix window",
+      },
+    },
+
+    config = function()
+      vim.api.nvim_create_user_command("LineNotesToggleLine", function(opts)
+        require("line_notes").add(opts.args)
+      end, { nargs = "?" })
+
+      vim.api.nvim_create_user_command("LineNotesQuickfix", function(opts)
+        require("line_notes").quickfix()
+      end, { nargs = "?" })
+
+      vim.api.nvim_create_user_command("LineNotesClearAll", function(opts)
+        require("line_notes").clear()
+      end, { nargs = 0 })
+    end,
   },
 
   {
@@ -382,6 +500,14 @@ return {
           mappings = {
             ["/"] = "noop",
             ["-"] = "navigate_up",
+            ["Y"] = function(state)
+              local node = state.tree:get_node()
+              local id = node:get_id()
+              local filepath = vim.fn.fnamemodify(id, ":.")
+
+              print(filepath)
+              vim.fn.setreg("+", filepath)
+            end,
           },
         },
       })
@@ -434,6 +560,24 @@ return {
   },
 
   {
+    "github/copilot.vim",
+  },
+
+  {
+    "zbirenbaum/copilot.lua",
+    enabled = false,
+
+    cmd = "Copilot",
+
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      })
+    end,
+  },
+
+  {
     "folke/zen-mode.nvim",
 
     keys = {
@@ -480,5 +624,64 @@ return {
     "refractalize/kitty-open-file",
 
     config = true,
+  },
+
+  {
+    "jackMort/ChatGPT.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("chatgpt").setup({
+        api_key_cmd = "security find-generic-password -s ChatGPT.nvim -a api_key -w",
+        edit_with_instructions = {
+          diff = true,
+        },
+      })
+    end,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+  },
+
+  {
+    "mbbill/undotree",
+  },
+
+  {
+    "glacambre/firenvim",
+
+    -- Lazy load firenvim
+    -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+    lazy = not vim.g.started_by_firenvim,
+
+    build = function()
+      vim.fn["firenvim#install"](0)
+    end,
+
+    config = function()
+      vim.g.firenvim_config = {
+        localSettings = {
+          [".*"] = {
+            takeover = "never",
+          },
+        },
+      }
+    end,
+  },
+
+  {
+    "refractalize/focus-buffer",
+
+    keys = {
+      {
+        "<leader>fb",
+        function()
+          require("focus-buffer").start_focus_buffer()
+        end,
+        mode = "v",
+        desc = "Focus buffer",
+      },
+    },
   },
 }

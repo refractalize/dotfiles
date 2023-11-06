@@ -28,12 +28,16 @@ require("lazy").setup("plugins", {
   change_detection = {
     enabled = true,
     notify = false,
+  },
+  install = {
+    missing = false
   }
 })
 LUA
 
 " set the search pattern to the visually highlighted text
 vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g")<CR><CR>
+vnoremap g* <Cmd>call setreg('/', substitute(substitute(escape(GetVisualText(1),'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g"))<CR><Esc>
 
 nmap <leader>cf :let @+=expand("%")<CR>
 nmap <leader>cd :let @+=expand("%:h")<CR>
@@ -50,7 +54,7 @@ set tabstop=4
 set expandtab
 set smarttab
 set hlsearch
-syntax manual
+" syntax manual
 set path+=**     " allow searching all files and subdirectories in current directory
 set number
 set ruler
@@ -65,17 +69,21 @@ set guioptions-=T
 set guicursor+=n-v-c-sm:block-Cursor,i-ci-ve:ver25-CursorIM
 set complete-=i
 set nofileignorecase " make sure we use exact case on macos
+set splitbelow
+set splitright
 set virtualedit=block " we can select beyond the end of the line in visual block, useful for vim-sandwich
 set diffopt+=vertical " diffs are always shown left/right
 set diffopt+=linematch:60
+set diffopt+=hiddenoff
 set isfname-==
 set mouse=a
 set inccommand=nosplit
-set signcolumn=yes:1
+set signcolumn=yes:2
 set termguicolors
 set pumblend=20
 set nofoldenable
 set listchars=trail:·,nbsp:+,tab:\|·>
+set list
 
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -119,7 +127,6 @@ cnoremap <M-f>	<S-Right>
 cnoremap <M-BS> <C-W>
 
 nnoremap <silent> <leader>a :ArgWrap<CR>
-nnoremap g* :call setreg('/', '\<' . expand('<cword>') . '\>')<CR>
 
 " visual select last pasted text
 " http://vim.wikia.com/wiki/Selecting_your_pasted_text
@@ -150,14 +157,16 @@ source $HOME/.config/nvim/titlestring.vim
 source $HOME/.config/nvim/quickfix.vim
 source $HOME/.config/nvim/watch.vim
 source $HOME/.config/nvim/javascript.vim
+source $HOME/.config/nvim/csharp.vim
 
 let g:vim_json_conceal=0
 
 lua require('quickfix').setup()
+lua require('search')
 
 autocmd VimResized * wincmd =
 
-command! -nargs=1 ProfileStart :profile start <args> | profile func * | profile file *
+command! ProfileStart :profile start nvim-profile | profile func * | profile file *
 command! ProfileStop :profile stop
 
 lua <<EOF

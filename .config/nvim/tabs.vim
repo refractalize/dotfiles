@@ -12,10 +12,15 @@ nnoremap <M-[> :tabprevious<cr>
 nnoremap <M-]> :tabnext<cr>
 nnoremap <M-W> :tabclose<cr>
 
-function! OpenBufferInTab(count)
-  echom a:count
+function! OpenBufferInTab(count, close = 0)
   let buf = bufnr()
-  if a:count > 0
+  let tabcount = tabpagenr('$')
+
+  if a:close
+    close
+  endif
+
+  if a:count > 0 && a:count <= tabcount
     exe 'tabn' . a:count
     exe 'vnew'
   else
@@ -24,11 +29,12 @@ function! OpenBufferInTab(count)
   exe 'b ' . buf
 endfunction
 
-command! -count=0 OpenBufferInTab call OpenBufferInNewTab(<count>)
+nnoremap <silent> <M-t> <Cmd>rightbelow call OpenBufferInTab(v:count)<CR>
+nnoremap <silent> <M-T> <Cmd>rightbelow call OpenBufferInTab(v:count, v:true)<CR>
 
-" nnoremap <silent> <M-t> :OpenBufferInTab<CR>
-nnoremap <silent> <M-t> :<c-u>call OpenBufferInTab(v:count)<CR>
-
+let g:lasttab = 1
 au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <silent> <M-`> :exe "tabn ".g:lasttab<cr>
-nnoremap <silent> <M-O> :tabonly<CR>
+nnoremap <M-S-;> <Cmd>exe "tabn ".g:lasttab<cr>
+nnoremap <M-O> <Cmd>tabonly<CR>
+nnoremap <M-S-]> <Cmd>tabnext<CR>
+nnoremap <M-S-[> <Cmd>tabprev<CR>

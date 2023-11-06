@@ -17,6 +17,7 @@ return {
       local cmp = require("cmp")
 
       cmp.setup({
+        preselect = cmp.PreselectMode.None,
         snippet = {
           -- REQUIRED - you must specify a snippet engine
           expand = function(args)
@@ -27,12 +28,15 @@ return {
           end,
         },
         mapping = cmp.mapping.preset.insert({
-          ["<CR>"] = cmp.mapping.confirm(),
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
+          ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-f>"] = cmp.mapping.scroll_docs(4),
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp_signature_help" },
           { name = "nvim_lsp" },
           { name = "vsnip" }, -- For vsnip users.
+          -- { name = "copilot" },
           { name = "path" },
           -- { name = 'luasnip' }, -- For luasnip users.
           -- { name = 'ultisnips' }, -- For ultisnips users.
@@ -99,6 +103,7 @@ return {
 
         let g:vsnip_filetypes = {}
         let g:vsnip_filetypes.typescript = ['javascript']
+        let g:vsnip_filetypes.typescriptreact = ['javascript']
       ]])
     end,
   },

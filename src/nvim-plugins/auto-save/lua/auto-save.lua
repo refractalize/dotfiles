@@ -1,7 +1,7 @@
 local defaults = {
   write_delay = 135,
   ignore_files = {},
-  ignore_buffer = nil
+  ignore_buffer = nil,
 }
 
 function ignore_buffer(options, buffer)

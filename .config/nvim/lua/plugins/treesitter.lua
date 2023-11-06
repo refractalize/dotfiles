@@ -35,17 +35,24 @@ return {
     config = function()
       vim.treesitter.language.register('bash', 'zsh')
 
+      function disable(lang, bufnr) -- Disable in large C++ buffers
+        return vim.api.nvim_buf_line_count(bufnr) > 50000
+      end
+
       require'nvim-treesitter.configs'.setup {
         ensure_installed = 'all',
         ignore_install = { 'java', 'smali', 't32' },
         highlight = {
-          enable = true              -- false will disable the whole extension
+          enable = true,              -- false will disable the whole extension
+          disable = disable,
         },
         indent = {
-          enable = true
+          enable = true,
+          disable = disable,
         },
         matchup = {
-          enable = true
+          enable = true,
+          disable = disable,
         },
         incremental_selection = {
           enable = true,
@@ -54,6 +61,7 @@ return {
             node_incremental = ')',
             node_decremental = '(',
           },
+          disable = disable,
         },
       }
 

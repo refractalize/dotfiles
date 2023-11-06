@@ -66,8 +66,3 @@ function! GetVisualText(range)
     return getreg('"')
   endif
 endfunction
-
-function! Blah(range)
-  echom GetVisualText(a:range)
-  echom GetVisualText(a:range)
-endfunction

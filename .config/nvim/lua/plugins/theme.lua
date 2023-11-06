@@ -5,9 +5,13 @@ return {
     priotity = 1000,
 
     config = function()
-      vim.cmd([[
-        call theme#SetupCurrentTheme()
-      ]])
+      if vim.g.started_by_firenvim then
+        vim.cmd([[colorscheme rose-pine-dawn]])
+      else
+        vim.cmd([[
+          call theme#SetupCurrentTheme()
+        ]])
+      end
     end,
   },
 

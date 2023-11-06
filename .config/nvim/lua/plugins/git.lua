@@ -7,12 +7,21 @@ return {
     lazy = false,
 
     keys = {
-      { "<M-d>", "<Cmd>Gdiffsplit!<CR>", "Show diffs" },
-      { "<M-D>", "<Cmd>Gdiffsplit! origin/master...<CR>", "Show diffs with master" },
+      {
+        "<M-d>",
+        "<Cmd>Gdiffsplit!<CR>",
+        desc = "Show diffs",
+      },
+      {
+        "<M-D>",
+        "<Cmd>Gdiffsplit! origin/master...<CR>",
+        desc = "Show diffs with master",
+      },
     },
   },
 
   "shumphrey/fugitive-gitlab.vim",
+  "cedarbaum/fugitive-azure-devops.vim",
 
   {
     "refractalize/git-copy-lines",
@@ -25,6 +34,8 @@ return {
   {
     "lewis6991/gitsigns.nvim",
 
+    lazy = false,
+
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
@@ -32,10 +43,15 @@ return {
     config = function()
       require("gitsigns").setup({
         on_attach = function(bufnr)
-          vim.cmd([[
-            nnoremap <expr> ]c &diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'
-            nnoremap <expr> [c &diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'
-          ]])
+          vim.keymap.set("n", "]c", function()
+            require("gitsigns").next_hunk()
+          end, { buffer = bufnr })
+          vim.keymap.set("n", "[c", function()
+            require("gitsigns").prev_hunk()
+          end, { buffer = bufnr })
+          vim.keymap.set("n", "<Leader>dp", function()
+            require("gitsigns").preview_hunk_inline()
+          end, { buffer = bufnr })
         end,
       })
     end,

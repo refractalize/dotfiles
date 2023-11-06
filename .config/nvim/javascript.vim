@@ -77,13 +77,12 @@ endfunction
 command! ToggleMochaOnly :lua require('toggle_mocha_only').toggle_mocha_only()<cr>
 autocmd FileType javascript nnoremap <Leader>o <Cmd>ToggleMochaOnly<CR>
 
-command! RunMochaTest :lua unload('mocha_nearest_test'); unload('ts_utils'); require('mocha_nearest_test').mocha_nearest_test()<cr>
-autocmd FileType javascript nnoremap <Leader>tl <Cmd>RunMochaTest<CR>
+command! RunMochaTest :lua require('mocha_nearest_test').mocha_nearest_test()<cr>
 
-command! ToggleImportRequre :lua unload('toggle_import_require'); unload('ts_utils'); require('toggle_import_require').toggle_import_require()<cr>
+command! ToggleImportRequre :lua require('toggle_import_require').toggle_import_require()<cr>
 nnoremap <Leader>ri :ToggleImportRequre<CR>
 
-command! ToggleAsyncFunction :lua unload('toggle_async_function'); unload('ts_utils'); require('toggle_async_function').toggle_async_function()<cr>
+command! ToggleAsyncFunction :lua require('toggle_async_function').toggle_async_function()<cr>
 nnoremap <Leader>ra :ToggleAsyncFunction<CR>
 
 function! FindNodeDependencyPath(directory, dependency)

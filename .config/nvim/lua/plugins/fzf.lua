@@ -54,6 +54,13 @@ return {
 
     keys = {
       { "<Leader>l", "<cmd>FzfLua blines<cr>", desc = "Buffer lines" },
+      {
+        "<Leader>b",
+        function()
+          require("fzf-lua").buffers()
+        end,
+        desc = "Buffers",
+      },
       { "<Leader>*", "<cmd>FzfLua grep_visual<cr>", desc = "Search visual", mode = "v" },
       {
         "<Leader>*",
@@ -95,34 +102,33 @@ return {
         "<c-i>",
         function()
           local actions = require("fzf-lua.actions")
+          local packageJson = vim.fn.findfile("package.json", ".;")
+          local searchPackageJson = packageJson
+              and " && jq -r '.dependencies + .devDependencies | keys[]' " .. packageJson
+            or ""
 
-          require("fzf-lua").fzf_complete(
-            "rg --files | sed 's/.*/.\\/&/' && [[ -f package.json ]] && jq -r '.dependencies + .devDependencies | keys[]' package.json",
-            {
-              actions = {
-                ["default"] = function(selected, opts)
-                  local path = selected[1]
-                  local basepath = vim.fn.fnamemodify(path, ":t:r")
+          require("fzf-lua").fzf_exec("rg --files | sed 's/.*/.\\/&/'" .. searchPackageJson, {
+            complete = function(selected, opts, line, col)
+              local path = selected[1]
+              local basepath = vim.fn.fnamemodify(path, ":t:r")
 
-                  if string.sub(path, 1, 1) ~= "." then
-                    module_path = path
-                  else
-                    local relative_path =
-                      vim.fn.systemlist("grealpath --relative-to " .. vim.fn.expand("%:h") .. " " .. path)[1]
+              if string.sub(path, 1, 1) ~= "." then
+                module_path = path
+              else
+                local relative_path =
+                  vim.fn.systemlist("grealpath --relative-to " .. vim.fn.expand("%:h") .. " " .. path)[1]
 
-                    if string.sub(relative_path, 1, 1) ~= "." then
-                      module_path = "./" .. relative_path
-                    else
-                      module_path = relative_path
-                    end
-                  end
+                if string.sub(relative_path, 1, 1) ~= "." then
+                  module_path = "./" .. relative_path
+                else
+                  module_path = relative_path
+                end
+              end
 
-                  local import_statement = "import " .. basepath .. " from '" .. module_path .. "'"
-                  return actions.complete_insert({ import_statement }, opts)
-                end,
-              },
-            }
-          )
+              line = "import " .. basepath .. " from '" .. module_path .. "'"
+              return line, #line - 1
+            end,
+          })
         end,
         mode = "i",
         desc = "Import module",
@@ -140,9 +146,10 @@ return {
       {
         "<c-x><c-h>",
         function()
-          require("fzf-lua").fzf_complete(
+          require("fzf-lua").fzf_exec(
             "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 | sed -E 's/^[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
             {
+              complete = true,
               fzf_opts = {
                 ["--tiebreak"] = "index",
               },
@@ -180,6 +187,25 @@ return {
           require("fzf-lua").lsp_finder()
         end,
         desc = "Find references",
+      },
+      {
+        "gs",
+        function()
+          require("fzf-lua").lsp_document_symbols()
+        end,
+        desc = "Show symbols",
+      },
+      {
+        "<M-r>",
+        function()
+          require("fzf-lua").command_history({
+            fzf_opts = {
+              ["--query"] = vim.fn.shellescape(vim.fn.getcmdline()),
+            },
+          })
+        end,
+        mode = { "c" },
+        desc = "Show command history",
       },
     },
 
@@ -233,6 +259,10 @@ return {
         })
       end, { nargs = "?" })
 
+      vim.api.nvim_create_user_command("RgLast", function(opts)
+        require("fzf-lua").grep_last()
+      end, { nargs = 0 })
+
       vim.api.nvim_create_user_command("A", function(opts)
         local filename = vim.fn.expand("%")
         local basename = vim.fn.substitute(filename, "\\.[^/]*", "", "")
@@ -270,6 +300,10 @@ return {
           search = "\\b" .. vim.fn.expand("%:t:r") .. "\\b",
           no_esc = true,
         })
+      end, { nargs = 0 })
+
+      vim.api.nvim_create_user_command("DocumentSymbols", function(opts)
+        require("fzf-lua").lsp_document_symbols()
       end, { nargs = 0 })
     end,
   },

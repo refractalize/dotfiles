@@ -10,5 +10,14 @@
     "body": [
       "${VIM:system('python -c \"import uuid, sys;sys.stdout.write(str(uuid.uuid4()))\"')}"
     ]
+  },
+  "filename": {
+    "prefix": [
+      "filename"
+    ],
+    "body": [
+      "${TM_FILENAME_BASE}"
+    ],
+    "description": "inserts current filename"
   }
 }
