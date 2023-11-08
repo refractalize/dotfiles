@@ -32,9 +32,9 @@ endfunction
 nnoremap <silent> <M-t> <Cmd>rightbelow call OpenBufferInTab(v:count)<CR>
 nnoremap <silent> <M-T> <Cmd>rightbelow call OpenBufferInTab(v:count, v:true)<CR>
 
-let g:lasttab = 1
-au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <M-S-;> <Cmd>exe "tabn ".g:lasttab<cr>
+nnoremap <M-S-;> g<Tab>
 nnoremap <M-O> <Cmd>tabonly<CR>
 nnoremap <M-S-]> <Cmd>tabnext<CR>
 nnoremap <M-S-[> <Cmd>tabprev<CR>
+nnoremap <S-M-.> <Cmd>tabm +1 \| lua require('lualine').refresh({ scope = 'tabpage' })<CR>
+nnoremap <S-M-,> <Cmd>tabm -1 \| lua require('lualine').refresh({ scope = 'tabpage' })<CR>

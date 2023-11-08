@@ -6,17 +6,20 @@ nnoremap <M-;> <C-W>p
 nnoremap <M-r> <C-W>r
 nnoremap <M-x> <C-W>x
 nnoremap <M-R> <C-W>R
-nnoremap <silent> <M-s> :split<CR>
-nnoremap <silent> <M-v> :vsplit<CR>
+nnoremap <M-s> <Cmd>split<CR>
+nnoremap <M-v> <Cmd>vsplit<CR>
 nnoremap <M-o> <C-W>o
 nnoremap <M-=> <C-W>=
 tnoremap <M-T> <C-\><C-N><C-W>Ti
 nnoremap <M-w> <C-W>c
 
-nnoremap <silent> <M-J> :exe "resize -2"<CR>
-nnoremap <silent> <M-K> :exe "resize +2"<CR>
-nnoremap <silent> <M-L> :exe "vertical resize +2"<CR>
-nnoremap <silent> <M-H> :exe "vertical resize -2"<CR>
+nnoremap <M-J> <Cmd>resize -2<CR>
+nnoremap <M-K> <Cmd>resize +2<CR>
+nnoremap <M-L> <Cmd>vertical resize +2<CR>
+nnoremap <M-H> <Cmd>vertical resize -2<CR>
+
+nnoremap <M-,> <Cmd>wincmd R<CR>
+nnoremap <M-.> <Cmd>wincmd r<CR>
 
 lua <<LUA
   local id = vim.api.nvim_create_augroup("CursorLine", {})
