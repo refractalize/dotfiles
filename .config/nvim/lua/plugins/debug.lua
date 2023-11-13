@@ -86,9 +86,35 @@ return {
       dap.configurations.cs = {
         {
           type = "netcoredbg",
-          name = "launch - netcoredbg",
+          name = "Test",
           request = "launch",
           program = "dotnet",
+        },
+        {
+          type = "netcoredbg",
+          name = "Launch WebApp",
+          request = "launch",
+          program = function()
+            local debugDir = vim.fn.finddir("bin/Debug", ".;")
+            local projectDir = vim.fn.fnamemodify(debugDir, ":h:h")
+            local projectFile = vim.fn.glob(projectDir .. "/*.csproj")
+            local projectName = vim.fn.fnamemodify(projectFile, ":t:r")
+            local dllPath = vim.fn.findfile(projectName .. ".dll", debugDir .. "/**")
+            local dllPathRelativeToProjectDir = string.sub(dllPath, #projectDir + 2, -1)
+
+            return dllPathRelativeToProjectDir
+          end,
+          cwd = function()
+            local debugDir = vim.fn.finddir("bin/Debug", ".;")
+            local projectDir = vim.fn.fnamemodify(vim.fn.fnamemodify(debugDir, ":h:h"), ":p")
+            return projectDir
+          end,
+        },
+        {
+          type = "netcoredbg",
+          name = "attach - netcoredbg",
+          request = "attach",
+          processId = require("dap.utils").pick_process,
         },
       }
 
@@ -168,6 +194,13 @@ return {
         end,
         desc = "Debug evaluate expression",
         mode = "v",
+      },
+      {
+        "<Leader>du",
+        function()
+          require("dapui").toggle()
+        end,
+        desc = "Toggle debug UI",
       },
     },
 

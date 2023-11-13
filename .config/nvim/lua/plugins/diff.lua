@@ -14,7 +14,10 @@ return {
     config = function()
       require("diffview").setup({
         default_args = {
-          DiffviewOpen = { "--untracked-files=no", "--imply-local" },
+          DiffviewOpen = {
+            "--untracked-files=no",
+            "--imply-local"
+          },
         },
         view = {
           merge_tool = {

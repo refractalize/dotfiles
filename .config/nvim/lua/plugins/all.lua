@@ -109,6 +109,9 @@ return {
           sql = {
             require("formatter.filetypes.sql").pgformat,
           },
+          xml = {
+            require("formatter.filetypes.xml").tidy,
+          },
         },
       })
     end,
