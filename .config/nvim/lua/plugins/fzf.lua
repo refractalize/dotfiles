@@ -198,14 +198,35 @@ return {
       {
         "<M-r>",
         function()
-          require("fzf-lua").command_history({
-            fzf_opts = {
-              ["--query"] = vim.fn.shellescape(vim.fn.getcmdline()),
-            },
-          })
+          -- There seems to be an issue when the command line has text in it
+          -- That when we open the command history, the terminal containing
+          -- fzf is in normal mode, and you need to get back into terminal/insert
+          -- mode to be able to use it.
+          --
+          -- Solution is to take the command line text, clear it, escape from the
+          -- command line then run the command history with the captured command line text
+          local existing_command = vim.fn.getcmdline()
+          vim.fn.setcmdline("")
+
+          vim.schedule(function()
+            require("fzf-lua").command_history({
+              reverse_list = false,
+              fzf_opts = {
+                ["--query"] = vim.fn.shellescape(existing_command),
+
+                -- Sort by most recent
+                ["--no-sort"] = "",
+                -- Prompt at the bottom
+                ["--layout"] = "default",
+              },
+            })
+          end)
+
+          return "<C-C>"
         end,
         mode = { "c" },
         desc = "Show command history",
+        expr = true,
       },
     },
 
@@ -250,8 +271,6 @@ return {
         },
       })
 
-      -- fzf_lua.register_ui_select()
-
       vim.api.nvim_create_user_command("Rg", function(opts)
         require("fzf-lua").grep({
           search = opts.args,
@@ -289,6 +308,7 @@ return {
       vim.api.nvim_create_user_command("Gdiff", function(opts)
         local actions = require("fzf-lua.actions")
         require("fzf-lua").fzf_exec("git diff " .. opts.args .. " | diff2vimgrep", {
+          previewer = "builtin",
           actions = {
             ["default"] = actions.file_edit_or_qf,
           },

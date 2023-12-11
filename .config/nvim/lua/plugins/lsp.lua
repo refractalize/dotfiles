@@ -1,5 +1,12 @@
 return {
   {
+    "williamboman/mason-lspconfig.nvim",
+
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+  },
+  {
     "neovim/nvim-lspconfig",
 
     dependencies = {
@@ -7,6 +14,7 @@ return {
       "nvim-cmp",
       "vim-matchup",
       "SmiteshP/nvim-navic",
+      "williamboman/mason-lspconfig.nvim",
     },
 
     config = function()
@@ -26,168 +34,154 @@ return {
         silent = true,
       }
       vim.api.nvim_set_keymap("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-      vim.api.nvim_set_keymap("n", "[d",
-        "<cmd>lua vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } })<CR>", opts)
-      vim.api.nvim_set_keymap("n", "]d",
-        "<cmd>lua vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } })<CR>", opts)
+      vim.api.nvim_set_keymap(
+        "n",
+        "[d",
+        "<cmd>lua vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } })<CR>",
+        opts
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "]d",
+        "<cmd>lua vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } })<CR>",
+        opts
+      )
       vim.api.nvim_set_keymap("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
       lsp_status.register_progress()
 
-      local setup_lsp_mappings = function(client, bufnr, server_mappings)
+      local on_attach = function(client, bufnr, options)
+        options = vim.tbl_extend("force", {
+          format = true,
+        }, options or {})
+
         lsp_status.on_attach(client)
         if client.server_capabilities.documentSymbolProvider then
           navic.attach(client, bufnr)
         end
 
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
-        vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+        vim.keymap.set("n", "gD", function()
+          vim.lsp.buf.declaration()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "gd", function()
+          vim.lsp.buf.definition()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "K", function()
+          vim.lsp.buf.hover()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "gi", function()
+          vim.lsp.buf.implementation()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "gk", function()
+          vim.lsp.buf.signature_help()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "gt", function()
+          vim.lsp.buf.type_definition()
+        end, { buffer = bufnr })
+        vim.keymap.set("n", "<Leader>rn", function()
+          vim.lsp.buf.rename()
+        end, { buffer = bufnr })
 
-        if server_mappings.format then
-          if client.server_capabilities.documentFormattingProvider then
-            vim.api.nvim_buf_set_keymap(bufnr, "n", "<M-f>", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
-          end
-
-          if client.server_capabilities.documentRangeFormattingProvider then
-            vim.api.nvim_buf_set_keymap(bufnr, "x", "<M-f>", "<cmd>lua vim.lsp.buf.range_formatting({})<CR>", opts)
-          end
+        if client.server_capabilities.documentFormattingProvider and options.format or options.format == "force" then
+          vim.keymap.set("n", "<M-f>", function()
+            vim.lsp.buf.format({ async = true })
+          end, { buffer = bufnr })
         end
 
-        if server_mappings.setup then
-          server_mappings.setup(client, bufnr)
+        if options.setup then
+          options.setup(client, bufnr)
         end
       end
 
-      local servers = {
-        "cssls",
-        "html",
-        "jsonls",
-        "julials",
-        "pyright",
-        rust_analyzer = {
-          ["rust-analyzer"] = {
-            imports = {
-              granularity = {
-                group = "module",
-              },
-              prefix = "self",
-            },
-            cargo = {
-              buildScripts = {
-                enable = true,
-              },
-            },
-            procMacro = {
-              enable = true,
-            },
-          },
-        },
-        "solargraph",
-        "sqlls",
+      local capabilities = vim.tbl_extend(
+        "force",
+        {},
+        vim.lsp.protocol.make_client_capabilities(),
+        lsp_status.capabilities,
+        require("cmp_nvim_lsp").default_capabilities()
+      )
+
+      local server_overrides = {
         tsserver = {
           mappings = {
             format = false,
           },
         },
         eslint = {
-          format = true,
           mappings = {
             format = false,
             setup = function(client, bufnr)
-              vim.api.nvim_buf_set_keymap(bufnr, "n", "<M-F>", "<cmd>EslintFixAll<CR>", opts)
+              vim.keymap.set("n", "<M-F>", "<Cmd>EslintFixAll<CR>", { buffer = bufnr })
             end,
           },
         },
-      }
-
-      local capabilities = vim.tbl_extend("keep", {}, lsp_status.capabilities)
-      require("cmp_nvim_lsp").default_capabilities(capabilities)
-
-      function removekey(table, key)
-        local element = table[key]
-        table[key] = nil
-        return element
-      end
-
-      local server_mappings_default = {
-        format = true,
-      }
-
-      for server, server_settings in pairs(servers) do
-        if type(server) == "number" then
-          server = server_settings
-          server_settings = nil
-        end
-
-        local server_mappings = vim.tbl_extend(
-          "force",
-          server_mappings_default,
-          server_settings and removekey(server_settings, "mappings") or {}
-        )
-
-        lspconfig[server].setup({
-          on_attach = function(client, bufnr)
-            setup_lsp_mappings(client, bufnr, server_mappings)
-          end,
-          capabilities = capabilities,
-          flags = {
-            debounce_text_changes = 140,
+        lua_ls = {
+          mappings = {
+            format = false,
           },
-          settings = server_settings,
-        })
-      end
-
-      lspconfig.omnisharp.setup({
-        on_attach = function(client, bufnr)
-          setup_lsp_mappings(client, bufnr, {
-            format = true,
-          })
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 140,
-        },
-        cmd = { "dotnet", "/Users/tim/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll" },
-        enable_editorconfig_support = true,
-        enable_roslyn_analyzers = true,
-        analyze_open_documents_only = true,
-      })
-
-      lspconfig.lua_ls.setup {
-        on_init = function(client)
-          local path = client.workspace_folders[1].name
-          if not vim.loop.fs_stat(path .. '/.luarc.json') and not vim.loop.fs_stat(path .. '/.luarc.jsonc') then
-            client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
-              Lua = {
-                runtime = {
-                  -- Tell the language server which version of Lua you're using
-                  -- (most likely LuaJIT in the case of Neovim)
-                  version = 'LuaJIT'
+          settings = {
+            Lua = {
+              runtime = {
+                version = "LuaJIT",
+              },
+              diagnostics = {
+                globals = {
+                  "vim",
+                  "require",
                 },
-                -- Make the server aware of Neovim runtime files
-                workspace = {
-                  checkThirdParty = false,
-                  library = {
-                    vim.env.VIMRUNTIME
-                    -- "${3rd}/luv/library"
-                    -- "${3rd}/busted/library",
-                  }
-                  -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
-                  -- library = vim.api.nvim_get_runtime_file("", true)
-                }
-              }
-            })
-
-            client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-          end
-          return true
-        end
+              },
+              workspace = {
+                checkThirdParty = false,
+                library = {
+                  vim.env.VIMRUNTIME,
+                },
+              },
+            },
+          },
+        },
+        omnisharp = {
+          cmd = { "dotnet", "/Users/tim/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll" },
+          enable_editorconfig_support = true,
+          enable_roslyn_analyzers = true,
+          analyze_open_documents_only = true,
+          mappings = {
+            format = "force",
+          },
+        },
       }
+
+      local mason_lspconfig = require("mason-lspconfig")
+      mason_lspconfig.setup({
+        ensure_installed = {
+          "cssls",
+          "html",
+          "jsonls",
+          "julials",
+          "pyright",
+          "rust_analyzer",
+          "sqlls",
+          "tsserver",
+          "eslint",
+        },
+
+        handlers = {
+          function(server_name)
+            local server_options = server_overrides[server_name] or {}
+
+            local setup_options = vim.tbl_extend("force", {
+              on_attach = function(client, bufnr)
+                on_attach(client, bufnr, server_options.mappings)
+              end,
+              capabilities = capabilities,
+              flags = {
+                debounce_text_changes = 140,
+              },
+            }, server_options)
+
+            lspconfig[server_name].setup(setup_options)
+          end,
+        },
+      })
 
       vim.diagnostic.config({
         virtual_text = { severity = { min = vim.diagnostic.severity.INFO } },

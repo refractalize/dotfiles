@@ -1,16 +1,28 @@
-function node_under_cursor(buf)
+local function node_under_cursor(buf)
   local position = vim.api.nvim_win_get_cursor(0)
   return vim.treesitter.get_node({ bufnr = buf, pos = { position[1] - 1, position[2] } })
 end
 
-function find_enclosing(query, buf)
-  local node = node_under_cursor(buf)
-  local all_matches = find_matches(node:root(), query, buf)
-
-  return find_matching_ancestor(node, all_matches)
+local function build_match(query, captures)
+  local named_captures = {}
+  for capture_id, capture_node in pairs(captures) do
+    local capture_name = query.captures[capture_id]
+    named_captures[capture_name] = capture_node
+  end
+  return named_captures
 end
 
-function tbl_find(fn, table)
+local function find_matches(node, query, buf)
+  local matches = {}
+
+  for _, captures, _ in query:iter_matches(node, buf) do
+    table.insert(matches, build_match(query, captures))
+  end
+
+  return matches
+end
+
+local function tbl_find(fn, table)
   for _, item in pairs(table) do
     if fn(item) then
       return item
@@ -18,7 +30,7 @@ function tbl_find(fn, table)
   end
 end
 
-function find_matching_ancestor(node, all_matches)
+local function find_matching_ancestor(node, all_matches)
   local found_match = tbl_find(function(match)
     return node == match.node
   end, all_matches)
@@ -33,12 +45,29 @@ function find_matching_ancestor(node, all_matches)
   end
 end
 
-function find_all(query, buf)
+local function find_enclosing(query, buf)
+  local node = node_under_cursor(buf)
+  local all_matches = find_matches(node:root(), query, buf)
+
+  return find_matching_ancestor(node, all_matches)
+end
+
+local function find_all(query, buf)
   local node = node_under_cursor(buf)
   return find_matches(node:root(), query, buf)
 end
 
-function find_and_replace_surrounding_node_text(query, replace_fn)
+local function node_text(node, buf)
+  return vim.treesitter.get_node_text(node, buf)
+end
+
+local function replace_node_text(node, buf, text)
+  local start_row, start_col, end_row, end_col = node:range()
+  local lines = vim.split(text, "\n")
+  vim.api.nvim_buf_set_text(buf, start_row, start_col, end_row, end_col, lines)
+end
+
+local function find_and_replace_surrounding_node_text(query, replace_fn)
   local buf = vim.api.nvim_get_current_buf()
   local match = find_enclosing(query, buf)
 
@@ -54,21 +83,11 @@ function find_and_replace_surrounding_node_text(query, replace_fn)
   end
 end
 
-function node_text(node, buf)
-  return vim.treesitter.get_node_text(node, buf)
-end
-
-function replace_node_text(node, buf, text)
-  local start_row, start_col, end_row, end_col = node:range()
-  local lines = vim.split(text, "\n", true)
-  vim.api.nvim_buf_set_text(buf, start_row, start_col, end_row, end_col, lines)
-end
-
-function print_node(node, buf)
+local function print_node(node, buf)
   print(node:type(), node:sexpr(), vim.treesitter.get_node_text(node, buf))
 end
 
-function cursor_range(buf)
+local function cursor_range(buf)
   local position = vim.api.nvim_win_get_cursor(0)
   return {
     position[1] - 1,
@@ -78,11 +97,11 @@ function cursor_range(buf)
   }
 end
 
-function node_contains_cursor(node)
+local function node_contains_cursor(node)
   return vim.treesitter.node_contains(node, cursor_range())
 end
 
-function node_children(node)
+local function node_children(node)
   local children = {}
 
   for i = 0, node:child_count() - 1 do
@@ -93,7 +112,7 @@ function node_children(node)
   return children
 end
 
-function sort_matches_by_lexical_order(matches, key)
+local function sort_matches_by_lexical_order(matches, key)
   local copy = vim.tbl_extend("keep", {}, matches)
   table.sort(copy, function(a, b)
     local start_row_a, start_col_a = key(a):range()
@@ -110,20 +129,13 @@ function sort_matches_by_lexical_order(matches, key)
   return copy
 end
 
-function find_matches(node, query, buf)
-  local matches = {}
+local function find_first_match(node, query, buf)
+  local iter = query:iter_matches(node, buf)
+  local _, captures, _ = iter()
 
-  for _, captures, _ in query:iter_matches(node, buf) do
-    local named_captures = {}
-    for capture_id, capture_node in pairs(captures) do
-      local capture_name = query.captures[capture_id]
-      named_captures[capture_name] = capture_node
-    end
-
-    table.insert(matches, named_captures)
+  if captures then
+    return build_match(query, captures)
   end
-
-  return matches
 end
 
 return {
@@ -137,4 +149,5 @@ return {
   print_node = print_node,
   node_children = node_children,
   sort_matches_by_lexical_order = sort_matches_by_lexical_order,
+  find_first_match = find_first_match,
 }

@@ -118,30 +118,57 @@ return {
         },
       }
 
-      vim.api.nvim_set_hl(0, "DapBreakpoint", { ctermbg = 0, fg = "#993939", bg = "#31353f" })
-      vim.api.nvim_set_hl(0, "DapLogPoint", { ctermbg = 0, fg = "#61afef", bg = "#31353f" })
-      vim.api.nvim_set_hl(0, "DapStopped", { ctermbg = 0, fg = "#98c379", bg = "#31353f" })
+      vim.api.nvim_set_hl(0, "DapBreakpoint", { ctermbg = 0, fg = "#993939" })
+      vim.api.nvim_set_hl(0, "DapLogPoint", { ctermbg = 0, fg = "#61afef" })
+      vim.api.nvim_set_hl(0, "DapStopped", { ctermbg = 0, fg = "#98c379" })
 
       vim.fn.sign_define(
         "DapBreakpoint",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
       )
       vim.fn.sign_define(
         "DapBreakpointCondition",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
       )
       vim.fn.sign_define(
         "DapBreakpointRejected",
-        { text = "", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
       )
       vim.fn.sign_define(
         "DapLogPoint",
-        { text = "", texthl = "DapLogPoint", linehl = "DapLogPoint", numhl = "DapLogPoint" }
+        { text = "", texthl = "DapLogPoint", linehl = "", numhl = "" }
       )
       vim.fn.sign_define(
         "DapStopped",
-        { text = "⮕", texthl = "DapStopped", linehl = "DapStopped", numhl = "DapStopped" }
+        { text = "󰜴", texthl = "DapStopped", linehl = "", numhl = "" }
       )
+
+      local function get_breakpoint(buffer, line)
+        local breakpoints = require('dap.breakpoints')
+        local buffer_breakpoints = breakpoints.get(buffer)[buffer]
+        local current_line = vim.fn.line('.')
+        return vim.tbl_filter(function(b)
+          return b.line == current_line
+        end, buffer_breakpoints)[1]
+      end
+
+      vim.api.nvim_create_user_command('DapEditBreakpointCondition', function()
+        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line('.'))
+        vim.ui.input({ prompt = 'Breakpoint Condition: ', default = breakpoint and breakpoint.condition }, function(condition)
+          if condition then
+            dap.set_breakpoint(condition)
+          end
+        end)
+      end, {})
+
+      vim.api.nvim_create_user_command('DapEditBreakpointLogMessage', function()
+        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line('.'))
+        vim.ui.input({ prompt = 'Breakpoint Log Message: ', default = breakpoint and breakpoint.logMessage }, function(log_message)
+          if log_message then
+            dap.set_breakpoint(nil, nil, log_message)
+          end
+        end)
+      end, {})
     end,
   },
 
@@ -206,7 +233,46 @@ return {
 
     config = function()
       local dap, dapui = require("dap"), require("dapui")
-      dapui.setup()
+      dapui.setup({
+        layouts = {
+          {
+            elements = {
+              {
+                id = "scopes",
+                size = 0.25,
+              },
+              {
+                id = "breakpoints",
+                size = 0.25,
+              },
+              {
+                id = "stacks",
+                size = 0.25,
+              },
+              {
+                id = "watches",
+                size = 0.25,
+              },
+            },
+            position = "left",
+            size = 100,
+          },
+          {
+            elements = {
+              {
+                id = "repl",
+                size = 0.5,
+              },
+              {
+                id = "console",
+                size = 0.5,
+              },
+            },
+            position = "bottom",
+            size = 10,
+          },
+        },
+      })
 
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()

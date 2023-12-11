@@ -33,6 +33,7 @@ return {
 
   {
     "lewis6991/gitsigns.nvim",
+    enabled = false,
 
     lazy = false,
 
@@ -44,11 +45,23 @@ return {
       require("gitsigns").setup({
         on_attach = function(bufnr)
           vim.keymap.set("n", "]c", function()
-            require("gitsigns").next_hunk()
+            if vim.wo.diff then
+              return "]c"
+            end
+            vim.schedule(function()
+              require("gitsigns").next_hunk()
+            end)
+            return "<Ignore>"
           end, { buffer = bufnr })
           vim.keymap.set("n", "[c", function()
-            require("gitsigns").prev_hunk()
-          end, { buffer = bufnr })
+            if vim.wo.diff then
+              return "[c"
+            end
+            vim.schedule(function()
+              require("gitsigns").prev_hunk()
+            end)
+            return "<Ignore>"
+          end, { buffer = bufnr, expr = true })
           vim.keymap.set("n", "<Leader>dp", function()
             require("gitsigns").preview_hunk_inline()
           end, { buffer = bufnr })

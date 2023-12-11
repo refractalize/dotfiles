@@ -13,9 +13,6 @@ function SourceBuffer:new(o)
 end
 
 function SourceBuffer:set_marks()
-  print('self.buffer: ' .. vim.inspect(self.buffer))
-  print('self.start_line: ' .. vim.inspect(self.start_line))
-  print('self.end_line: ' .. vim.inspect(self.end_line))
   self.start_extmark = vim.api.nvim_buf_set_extmark(self.buffer, namespace, self.start_line, 0, {
     sign_text = "↱",
     sign_hl_group = "Question",

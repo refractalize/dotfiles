@@ -35,13 +35,9 @@ require("lazy").setup("plugins", {
 })
 LUA
 
-" set the search pattern to the visually highlighted text
-vnoremap * y/\V<C-R>=substitute(substitute(escape(@",'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g")<CR><CR>
-vnoremap g* <Cmd>call setreg('/', substitute(substitute(escape(GetVisualText(1),'/\'), "\t", "\\\\t", "g"), "\n", "\\\\n", "g"))<CR><Esc>
-
-nmap <leader>cf :let @+=expand("%")<CR>
-nmap <leader>cd :let @+=expand("%:h")<CR>
-nmap <leader>cl :let @+=expand("%").":".line(".")<CR>
+nmap <leader>cf :let @+=expand("%:.")<CR>
+nmap <leader>cd :let @+=expand("%:h:.")<CR>
+nmap <leader>cl :let @+=expand("%:.").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
 filetype plugin indent on
@@ -75,6 +71,8 @@ set virtualedit=block " we can select beyond the end of the line in visual block
 set diffopt+=vertical " diffs are always shown left/right
 set diffopt+=linematch:60
 set diffopt+=hiddenoff
+set diffopt+=algorithm:patience
+set diffopt+=indent-heuristic
 set isfname-==
 set mouse=a
 set inccommand=nosplit
@@ -84,6 +82,8 @@ set pumblend=20
 set nofoldenable
 set listchars=trail:·,nbsp:+,tab:\|·>
 set list
+
+au TextYankPost * silent! lua vim.highlight.on_yank({ higroup = 'Visual' })
 
 " navigate long, wrapping lines
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -163,6 +163,7 @@ let g:vim_json_conceal=0
 
 lua require('quickfix').setup()
 lua require('search')
+lua require('page')
 
 autocmd VimResized * wincmd =
 

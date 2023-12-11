@@ -8,9 +8,20 @@ nnoremap <M-7> 7gt
 nnoremap <M-8> 8gt
 nnoremap <M-9> 9gt
 nnoremap <M-0> :tablast<cr>
-nnoremap <M-[> :tabprevious<cr>
-nnoremap <M-]> :tabnext<cr>
-nnoremap <M-W> :tabclose<cr>
+
+lua << EOF
+  -- Close tab and return to last accessed tab
+  vim.keymap.set('n', '<M-W>', function()
+    local alttab = vim.fn.tabpagenr('#')
+    if alttab > 0 then
+      local alttabid = vim.api.nvim_list_tabpages()[alttab]
+      vim.cmd('tabclose')
+      vim.api.nvim_set_current_tabpage(alttabid)
+    else
+      vim.cmd('tabclose')
+    end
+  end, {})
+EOF
 
 function! OpenBufferInTab(count, close = 0)
   let buf = bufnr()

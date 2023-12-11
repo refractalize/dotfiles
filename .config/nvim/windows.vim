@@ -17,6 +17,7 @@ nnoremap <M-J> <Cmd>resize -2<CR>
 nnoremap <M-K> <Cmd>resize +2<CR>
 nnoremap <M-L> <Cmd>vertical resize +2<CR>
 nnoremap <M-H> <Cmd>vertical resize -2<CR>
+nnoremap <M-n> <Cmd>enew<CR>
 
 nnoremap <M-,> <Cmd>wincmd R<CR>
 nnoremap <M-.> <Cmd>wincmd r<CR>

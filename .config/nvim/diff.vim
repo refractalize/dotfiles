@@ -17,6 +17,3 @@ function! DiffIgnoreWhitespaceToggle()
    set diffopt+=iwhite
  endif
 endfunction
-
-command! GPatchCopy silent exec "!git diff HEAD " . expand("%") . " | pbcopy"
-command! GPatchPaste silent exec "!pbpaste | git apply"

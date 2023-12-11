@@ -13,6 +13,10 @@ function LiveBuffer:new(o)
   return o
 end
 
+local function is_buffer_hidden(buf)
+  return vim.fn.bufwinid(buf) == -1
+end
+
 function LiveBuffer:startjob()
   if is_buffer_hidden(self.result_buf) then
     self.result_stale = true
@@ -30,7 +34,7 @@ function LiveBuffer:startjob()
   local std_err = {}
   local cmd = self:expand_shell_command()
 
-  function set_result()
+  local function set_result()
     if finished then
       if exit_code ~= 0 then
         self:reload_buffer(self.result_buf)
@@ -74,21 +78,24 @@ function LiveBuffer:startjob()
   end
 end
 
-function substitute_command(cmd, fn)
+local function substitute_command(cmd, fn)
   return vim.fn.substitute(cmd, '\\\\\\?{\\(\\(\\d*\\)\\|\\(new\\(\\:\\(\\i\\+\\)\\)\\?\\)\\)}', fn, 'g')
 end
 
-function replace_placeholder(placeholder_text, buffer_number)
+local function replace_placeholder(placeholder_text, buffer_number)
   if placeholder_text == '\\{}' then
     return '{}'
   else
+    local bufnr = tonumber(buffer_number)
+
     return vim.fn.shellescape(
-      vim.fn.join(vim.api.nvim_buf_get_lines(tonumber(buffer_number), 0, -1, true), '\n')
+      --- @cast bufnr integer
+      vim.fn.join(vim.api.nvim_buf_get_lines(bufnr, 0, -1, true), '\n')
     )
   end
 end
 
-function render_command_with_arguments(cmd)
+local function render_command_with_arguments(cmd)
   return substitute_command(cmd, function(m)
     return replace_placeholder(m[1], m[3])
   end)
@@ -110,7 +117,7 @@ function LiveBuffer:append_buffer_lines(lines)
   if lines[#lines] == "" then
     table.remove(lines)
   end
-  
+
   local start_line = vim.api.nvim_buf_line_count(self.result_buf)
   local keep_lines = vim.fn.getfsize(self:out_file()) ~= 0
 
@@ -147,7 +154,7 @@ function LiveBuffer:reload_buffer(buf)
   local size = vim.fn.getfsize(self:out_file())
 
   if size <= limit then
-    vim.api.nvim_buf_call(buf, function () vim.cmd("e!") end)
+    vim.api.nvim_buf_call(buf, function() vim.cmd("e!") end)
   else
     vim.api.nvim_err_writeln('Watch: command output (' .. size .. ') larger than limit (' .. limit .. ')')
   end
@@ -161,7 +168,7 @@ end
 
 function LiveBuffer:find_or_create(buf)
   local live_buffer = self:find(vim.api.nvim_get_current_buf())
-  
+
   if not live_buffer then
     live_buffer = LiveBuffer:new({
       autocmds = {},
@@ -173,7 +180,7 @@ function LiveBuffer:find_or_create(buf)
   return live_buffer
 end
 
-function resolve_command_argument_buffer(placeholder_text, buffer_number, buffer_new, current_buf, new_buffers)
+local function resolve_command_argument_buffer(placeholder_text, buffer_number, buffer_new, current_buf, new_buffers)
   if placeholder_text == '\\{}' then
     return '{}'
   elseif buffer_new ~= '' then
@@ -186,13 +193,13 @@ function resolve_command_argument_buffer(placeholder_text, buffer_number, buffer
   end
 end
 
-function resolve_command_argument_buffers(cmd, current_buf, new_buffers)
+local function resolve_command_argument_buffers(cmd, current_buf, new_buffers)
   return substitute_command(cmd, function(m)
     return resolve_command_argument_buffer(m[1], m[3], m[4], current_buf, new_buffers)
   end)
 end
 
-function find_command_argument_buffer(buffer_number, buffer_new, buffer_new_file_type, buffers)
+local function find_command_argument_buffer(buffer_number, buffer_new, buffer_new_file_type, buffers)
   if buffer_number ~= '' then
     table.insert(buffers, tonumber(buffer_number))
   elseif buffer_new ~= '' then
@@ -200,7 +207,7 @@ function find_command_argument_buffer(buffer_number, buffer_new, buffer_new_file
   end
 end
 
-function find_command_argument_buffers(cmd)
+local function find_command_argument_buffers(cmd)
   local buffers = {}
   substitute_command(cmd, function(m)
     return find_command_argument_buffer(m[3], m[4], m[6], buffers)
@@ -217,7 +224,7 @@ function LiveBuffer:resolve_command(cmd, current_buf)
     vim.cmd('rightbelow vertical new')
     local buffer = vim.api.nvim_get_current_buf()
     if buf_type ~= '' then
-      vim.api.nvim_buf_set_option(buffer, 'filetype', buf_type)
+      vim.bo[buffer].filetype = buf_type
     end
     table.insert(new_buffers, buffer)
   end
@@ -244,7 +251,7 @@ end
 
 function LiveBuffer:set_filetypes(filetypes)
   if filetypes.result_buf then
-    vim.api.nvim_buf_set_option(self.result_buf, 'filetype', filetypes.result_buf)
+    vim.bo[self.result_buf].filetype = filetypes.result_buf
   end
 end
 
@@ -261,7 +268,7 @@ function LiveBuffer:start(cmd, current_buf, options)
   self:startjob()
 
   if options.filetype then
-    vim.api.nvim_buf_set_option(self.result_buf, 'filetype', options.filetype)
+    vim.bo[self.result_buf].filetype = options.filetype
   end
 end
 
@@ -283,16 +290,12 @@ function LiveBuffer:show_buffer()
   vim.api.nvim_set_current_win(orig_win)
 end
 
-function is_buffer_hidden(buf)
-  return vim.fn.bufwinid(buf) == -1
-end
-
 function LiveBuffer:create_result_buffer()
   self.result_buf = vim.api.nvim_create_buf(true, false)
   local temp_file = vim.fn.tempname()
   vim.api.nvim_buf_set_name(self.result_buf, temp_file)
-  vim.api.nvim_buf_set_option(self.result_buf, 'autoread', true)
-  vim.api.nvim_buf_set_option(self.result_buf, 'buftype', 'nowrite')
+  vim.bo[self.result_buf].autoread = true
+  vim.bo[self.result_buf].buftype = 'nowrite'
 
   vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     buffer = self.result_buf,
@@ -351,7 +354,7 @@ function LiveBuffer:existing_autocmd_events(buffer)
     group = watch_autocmd_group
   })
 
-  return vim.tbl_map(function (autocmd)
+  return vim.tbl_map(function(autocmd)
     return autocmd.event
   end, autocmds)
 end

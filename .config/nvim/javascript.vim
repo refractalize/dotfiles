@@ -79,11 +79,10 @@ autocmd FileType javascript nnoremap <Leader>o <Cmd>ToggleMochaOnly<CR>
 
 command! RunMochaTest :lua require('mocha_nearest_test').mocha_nearest_test()<cr>
 
-command! ToggleImportRequre :lua require('toggle_import_require').toggle_import_require()<cr>
-nnoremap <Leader>ri :ToggleImportRequre<CR>
-
-command! ToggleAsyncFunction :lua require('toggle_async_function').toggle_async_function()<cr>
-nnoremap <Leader>ra :ToggleAsyncFunction<CR>
+nnoremap <Leader>ri <Cmd>lua require('toggle_import_require').toggle_import_require()<CR>
+nnoremap <Leader>ra <Cmd>lua require('toggle_async_function').toggle_async_function()<CR>
+nnoremap <Leader>rb <Cmd>lua require('toggle_arrow_function_block').toggle_arrow_function_block()<CR>
+nnoremap <Leader>rw <Cmd>lua unload('toggle_await'); require('toggle_await').toggle_await()<CR>
 
 function! FindNodeDependencyPath(directory, dependency)
   if a:directory == '/'

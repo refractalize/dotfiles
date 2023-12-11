@@ -1,0 +1,200 @@
+{
+  "constructor": {
+    "prefix": [
+      "constructor"
+    ],
+    "body": [
+      "constructor($1) {",
+      "  $2",
+      "}"
+    ]
+  },
+  "function": {
+    "prefix": [
+      "fn"
+    ],
+    "body": [
+      "function $1($2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "arrow function": {
+    "prefix": [
+      "=>"
+    ],
+    "body": [
+      "($1) => {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "wait": {
+    "prefix": [
+      "wait"
+    ],
+    "body": [
+      "await new Promise(r => setTimeout(r, $1))"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('var', var)": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "console.log('$1', $1)"
+    ]
+  },
+  "console.error('var', var)": {
+    "prefix": [
+      "dbe"
+    ],
+    "body": [
+      "console.error('$1', $1)"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('text')": {
+    "prefix": [
+      "cl"
+    ],
+    "body": [
+      "console.log('$0')"
+    ],
+    "description": "Wait for a given number of milliseconds"
+  },
+  "console.log('filename:1')": {
+    "prefix": [
+      "tr",
+      "here"
+    ],
+    "body": [
+      "console.log('trace: $RELATIVE_FILEPATH:$TM_LINE_NUMBER')"
+    ]
+  },
+  "this=": {
+    "prefix": [
+      "this="
+    ],
+    "body": [
+      "this.#$1 = $1"
+    ]
+  },
+  "describe": {
+    "prefix": [
+      "describe"
+    ],
+    "body": [
+      "describe('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "context": {
+    "prefix": [
+      "context"
+    ],
+    "body": [
+      "context('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "beforeEach": {
+    "prefix": [
+      "beforeEach"
+    ],
+    "body": [
+      "beforeEach(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "afterEach": {
+    "prefix": [
+      "afterEach"
+    ],
+    "body": [
+      "afterEach(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "after": {
+    "prefix": [
+      "after"
+    ],
+    "body": [
+      "after(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "before": {
+    "prefix": [
+      "before"
+    ],
+    "body": [
+      "before(function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "it": {
+    "prefix": [
+      "it"
+    ],
+    "body": [
+      "it('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "test('$1', function () {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Adds a test"
+  },
+  "json": {
+    "prefix": [
+      "json"
+    ],
+    "body": [
+      "JSON.stringify(${1:$TM_SELECTED_TEXT}, null, 2)"
+    ]
+  },
+  "import assert": {
+    "prefix": [
+      "ia"
+    ],
+    "body": [
+      "import assert from 'assert'"
+    ]
+  },
+  "suite": {
+    "prefix": ["suite"],
+    "body": [
+      "describe('$TM_FILENAME_BASE', function () {",
+      "  it('$1', function () {",
+      "    $2",
+      "  })",
+      "})"
+    ]
+  }
+}

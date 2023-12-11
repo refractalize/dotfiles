@@ -1,0 +1,13 @@
+{
+  "json": {
+    "prefix": "json",
+    "body": [
+      "SELECT",
+      "  array_to_json (array_agg (row_to_json (t)))",
+      "FROM",
+      "  (",
+      "    $TM_SELECTED_TEXT",
+      "  ) t"
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "Console.WriteLine()": {
+    "prefix": [
+      "cw"
+    ],
+    "body": [
+      "Console.WriteLine($1);"
+    ]
+  },
+  "await Task.Delay($1)": {
+    "prefix": [
+      "wait"
+    ],
+    "body": [
+      "await Task.Delay($1);"
+    ]
+  },
+  "print properties": {
+    "prefix": [
+      "pp"
+    ],
+    "body": [
+      "foreach (var p in $1.GetType().GetProperties())",
+      "{",
+      "    Console.WriteLine(\\$\"  {p.Name}: {p.GetValue($1)}\");",
+      "}"
+    ]
+  },
+  "debug": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "Console.WriteLine(\\$\"$1: {$1}\");"
+    ]
+  },
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "[Test]",
+      "public async Task $1()",
+      "{",
+      "    $0",
+      "}"
+    ]
+  },
+  "dbcontext": {
+    "prefix": [
+      "dbcontext"
+    ],
+    "body": [
+      "var connectionString = \"Server=127.0.0.1; Database=ceres; User Id=sa; Password=Pa5sw^rd; TrustServerCertificate=true;\";",
+      "var options = new DbContextOptionsBuilder<CeresApiDbContext>().UseSqlServer(connectionString);",
+      "var userScopeFactory = new UserScopeFactory(null!);",
+      "userScopeFactory.SetUserScope(new User",
+      "{",
+      "    Id = SystemUser.SystemUserId,",
+      "    Name = SystemUser.SystemUserName",
+      "});",
+      "var dbContext = new CeresApiDbContext(options.Options, userScopeFactory, TimeProvider.Current, null!);"
+    ]
+  },
+  "dbj": {
+    "prefix": [
+      "dbj"
+    ],
+    "body": [
+      "Console.WriteLine(\\$\"$1: {System.Text.Json.JsonSerializer.Serialize($1, new System.Text.Json.JsonSerializerOptions",
+      "{",
+      "    WriteIndented = true",
+      "})}\");"
+    ]
+  },
+  "Write Value to File": {
+    "prefix": ["dbf"],
+    "body": [
+      "System.IO.File.WriteAllText(\"$SYS_PWD/$1\", $2);"
+    ]
+  }
+}

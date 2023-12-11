@@ -76,7 +76,7 @@ return {
     config = function()
       require("formatter").setup({
         logging = true,
-        log_level = vim.log.levels.DEBUG,
+        log_level = vim.log.levels.WARN,
 
         filetype = {
           javascript = {
@@ -214,16 +214,6 @@ return {
     enabled = false,
     init = function()
       vim.g.vcoolor_disable_mappings = 1
-    end,
-  },
-
-  {
-    "suketa/nvim-dap-ruby",
-
-    dependencies = "nvim-dap",
-
-    config = function()
-      -- require('dap-ruby').setup()
     end,
   },
 
@@ -384,10 +374,14 @@ return {
   {
     "refractalize/auto-save",
     config = function()
+      if vim.g.started_by_firenvim then
+        return
+      end
+
       require("auto-save").setup({
         write_delay = 0,
         ignore_buffer = function(bufnr)
-          return vim.api.nvim_buf_line_count(bufnr) > 50000
+          return vim.api.nvim_buf_line_count(bufnr) > 50000 or vim.bo[bufnr].filetype == "oil"
         end,
       })
     end,
@@ -473,56 +467,11 @@ return {
   },
 
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v2.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-    },
-
-    lazy = false,
-
-    keys = {
-      { "-", "<cmd>Neotree position=current reveal=true dir=%:h<cr>", desc = "Open Neotree" },
-    },
-
-    config = function()
-      require("neo-tree").setup({
-        -- enable_git_status = false,
-        filesystem = {
-          bind_to_cwd = false,
-          use_libuv_file_watcher = true,
-          follow_current_file = true,
-          hijack_netrw_behavior = "open_current",
-        },
-        buffers = {
-          follow_current_file = true,
-        },
-        window = {
-          mappings = {
-            ["/"] = "noop",
-            ["-"] = "navigate_up",
-            ["Y"] = function(state)
-              local node = state.tree:get_node()
-              local id = node:get_id()
-              local filepath = vim.fn.fnamemodify(id, ":.")
-
-              print(filepath)
-              vim.fn.setreg("+", filepath)
-            end,
-          },
-        },
-      })
-    end,
-  },
-
-  {
     "AckslD/nvim-neoclip.lua",
 
     keys = {
       {
-        "<C-p>",
+        "<Leader>p",
         function()
           require("neoclip.fzf")()
         end,
@@ -542,11 +491,7 @@ return {
   },
 
   {
-    "rmagatti/auto-session",
-
-    opts = {
-      log_level = "error",
-    },
+    "refractalize/inter-session",
 
     config = true,
   },
@@ -567,20 +512,6 @@ return {
   },
 
   {
-    "zbirenbaum/copilot.lua",
-    enabled = false,
-
-    cmd = "Copilot",
-
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-    end,
-  },
-
-  {
     "folke/zen-mode.nvim",
 
     keys = {
@@ -590,14 +521,7 @@ return {
           require("zen-mode").toggle()
         end,
         desc = "ZenMode",
-      },
-      {
-        "<M-Enter>",
-        function()
-          require("zen-mode").toggle()
-        end,
-        desc = "ZenMode",
-        mode = "i",
+        mode = { "n", "i" },
       },
     },
 
@@ -670,6 +594,17 @@ return {
           },
         },
       }
+
+      if vim.g.started_by_firenvim then
+        vim.api.nvim_create_autocmd({ "VimEnter" }, {
+          pattern = "*",
+
+          callback = function()
+            vim.go.laststatus = 0
+            vim.go.cmdheight = 0
+          end,
+        })
+      end
     end,
   },
 
@@ -686,5 +621,160 @@ return {
         desc = "Focus buffer",
       },
     },
+  },
+
+  {
+    "stevearc/oil.nvim",
+
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+
+    lazy = false,
+
+    keys = {
+      {
+        "-",
+        function()
+          require("oil").open()
+        end,
+        desc = "Open Oil",
+      },
+    },
+
+    config = function()
+      require("oil").setup({
+        win_options = {
+          signcolumn = "yes:2",
+        },
+      })
+    end,
+  },
+
+  {
+    "refractalize/oil-git-status",
+
+    dependencies = {
+      "stevearc/oil.nvim",
+    },
+
+    config = { show_ignored = true },
+  },
+
+  {
+    "David-Kunz/gen.nvim",
+  },
+
+  {
+    "rcarriga/nvim-notify",
+
+    config = function()
+      vim.notify = require("notify")
+    end,
+  },
+
+  {
+    "gsuuon/llm.nvim",
+  },
+
+  {
+    "rest-nvim/rest.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+    },
+    config = true,
+  },
+
+  {
+    "refractalize/ls.nvim",
+
+    -- config = true,
+  },
+
+  {
+    "untitled-ai/jupyter_ascending.vim",
+
+    init = function()
+      vim.g.jupyter_ascending_default_mappings = false
+    end,
+  },
+
+  {
+    "3rd/image.nvim",
+    -- couldn't get imagemagick to work
+    enabled = false,
+
+    config = true,
+
+    init = function()
+      package.path = package.path
+        .. ";"
+        .. vim.fn.expand("$HOME")
+        .. "/.luarocks/share/lua/5.1/?/init.lua"
+        .. ";"
+        .. vim.fn.expand("$HOME")
+        .. "/.luarocks/share/lua/5.1/?.lua"
+    end,
+
+    build = "luarocks --lua-version 5.1 --local install magick",
+  },
+
+  {
+    "stevearc/dressing.nvim",
+
+    config = {
+      input = {
+        insert_only = false,
+      },
+      select = {
+        backend = { "fzf_lua" },
+        fzf_lua = {
+          winopts = {
+            fullscreen = false,
+          },
+        },
+      },
+    },
+  },
+
+  {
+    "L3MON4D3/LuaSnip",
+    enabled = true,
+
+    keys = {
+      {
+        "<C-j>",
+        function()
+          require("luasnip").expand_or_jump()
+        end,
+        mode = { "i", "v" },
+        desc = "Expand or jump",
+      },
+      {
+        "<C-k>",
+        function()
+          require("luasnip").jump(-1)
+        end,
+        mode = "i",
+        desc = "Jump backward",
+      },
+    },
+
+    config = function()
+      require("luasnip.loaders.from_vscode").lazy_load({
+        paths = vim.fn.stdpath("config") .. "/snippets",
+      })
+
+      local fns = {
+        uuid = function()
+          return vim.fn.system("uuidgen"):gsub("\n", ""):lower()
+        end,
+      }
+
+      require("luasnip").env_namespace("SYS", { vars = os.getenv })
+      require("luasnip").env_namespace("FN", {
+        vars = function(name)
+          return fns[name:lower()]()
+        end,
+      })
+    end,
   },
 }
