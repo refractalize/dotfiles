@@ -7,3 +7,8 @@ use_nvm() {
     nvm use $node_version
   fi
 }
+
+use_nvim() {
+  local VERSION=$1
+  PATH_add $(nvimvm path $VERSION)
+}

@@ -1,22 +1,37 @@
-local function get_visual_range()
-  local start_position = vim.fn.getpos("v")
-  local end_position = vim.fn.getpos(".")
+local function get_last_visual_range()
+  return {
+    start_position = vim.fn.getpos("'<"),
+    end_position = vim.fn.getpos("'>"),
+    mode = vim.fn.visualmode(),
+  }
+end
 
-  if start_position[2] > end_position[2] or (start_position[2] == end_position[2] and start_position[3] > end_position[3]) then
-    start_position, end_position = end_position, start_position
-  end
-
+local function get_current_visual_range(mode)
   local mode = vim.fn.mode()
 
   if mode ~= "v" and mode ~= "V" and mode ~= "" then
-    mode = vim.fn.visualmode()
+    return nil
+  end
+
+  local start_position = vim.fn.getpos("v")
+  local end_position = vim.fn.getpos(".")
+
+  if
+    start_position[2] > end_position[2]
+    or (start_position[2] == end_position[2] and start_position[3] > end_position[3])
+  then
+    start_position, end_position = end_position, start_position
   end
 
   return {
     start_position = start_position,
     end_position = end_position,
-    mode = mode
+    mode = mode,
   }
+end
+
+local function get_visual_range()
+  return get_current_visual_range() or get_last_visual_range()
 end
 
 local function get_visual_lines(range)

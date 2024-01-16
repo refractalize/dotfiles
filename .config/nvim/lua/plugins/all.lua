@@ -53,15 +53,21 @@ return {
   "direnv/direnv.vim",
 
   {
-    "weilbith/nvim-code-action-menu",
-    cmd = "CodeActionMenu",
-  },
-
-  {
     "kosayoda/nvim-lightbulb",
+    enabled = true,
 
     config = function()
-      require("nvim-lightbulb").setup({ autocmd = { enabled = true } })
+      require("nvim-lightbulb").setup({
+        autocmd = {
+          enabled = true,
+        },
+        virtual_text = {
+          enabled = true,
+        },
+        sign = {
+          enabled = false,
+        },
+      })
     end,
   },
 
@@ -90,6 +96,9 @@ return {
           },
           markdown = {
             require("formatter.filetypes.markdown").prettierd,
+          },
+          yaml = {
+            require("formatter.filetypes.yaml").prettierd,
           },
           bash = {
             require("formatter.filetypes.sh").shfmt,
@@ -166,8 +175,15 @@ return {
     config = function()
       local baleia = require("baleia").setup()
 
-      vim.api.nvim_create_user_command("Baleia", function(opts)
+      local function run_once()
         baleia.once(vim.fn.bufnr("%"))
+        if vim.bo.modified then
+          vim.bo.buftype = "nowrite"
+        end
+      end
+
+      vim.api.nvim_create_user_command("Baleia", function(opts)
+        run_once()
       end, { nargs = 0 })
 
       vim.api.nvim_create_autocmd({ "BufRead" }, {
@@ -175,8 +191,7 @@ return {
 
         callback = function()
           if vim.api.nvim_buf_line_count(0) <= 5000 then
-            baleia.once(vim.fn.bufnr("%"))
-            vim.api.nvim_buf_set_option(0, "buftype", "nowrite")
+            run_once()
           end
         end,
       })
@@ -240,9 +255,10 @@ return {
   {
     "tpope/vim-dispatch",
 
-    config = function()
-      -- we keep this here to make sure the `after` in vim-dispatch-neovim works
-    end,
+    keys = {
+      "<leader>m",
+      "<Cmd>Make<CR>",
+    },
   },
 
   {
@@ -304,7 +320,14 @@ return {
         function()
           require("neotest").summary.open()
         end,
-        desc = "Run test file",
+        desc = "Show test summary",
+      },
+      {
+        "<leader>tc",
+        function()
+          require("neotest").output_panel.clear()
+        end,
+        desc = "Clear output panel",
       },
     },
 
@@ -642,6 +665,9 @@ return {
 
     config = function()
       require("oil").setup({
+        view_options = {
+          show_hidden = true,
+        },
         win_options = {
           signcolumn = "yes:2",
         },
@@ -650,7 +676,7 @@ return {
   },
 
   {
-    "refractalize/oil-git-status",
+    "refractalize/oil-git-status.nvim",
 
     dependencies = {
       "stevearc/oil.nvim",
@@ -665,6 +691,16 @@ return {
 
   {
     "rcarriga/nvim-notify",
+
+    keys = {
+      {
+        "<leader>nd",
+        function()
+          require("notify").dismiss()
+        end,
+        desc = "Dissmiss notifications",
+      },
+    },
 
     config = function()
       vim.notify = require("notify")
@@ -703,6 +739,16 @@ return {
     enabled = false,
 
     config = true,
+
+    opts = {
+      backend = "kitty", -- whatever backend you would like to use
+      max_width = 100,
+      max_height = 12,
+      max_height_window_percentage = math.huge,
+      max_width_window_percentage = math.huge,
+      window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
+      window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+    },
 
     init = function()
       package.path = package.path
@@ -775,6 +821,86 @@ return {
           return fns[name:lower()]()
         end,
       })
+    end,
+  },
+
+  {
+    "refractalize/google.nvim",
+
+    config = true,
+  },
+
+  {
+    "refractalize/curl.nvim",
+
+    config = function()
+      require("curl").setup()
+
+      vim.api.nvim_create_user_command("CurlSetHostArgs", function(opts)
+        require("curl").input_host_args(opts.fargs[1])
+      end, { nargs = 1 })
+    end,
+  },
+
+  {
+    "refractalize/ignore-lint",
+
+    keys = {
+      {
+        "<leader>il",
+        function()
+          require("ignore-lint").ignore_lint()
+        end,
+        desc = "Ignore lint",
+        mode = { "n", "v" },
+      },
+    },
+
+    config = function()
+      vim.api.nvim_create_user_command("IgnoreLint", function(opts)
+        if opts.range >= 2 then
+          require("ignore-lint").ignore_lint_visual(opts.line1, opts.line2)
+        else
+          require("ignore-lint").ignore_lint_line()
+        end
+      end, { nargs = 0, range = true })
+    end,
+  },
+
+  {
+    "Wansmer/sibling-swap.nvim",
+
+    config = {
+      keymaps = {
+        ["<C-.>"] = "swap_with_right",
+        ["<C-,>"] = "swap_with_left",
+        ["<space>."] = "swap_with_right_with_opp",
+        ["<space>,"] = "swap_with_left_with_opp",
+      },
+    },
+  },
+
+  {
+    "robitx/gp.nvim",
+    config = function()
+      require("gp").setup({
+        openai_api_key = { "security", "find-generic-password", "-s", "ChatGPT.nvim", "-a", "api_key", "-w" },
+      })
+
+      -- or setup with your own config (see Install > Configuration in Readme)
+      -- require("gp").setup(config)
+
+      -- shortcuts might be setup here (see Usage > Shortcuts in Readme)
+    end,
+  },
+
+  {
+    "benlubas/molten-nvim",
+    version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+    dependencies = { "3rd/image.nvim" },
+    build = ":UpdateRemotePlugins",
+    init = function()
+      vim.g.molten_image_provider = "image.nvim"
     end,
   },
 }

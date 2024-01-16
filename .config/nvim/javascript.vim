@@ -151,5 +151,6 @@ endfunction
 
 
 autocmd FileType javascript setlocal includeexpr=ResolveJavascriptImport(v:fname)
+autocmd FileType json autocmd BufRead package.json setlocal includeexpr=ResolveJavascriptImport(v:fname)
 autocmd FileType javascript setlocal isfname+=@-@
 autocmd FileType javascript command! InstallLspTools FloatermNew npm i -g @fsouza/prettierd typescript-language-server typescript vscode-langservers-extracted

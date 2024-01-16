@@ -11,13 +11,13 @@
       "$FN_UUID"
     ]
   },
-  "filename": {
+  "basename": {
     "prefix": [
       "filename"
     ],
     "body": [
       "${TM_FILENAME_BASE}"
     ],
-    "description": "inserts current filename"
+    "description": "inserts current basename"
   }
 }

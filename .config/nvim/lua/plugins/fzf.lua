@@ -53,7 +53,24 @@ return {
     },
 
     keys = {
-      { "<Leader>l", "<cmd>FzfLua blines<cr>", desc = "Buffer lines" },
+      {
+        "<Leader>l",
+        function()
+          require("fzf-lua").grep_curbuf()
+        end,
+        desc = "Buffer lines",
+      },
+      {
+        "<Leader>l",
+        function()
+          local utils = require("fzf-lua.utils")
+          require("fzf-lua").grep_curbuf({
+            search = utils.get_visual_selection(),
+          })
+        end,
+        desc = "Buffer lines",
+        mode = "v",
+      },
       {
         "<Leader>b",
         function()
@@ -61,7 +78,14 @@ return {
         end,
         desc = "Buffers",
       },
-      { "<Leader>*", "<cmd>FzfLua grep_visual<cr>", desc = "Search visual", mode = "v" },
+      {
+        "<Leader>*",
+        function()
+          require("fzf-lua").grep_visual()
+        end,
+        desc = "Search visual",
+        mode = "v",
+      },
       {
         "<Leader>*",
         function()
@@ -86,13 +110,10 @@ return {
           local actions = require("fzf-lua.actions")
           require("fzf-lua").grep({
             search = vim.fn.getline("."),
-            actions = {
-              ["default"] = function(selected, opts)
-                local line = vim.fn.substitute(selected[1], "^.\\{-}:\\d\\+:\\(\\d\\+:\\)\\?", "", "")
-                vim.fn.setline(".", line)
-                vim.cmd([[noautocmd lua vim.api.nvim_feedkeys('A', 'n', true)]])
-              end,
-            },
+            complete = function(selected)
+              local line = vim.fn.substitute(selected[1], "^.\\{-}:\\d\\+:\\(\\d\\+:\\)\\?", "", "")
+              return line, #line - 1
+            end,
           })
         end,
         mode = "i",
@@ -102,15 +123,16 @@ return {
         "<c-i>",
         function()
           local actions = require("fzf-lua.actions")
-          local packageJson = vim.fn.findfile("package.json", ".;")
-          local searchPackageJson = packageJson
-              and " && jq -r '.dependencies + .devDependencies | keys[]' " .. packageJson
+          local package_json = vim.fn.findfile("package.json", ".;")
+          local search_package_json = package_json
+              and " && jq -r '.dependencies + .devDependencies | keys[]' " .. package_json
             or ""
 
-          require("fzf-lua").fzf_exec("rg --files | sed 's/.*/.\\/&/'" .. searchPackageJson, {
+          require("fzf-lua").fzf_exec("rg --files | sed 's/.*/.\\/&/'" .. search_package_json, {
             complete = function(selected, opts, line, col)
               local path = selected[1]
               local basepath = vim.fn.fnamemodify(path, ":t:r")
+              local module_path
 
               if string.sub(path, 1, 1) ~= "." then
                 module_path = path
@@ -158,23 +180,6 @@ return {
         end,
         mode = "i",
         desc = "Complete historical command",
-      },
-      {
-        "<Leader>dv",
-        function()
-          require("fzf-lua").dap_variables()
-        end,
-        desc = "Debug show variables",
-      },
-      {
-        "<Leader>g",
-        function()
-          require("fzf-lua").grep({
-            search = "\\b" .. vim.fn.expand("<cword>") .. "\\b",
-            no_esc = true,
-          })
-        end,
-        desc = "Start search",
       },
       {
         "<Leader>G",
@@ -228,6 +233,14 @@ return {
         desc = "Show command history",
         expr = true,
       },
+      {
+        "<Leader>ca",
+        function()
+          require("fzf-lua").lsp_code_actions()
+        end,
+        desc = "Code action menu",
+        mode = { "n", "v" },
+      },
     },
 
     lazy = false,
@@ -250,6 +263,7 @@ return {
             winopts = {
               fullscreen = false,
             },
+            previewer = "codeaction_native",
           },
         },
 
@@ -275,28 +289,14 @@ return {
         require("fzf-lua").grep({
           search = opts.args,
           no_esc = true,
+          fzf_opts = {
+            ["--no-sort"] = "",
+          },
         })
       end, { nargs = "?" })
 
       vim.api.nvim_create_user_command("RgLast", function(opts)
         require("fzf-lua").grep_last()
-      end, { nargs = 0 })
-
-      vim.api.nvim_create_user_command("A", function(opts)
-        local filename = vim.fn.expand("%")
-        local basename = vim.fn.substitute(filename, "\\.[^/]*", "", "")
-        local files_with_same_basename = vim.fn.glob(basename .. ".*", false, true)
-        local alternate_files = vim.tbl_filter(function(f)
-          return f ~= filename
-        end, files_with_same_basename)
-
-        if #alternate_files == 1 then
-          vim.cmd("e " .. alternate_files[1])
-        else
-          require("fzf-lua").fzf_exec(alternate_files, {
-            actions = require("fzf-lua").defaults.actions.files,
-          })
-        end
       end, { nargs = 0 })
 
       vim.api.nvim_create_user_command("Rgs", function(opts)
@@ -322,9 +322,28 @@ return {
         })
       end, { nargs = 0 })
 
+      vim.api.nvim_create_user_command("Todos", function(opts)
+        require("fzf-lua").grep({
+          search = "\\bTODO\\b|\\bFIXME\\b|\\bNOTE\\b|\\bBUG\\b|\\bHACK\\b|\\bXXX\\b",
+          no_esc = true,
+        })
+      end, { nargs = 0 })
+
       vim.api.nvim_create_user_command("DocumentSymbols", function(opts)
         require("fzf-lua").lsp_document_symbols()
       end, { nargs = 0 })
+    end,
+  },
+
+  {
+    "refractalize/alternative-files",
+
+    config = function()
+      require("alternative-files").setup({
+        filetype_suffixes = {
+          cs = { "Test." },
+        },
+      })
     end,
   },
 }

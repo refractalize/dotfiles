@@ -1,0 +1,240 @@
+#!/usr/bin/env zsh
+
+set -e
+
+COMAND=$1
+
+if [ -z $COMAND ]; then
+  echo "Usage: nvimvm <command>"
+  echo ""
+  echo "Commands:"
+  echo "  versions"
+  echo "    List available versions"
+  echo "  installed"
+  echo "    List installed versions"
+  echo "  install <version>"
+  echo "    Install a version (but don't use it)"
+  echo "  use <version>"
+  echo "    Use a version"
+  echo "  path <version>"
+  echo "    Print the path to a version"
+  echo "  remove <version>"
+  echo "    Remove a version"
+  exit 1
+else
+  shift
+fi
+
+VERSIONS_DIR=~/.local/share/nvimvm/versions
+VERSION_FILE=~/.local/share/nvimvm/version
+DOWNLOAD_DIR=~/.local/share/nvimvm/downloads
+
+archive_name() {
+  local UNAME=$(uname)
+  if [[ $UNAME =~ "Darwin" ]]; then
+    echo nvim-macos
+  elif [[ $UNAME =~ "Linux" ]]; then
+    echo nvim-linux64
+  else
+    echo "Unsupported platform"
+    exit 1
+  fi
+}
+
+ARCHIVE_NAME=$(archive_name)
+
+mkdir -p $VERSIONS_DIR
+mkdir -p $DOWNLOAD_DIR
+
+GITHUB_RELEASES_CACHE=
+
+github_releases_raw() {
+  curl -s https://api.github.com/repos/neovim/neovim/releases
+}
+
+github_releases() {
+  if [ -z $GITHUB_RELEASES_CACHE ]; then
+    GITHUB_RELEASES_CACHE=$(mktemp)
+    github_releases_raw > $GITHUB_RELEASES_CACHE
+  fi
+
+  cat $GITHUB_RELEASES_CACHE
+}
+
+versions() {
+  github_releases | jq -r '.[] | if .tag_name | test("^v[0-9]") then .tag_name else "\(.tag_name) (\(.tag_name)-\(.target_commitish), \(.published_at))" end'
+}
+
+tag_version() {
+  local TAG_NAME=$1
+
+  if [[ $TAG_NAME =~ ^v[0-9] ]]; then
+    echo $TAG_NAME
+  elif [[ $TAG_NAME =~ -[a-f0-9]{40}$ ]]; then
+    echo $TAG_NAME
+  else
+    local COMMIT=$(github_releases | jq -r '.[] | select(.tag_name == $tagName) | .target_commitish' --arg tagName "$TAG_NAME")
+    echo $TAG_NAME-$COMMIT
+  fi
+}
+
+extract_version() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local DOWNLOAD_FILENAME=$(download_filename $TAG_NAME)
+  local VERSION_DIR=$VERSIONS_DIR/$TAG_VERSION
+
+  mkdir -p $VERSION_DIR
+  tar -xzf $DOWNLOAD_FILENAME -C $VERSION_DIR
+}
+
+write_version_json() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local VERSION_JSON=$VERSIONS_DIR/$TAG_VERSION.json
+
+  github_releases | jq -r '.[] | select(.tag_name == $tagName)' --arg tagName "$TAG_NAME" > $VERSION_JSON
+}
+
+download_filename() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  echo $DOWNLOAD_DIR/$TAG_VERSION.tar.gz
+}
+
+download_version() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local DOWNLOAD_FILENAME=$(download_filename $TAG_NAME)
+
+  if [ ! -f $DOWNLOAD_FILENAME ]; then
+    echo "Downloading $TAG_VERSION"
+    local URL=$(github_releases | jq -r '.[] | select(.tag_name == $tagName) | .assets[] | select(.name == "\($assetName).tar.gz") | .browser_download_url' --arg tagName "$TAG_NAME" --arg assetName "$ARCHIVE_NAME")
+    curl -L --progress-bar -o $DOWNLOAD_FILENAME $URL
+  fi
+}
+
+current_version() {
+  if [ -f $VERSION_FILE ]; then
+    cat $VERSION_FILE
+  else
+    echo "system"
+  fi
+}
+
+installed() {
+  local CURRENT_VERSION=$(current_version)
+
+  for F in $(ls -1 $VERSIONS_DIR/*.json); do
+    V=$(basename $F .json)
+
+    if [[ $V =~ ^v[0-9] ]]; then
+      local DATE=''
+    else
+      local DATE=" ($(cat $F | jq -r '.published_at'))"
+    fi
+
+    if [ $V = $CURRENT_VERSION ]; then
+      echo "* $V$DATE"
+    else
+      echo "  $V$DATE"
+    fi
+  done
+
+  if [ $CURRENT_VERSION = "system" ]; then
+    echo "* system"
+  else
+    echo "  system"
+  fi
+}
+
+install() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local VERSION_DIR=$VERSIONS_DIR/$TAG_VERSION
+
+  if [ ! -d $VERSION_DIR ]; then
+    download_version $TAG_NAME
+    extract_version $TAG_NAME
+    write_version_json $TAG_NAME
+  fi
+}
+
+use() {
+  local TAG_NAME=$1
+
+  if [ $TAG_NAME = "system" ]; then
+    echo "Using system"
+    rm -f ~/.local/bin/nvim
+    rm $VERSION_FILE
+    return
+  else
+    local TAG_VERSION=$(tag_version $TAG_NAME)
+    local VERSION_DIR=$VERSIONS_DIR/$TAG_VERSION
+
+    if [ ! -d $VERSION_DIR ]; then
+      install $TAG_NAME
+    fi
+
+    echo "Using $TAG_VERSION"
+    echo $TAG_VERSION > $VERSION_FILE
+    rm -f ~/.local/bin/nvim
+    ln -s $VERSION_DIR/$ARCHIVE_NAME/bin/nvim ~/.local/bin/nvim
+  fi
+}
+
+path() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local VERSION_DIR=$VERSIONS_DIR/$TAG_VERSION
+
+  if [ ! -d $VERSION_DIR ]; then
+    install $TAG_NAME
+  fi
+
+  echo $VERSION_DIR/$ARCHIVE_NAME/bin
+}
+
+remove() {
+  local TAG_NAME=$1
+  local TAG_VERSION=$(tag_version $TAG_NAME)
+  local VERSION_DIR=$VERSIONS_DIR/$TAG_VERSION
+
+  if [ -d $VERSION_DIR ]; then
+    echo "Removing $TAG_VERSION"
+    rm -rf $VERSION_DIR
+  fi
+
+  DOWNLOAD_FILENAME=$(download_filename $TAG_NAME)
+
+  if [ -f $DOWNLOAD_FILENAME ]; then
+    echo "Removing $TAG_VERSION download"
+    rm $DOWNLOAD_FILENAME
+  fi
+}
+
+case $COMAND in
+  "versions")
+    versions
+    ;;
+  "remove")
+    remove $1
+    ;;
+  "installed")
+    installed
+    ;;
+  "install")
+    install $1
+    ;;
+  "use")
+    use $1
+    ;;
+  "path")
+    path $1
+    ;;
+  *)
+    echo "Invalid command"
+    ;;
+esac
+
+rm -f $GITHUB_RELEASES_CACHE

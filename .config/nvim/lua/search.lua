@@ -12,24 +12,29 @@ end
 -- search for the visual selection and jump to the next match
 -- this is better than the built-in one because it handles
 -- multiple lines
-vim.keymap.set("v", "*", function()
+vim.keymap.set("v", "g*", function()
   local selection = utils.get_visual_text()
   local query = escape_query(selection)
   return "<Esc>/\\V" .. query .. "<CR>n"
 end, { expr = true })
 
 -- search for the visual selection and don't jump to the next match
-vim.keymap.set("v", "g*", function()
+vim.keymap.set("v", "*", function()
   local selection = utils.get_visual_text()
   local query = escape_query(selection)
-  vim.fn.setreg("/", query)
+  vim.fn.setreg("/", "\\V" .. query)
   vim.fn.histadd("search", query)
+  vim.cmd("set hlsearch")
   return "<Esc>"
 end, { expr = true })
 
 -- search for the word under the cursor but don't jump to the next match
-vim.keymap.set("n", "g*", function()
+vim.keymap.set("n", "*", function()
   local query = "\\<" .. vim.fn.expand("<cword>") .. "\\>"
   vim.fn.setreg("/", query)
   vim.fn.histadd("search", query)
+  vim.cmd("set hlsearch")
 end)
+
+-- search for the word under the cursor but jump to the next match
+vim.keymap.set("n", "g*", "*", { remap = false })

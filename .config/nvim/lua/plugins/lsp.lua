@@ -75,6 +75,9 @@ return {
         vim.keymap.set("n", "gk", function()
           vim.lsp.buf.signature_help()
         end, { buffer = bufnr })
+        vim.keymap.set("i", "<C-k>", function()
+          vim.lsp.buf.signature_help()
+        end, { buffer = bufnr })
         vim.keymap.set("n", "gt", function()
           vim.lsp.buf.type_definition()
         end, { buffer = bufnr })
@@ -150,6 +153,22 @@ return {
         },
       }
 
+      local function setup_language_server(server_name)
+        local server_options = server_overrides[server_name] or {}
+
+        local setup_options = vim.tbl_extend("force", {
+          on_attach = function(client, bufnr)
+            on_attach(client, bufnr, server_options.mappings)
+          end,
+          capabilities = capabilities,
+          flags = {
+            debounce_text_changes = 140,
+          },
+        }, server_options)
+
+        lspconfig[server_name].setup(setup_options)
+      end
+
       local mason_lspconfig = require("mason-lspconfig")
       mason_lspconfig.setup({
         ensure_installed = {
@@ -157,31 +176,19 @@ return {
           "html",
           "jsonls",
           "julials",
-          "pyright",
+          "pylsp",
           "rust_analyzer",
-          "sqlls",
+          -- "sqlls",
           "tsserver",
           "eslint",
         },
 
         handlers = {
-          function(server_name)
-            local server_options = server_overrides[server_name] or {}
-
-            local setup_options = vim.tbl_extend("force", {
-              on_attach = function(client, bufnr)
-                on_attach(client, bufnr, server_options.mappings)
-              end,
-              capabilities = capabilities,
-              flags = {
-                debounce_text_changes = 140,
-              },
-            }, server_options)
-
-            lspconfig[server_name].setup(setup_options)
-          end,
+          setup_language_server,
         },
       })
+
+      setup_language_server("sqlls")
 
       vim.diagnostic.config({
         virtual_text = { severity = { min = vim.diagnostic.severity.INFO } },
@@ -202,19 +209,5 @@ return {
         Hint = "#10B981",
       })
     end,
-  },
-
-  {
-    "weilbith/nvim-code-action-menu",
-
-    cmds = { "CodeActionMenu" },
-
-    keys = {
-      {
-        "<Leader>ca",
-        "<Cmd>CodeActionMenu<CR>",
-        desc = "Code action menu",
-      },
-    },
   },
 }

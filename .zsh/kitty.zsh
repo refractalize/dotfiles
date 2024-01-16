@@ -2,13 +2,9 @@ if ! defaults read net.kovidgoyal.kitty NSUserKeyEquivalents | grep -q "Hide kit
   defaults write net.kovidgoyal.kitty NSUserKeyEquivalents -dict-add "Hide kitty" '~^$\\U00a7'
 fi
 
-if [[ -e /Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/kitty.zsh ]]
-then
-  source /Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/kitty.zsh
+if test -n "$KITTY_INSTALLATION_DIR"; then
+    export KITTY_SHELL_INTEGRATION="no-cursor no-title"
+    autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+    kitty-integration
+    unfunction kitty-integration
 fi
-
-# This is for when running kitty from source
-# cd kitty && make debug && python3 .
-# if ! defaults read org.python.python NSUserKeyEquivalents | grep -q "Hide Python"; then
-#   defaults write org.python.python NSUserKeyEquivalents -dict-add "Hide Python" '~^$\\U00a7'
-# fi

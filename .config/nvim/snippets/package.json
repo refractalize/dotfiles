@@ -34,14 +34,17 @@
       },
       {
         "language": [
-          "typescript"
+          "typescript",
+          "typescriptreact"
         ],
         "path": "./typescript.json"
       },
       {
         "language": [
           "javascript",
-          "typescript"
+          "javascriptreact",
+          "typescript",
+          "typescriptreact"
         ],
         "path": "./javascript.json"
       },

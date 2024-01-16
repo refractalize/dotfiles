@@ -1,3 +1,4 @@
+local utils = require('refractalize.utils')
 local namespace = vim.api.nvim_create_namespace('difflines')
 
 local last_range
@@ -36,7 +37,7 @@ function show_diff(left, right)
 
   right_lines:setup_buffer()
 
-  require('utils').close_tab_when_any_window_is_closed({
+  utils.close_tab_when_any_window_is_closed({
     on_closed = function()
       left:clear()
       right:clear()

@@ -147,12 +147,10 @@ nnoremap <Leader>e :e %:h
 source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/style.vim
-source $HOME/.config/nvim/google.vim
 source $HOME/.config/nvim/diff.vim
 source $HOME/.config/nvim/spelling.vim
 source $HOME/.config/nvim/tabs.vim
 source $HOME/.config/nvim/windows.vim
-source $HOME/.config/nvim/ignorelint.vim
 source $HOME/.config/nvim/titlestring.vim
 source $HOME/.config/nvim/quickfix.vim
 source $HOME/.config/nvim/watch.vim

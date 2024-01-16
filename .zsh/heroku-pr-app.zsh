@@ -39,4 +39,3 @@ add-heroku-pr-app () {
   fi
 }
 zle -N add-heroku-pr-app
-bindkey '^h' add-heroku-pr-app

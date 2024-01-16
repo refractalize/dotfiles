@@ -1,3 +1,4 @@
 --hidden
 --glob=!.git
 --glob=!.*.sw*
+--glob=!.direnv
