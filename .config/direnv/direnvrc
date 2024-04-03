@@ -12,3 +12,28 @@ use_nvim() {
   local VERSION=$1
   PATH_add $(nvimvm path $VERSION)
 }
+
+layout_python_venv() {
+  local pyenv_version=$1
+  local venv_name=${2:-venv}
+  local pyenv_prefix=$(pyenv prefix $pyenv_version)
+
+  if [[ -z $pyenv_prefix ]]; then
+    return 1
+  fi
+
+  local pyenv_full_version=$(basename $pyenv_prefix)
+
+  if [[ ! -d $venv_name ]]; then
+    local python=$(pyenv prefix $pyenv_version)/bin/python
+    echo "layout venv: creating Virtual Environment for Python $pyenv_full_version in $venv_name"
+    $python -m venv $venv_name
+  else
+    local venv_version=$($venv_name/bin/python -c 'import platform; print(platform.python_version())')
+    if [[ $venv_version != $pyenv_full_version ]]; then
+      echo "layout venv: $venv_name is for Python $venv_version, not $pyenv_version => $pyenv_full_version"
+    fi
+  fi
+
+  source $venv_name/bin/activate
+}

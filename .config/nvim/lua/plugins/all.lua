@@ -24,16 +24,6 @@ return {
   },
   {
     "junegunn/vim-easy-align",
-
-    config = function()
-      vim.cmd([[
-        " Start interactive EasyAlign in visual mode (e.g. vipga)
-        xmap ga <Plug>(EasyAlign)
-
-        " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-        nmap ga <Plug>(EasyAlign)
-      ]])
-    end,
   },
 
   "godlygeek/tabular", -- format tables of data
@@ -74,7 +64,11 @@ return {
   {
     "mhartington/formatter.nvim",
 
-    cmd = { "Format" },
+    cmd = {
+      "Format",
+      "FormatAs",
+    },
+
     keys = {
       { "<M-f>", "<cmd>Format<cr>", desc = "Format" },
     },
@@ -82,11 +76,14 @@ return {
     config = function()
       require("formatter").setup({
         logging = true,
-        log_level = vim.log.levels.WARN,
+        log_level = vim.log.levels.INFO,
 
         filetype = {
           javascript = {
             require("formatter.filetypes.javascript").prettierd,
+          },
+          javascriptreact = {
+            require("formatter.filetypes.javascriptreact").prettierd,
           },
           typescript = {
             require("formatter.filetypes.typescript").prettierd,
@@ -337,7 +334,11 @@ return {
         log_level = vim.log.levels.DEBUG,
         adapters = {
           require("neotest-dotnet"),
-          require("neotest-python"),
+          require("neotest-python")({
+            args = {
+              "-s", -- show std out (print statements)
+            },
+          }),
           require("neotest-jest"),
         },
         -- quickfix = {
@@ -682,7 +683,7 @@ return {
       "stevearc/oil.nvim",
     },
 
-    config = { show_ignored = true },
+    config = { show_ignored = false },
   },
 
   {
@@ -791,7 +792,7 @@ return {
         function()
           require("luasnip").expand_or_jump()
         end,
-        mode = { "i", "v" },
+        mode = { "i" },
         desc = "Expand or jump",
       },
       {
@@ -805,6 +806,9 @@ return {
     },
 
     config = function()
+      require("luasnip").config.set_config({
+        store_selection_keys = "<c-j>",
+      })
       require("luasnip.loaders.from_vscode").lazy_load({
         paths = vim.fn.stdpath("config") .. "/snippets",
       })
@@ -821,6 +825,10 @@ return {
           return fns[name:lower()]()
         end,
       })
+
+      vim.api.nvim_create_user_command("LuaSnipEdit", function(opts)
+        require("luasnip.loaders").edit_snippet_files()
+      end, { nargs = 0 })
     end,
   },
 
@@ -902,5 +910,9 @@ return {
     init = function()
       vim.g.molten_image_provider = "image.nvim"
     end,
+  },
+
+  {
+    "arthurxavierx/vim-caser"
   },
 }

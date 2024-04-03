@@ -1,3 +1,0 @@
-#!/usr/bin/env zsh
-
-GIT_DIR=$HOME/.local/share/yadm/repo.git zsh

@@ -19,6 +19,7 @@ if ! zgen saved; then
 
   zgen load ~/.secrets.zsh
   zgen load ~/.zsh
+  zgen load ~/src/nvimvm
 
   zgen save
 fi

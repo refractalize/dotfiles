@@ -37,6 +37,7 @@ LUA
 
 nmap <leader>cf :let @+=expand("%:.")<CR>
 nmap <leader>cd :let @+=expand("%:h:.")<CR>
+nmap <leader>cD :let @+=expand("%:p:h")<CR>
 nmap <leader>cl :let @+=expand("%:.").":".line(".")<CR>
 nmap <leader>cF :let @+=expand("%:p")<CR>
 
@@ -145,7 +146,6 @@ nnoremap <Leader>sn :set number!<CR>
 nnoremap <Leader>e :e %:h
 
 source $HOME/.config/nvim/functions.vim
-source $HOME/.config/nvim/copypaste.vim
 source $HOME/.config/nvim/style.vim
 source $HOME/.config/nvim/diff.vim
 source $HOME/.config/nvim/spelling.vim
@@ -162,6 +162,9 @@ let g:vim_json_conceal=0
 lua require('quickfix').setup()
 lua require('search')
 lua require('page')
+lua require('refractalize/renamefile')
+lua require('refractalize/kittycopy').setup()
+lua require('refractalize/knip').setup()
 
 autocmd VimResized * wincmd =
 
@@ -170,8 +173,19 @@ command! ProfileStop :profile stop
 
 lua <<EOF
 
+
 function unload(name)
   package.loaded[name] = nil
 end
 
+vim.api.nvim_create_user_command(
+  'Browse',
+  function (opts)
+    vim.fn.system { 'open', opts.fargs[1] }
+  end,
+  { nargs = 1 }
+)
+
 EOF
+
+au FocusGained * wshada | rshada

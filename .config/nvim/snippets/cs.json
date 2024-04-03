@@ -76,7 +76,19 @@
   "Write Value to File": {
     "prefix": ["dbf"],
     "body": [
-      "System.IO.File.WriteAllText(\"$SYS_PWD/$1\", $2);"
+      "System.IO.File.WriteAllText(\"$WORKSPACE_FOLDER/$1\", $2);"
+    ]
+  },
+  "Write Query to File": {
+    "prefix": ["dbq"],
+    "body": [
+      "System.IO.File.WriteAllText(\"$WORKSPACE_FOLDER/$1.sql\", $1.ToQueryString()); // FIXME: remove this"
+    ]
+  },
+  "LogDuration": {
+    "prefix": ["logduration"],
+    "body": [
+      "_logger.LogDuration($1, () => ${TM_SELECTED_TEXT:code})"
     ]
   }
 }

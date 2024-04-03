@@ -42,9 +42,9 @@ return {
           lualine_b = {
             function()
               if vim.bo.modified then
-                return "%#lualine_b_replace#%f [modified]"
+                return "%#lualine_b_replace#%f (%n) [modified]"
               else
-                return "%f"
+                return "%f (%n)"
               end
             end,
           },

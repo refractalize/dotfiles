@@ -99,7 +99,7 @@ local function get_visual_text(range)
   end
 end
 
-function set_buf_options(buf, options)
+local function set_buf_options(buf, options)
   for option, value in pairs(options) do
     if value ~= nil then
       vim.api.nvim_buf_set_option(buf, option, value)
@@ -115,7 +115,7 @@ local defaults = {
   },
 }
 
-function close_tab_when_any_window_is_closed(options)
+local function close_tab_when_any_window_is_closed(options)
   options = vim.tbl_deep_extend("force", defaults, options or {})
 
   local tab = vim.api.nvim_get_current_tabpage()

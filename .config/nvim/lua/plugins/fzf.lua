@@ -267,6 +267,12 @@ return {
           },
         },
 
+        grep = {
+          fzf_opts = {
+            ["--no-sort"] = "",
+          },
+        },
+
         actions = {
           files = {
             ["default"] = actions.file_edit_or_qf,
@@ -289,9 +295,6 @@ return {
         require("fzf-lua").grep({
           search = opts.args,
           no_esc = true,
-          fzf_opts = {
-            ["--no-sort"] = "",
-          },
         })
       end, { nargs = "?" })
 
@@ -313,7 +316,10 @@ return {
             ["default"] = actions.file_edit_or_qf,
           },
         })
-      end, { nargs = "*" })
+      end, {
+        nargs = "*",
+        complete = "customlist,fugitive#ReadComplete",
+      })
 
       vim.api.nvim_create_user_command("SearchCurrentFilename", function(opts)
         require("fzf-lua").grep({
@@ -338,12 +344,30 @@ return {
   {
     "refractalize/alternative-files",
 
+    keys = {
+      {
+        "ga",
+        function()
+          require("alternative-files").show_alternative_files()
+        end,
+        desc = "Show alternative files",
+      },
+    },
+
+    cmd = {
+      "A",
+    },
+
     config = function()
       require("alternative-files").setup({
-        filetype_suffixes = {
-          cs = { "Test." },
+        basename_suffixes = {
+          cs = { "Tests" },
         },
       })
+
+      vim.api.nvim_create_user_command("A", function(opts)
+        require("alternative-files").show_alternative_files()
+      end, { nargs = 0 })
     end,
   },
 }

@@ -1,19 +1,19 @@
 {
   "env": {
-    "prefix": "env",
+    "prefix": [ "env" ],
     "body": [
       "#!/usr/bin/env $1"
     ]
   },
   "uuid": {
-    "prefix": "uuid",
+    "prefix": [ "uuid" ],
     "body": [
       "$FN_UUID"
     ]
   },
   "basename": {
     "prefix": [
-      "filename"
+      "basename"
     ],
     "body": [
       "${TM_FILENAME_BASE}"

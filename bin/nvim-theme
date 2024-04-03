@@ -18,7 +18,7 @@ then
   done
 elif [[ -n $all ]]
 then
-  for NVIM_LISTEN_ADDRESS in $(nvr --serverlist)
+  for NVIM_LISTEN_ADDRESS in $(ls $HOME/.local/state/nvim/kitty-remotes/*)
   do
     NVIM_LISTEN_ADDRESS=$NVIM_LISTEN_ADDRESS nvr +"Theme $THEME" --nostart
   done

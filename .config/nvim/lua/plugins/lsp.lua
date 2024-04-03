@@ -110,6 +110,9 @@ return {
             format = false,
           },
         },
+        bashls = {
+          filetypes = { "sh", "zsh" },
+        },
         eslint = {
           mappings = {
             format = false,
@@ -178,7 +181,7 @@ return {
           "julials",
           "pylsp",
           "rust_analyzer",
-          -- "sqlls",
+          "bashls",
           "tsserver",
           "eslint",
         },
@@ -187,8 +190,6 @@ return {
           setup_language_server,
         },
       })
-
-      setup_language_server("sqlls")
 
       vim.diagnostic.config({
         virtual_text = { severity = { min = vim.diagnostic.severity.INFO } },

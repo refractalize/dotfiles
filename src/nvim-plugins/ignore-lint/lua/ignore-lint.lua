@@ -17,7 +17,6 @@ local function compact(items)
 end
 
 local function diagnostic_codes(diagnostics)
-  print("diagnostics: " .. vim.inspect(diagnostics))
   local diagnostic_codes = uniq(compact(vim.tbl_map(function(d)
     return tostring(d.code)
   end, diagnostics)))
@@ -73,7 +72,7 @@ function LanguageLintIgnorer:ignore_lines(codes, buffer, start_line_number, end_
   local end_lines = self:end_lines(codes, end_indent)
 
   vim.api.nvim_buf_set_lines(0, start_line_number - 1, start_line_number - 1, true, start_lines)
-  vim.api.nvim_buf_set_lines(0, end_line_number + 1, end_line_number + 1, true, end_lines)
+  vim.api.nvim_buf_set_lines(0, end_line_number + #start_lines, end_line_number + #start_lines, true, end_lines)
 end
 
 function LanguageLintIgnorer:ignore_single_line(codes, buffer, line_number)
@@ -104,7 +103,7 @@ function LanguageLintIgnorer:ignore_single_line(codes, buffer, line_number)
     local end_lines = self:end_lines(codes, indent)
 
     vim.api.nvim_buf_set_lines(buffer, line_number - 1, line_number - 1, true, start_lines)
-    vim.api.nvim_buf_set_lines(buffer, line_number + 1, line_number + 1, true, end_lines)
+    vim.api.nvim_buf_set_lines(buffer, line_number + #start_lines, line_number + #start_lines, true, end_lines)
   end
 end
 

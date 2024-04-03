@@ -51,7 +51,7 @@ return {
               require("gitsigns").next_hunk()
             end)
             return "<Ignore>"
-          end, { buffer = bufnr })
+          end, { buffer = bufnr, expr = true })
           vim.keymap.set("n", "[c", function()
             if vim.wo.diff then
               return "[c"

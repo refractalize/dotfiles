@@ -1,5 +1,5 @@
 function! TitleString()
-  let branch = FugitiveHead(6)
+  let branch = v:lua.require('lualine.components.branch.git_branch').get_branch()
   let dir = $PROMPT_ICON != "" ? $PROMPT_ICON : fnamemodify(getcwd(),':t')
   if branch == ""
     return dir

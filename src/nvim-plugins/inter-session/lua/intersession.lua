@@ -1,7 +1,8 @@
 local filename = vim.fn.stdpath("state") .. "/sessions/" .. vim.fn.substitute(vim.fn.getcwd(), "/", "%", "g") .. ".vim"
+local is_resetting = false
 
 local function save()
-  if vim.fn.getcmdwintype() == "" then
+  if not is_resetting and vim.fn.getcmdwintype() == "" then
     vim.cmd("mks! " .. vim.fn.fnameescape(filename))
   end
 end
@@ -77,8 +78,14 @@ local function setup()
   end
 end
 
+local function reset()
+  vim.fn.delete(filename)
+  is_resetting = true
+end
+
 return {
   filename = filename,
+  reset = reset,
   setup = setup,
   save = save,
   load = load,
