@@ -1,4 +1,3 @@
-local utils = require('refractalize.utils')
 local namespace = vim.api.nvim_create_namespace('difflines')
 
 local last_range
@@ -21,8 +20,16 @@ function Range:new(o)
   return o
 end
 
+function on_window_closed(winid, on_closed)
+  vim.api.nvim_create_autocmd('WinClosed', {
+    pattern = tostring(winid),
+    callback = on_closed
+  })
+end
+
 function show_diff(left, right)
   vim.cmd('tabnew')
+  local left_winid = vim.api.nvim_get_current_win()
   local left_lines = left:lines()
   local right_lines = right:lines()
   local single_line = left_lines:single_line() and right_lines:single_line()
@@ -35,14 +42,17 @@ function show_diff(left, right)
     vim.cmd('vertical new')
   end
 
+  local right_winid = vim.api.nvim_get_current_win()
+
   right_lines:setup_buffer()
 
-  utils.close_tab_when_any_window_is_closed({
-    on_closed = function()
-      left:clear()
-      right:clear()
-    end
-  })
+  on_window_closed(left_winid, function()
+    left:clear()
+  end)
+
+  on_window_closed(right_winid, function()
+    right:clear()
+  end)
 end
 
 function Range:lines()
@@ -69,7 +79,13 @@ function Range:clear()
 end
 
 function RangeLines:setup_buffer()
-  vim.api.nvim_buf_set_option(0, 'filetype', vim.api.nvim_buf_get_option(self.range.buffer, 'filetype'))
+  vim.api.nvim_set_option_value('bufhidden', 'wipe', { buf = 0 })
+  vim.api.nvim_set_option_value('buftype', 'nofile', { buf = 0 })
+  vim.api.nvim_set_option_value('swapfile', false, { buf = 0 })
+
+  local filetype = vim.api.nvim_get_option_value('filetype', { buf = self.range.buffer })
+  vim.api.nvim_set_option_value('filetype', filetype, { buf = 0 })
+
   vim.api.nvim_buf_set_lines(0, 0, -1, true, self.lines)
   vim.cmd('diffthis')
 end
