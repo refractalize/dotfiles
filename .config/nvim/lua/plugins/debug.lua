@@ -122,52 +122,43 @@ return {
       vim.api.nvim_set_hl(0, "DapLogPoint", { ctermbg = 0, fg = "#61afef" })
       vim.api.nvim_set_hl(0, "DapStopped", { ctermbg = 0, fg = "#98c379" })
 
-      vim.fn.sign_define(
-        "DapBreakpoint",
-        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
-      )
-      vim.fn.sign_define(
-        "DapBreakpointCondition",
-        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
-      )
-      vim.fn.sign_define(
-        "DapBreakpointRejected",
-        { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" }
-      )
-      vim.fn.sign_define(
-        "DapLogPoint",
-        { text = "", texthl = "DapLogPoint", linehl = "", numhl = "" }
-      )
-      vim.fn.sign_define(
-        "DapStopped",
-        { text = "󰜴", texthl = "DapStopped", linehl = "", numhl = "" }
-      )
+      vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapLogPoint", linehl = "", numhl = "" })
+      vim.fn.sign_define("DapStopped", { text = "󰜴", texthl = "DapStopped", linehl = "", numhl = "" })
 
       local function get_breakpoint(buffer, line)
-        local breakpoints = require('dap.breakpoints')
+        local breakpoints = require("dap.breakpoints")
         local buffer_breakpoints = breakpoints.get(buffer)[buffer]
-        local current_line = vim.fn.line('.')
+        local current_line = vim.fn.line(".")
         return vim.tbl_filter(function(b)
           return b.line == current_line
         end, buffer_breakpoints)[1]
       end
 
-      vim.api.nvim_create_user_command('DapEditBreakpointCondition', function()
-        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line('.'))
-        vim.ui.input({ prompt = 'Breakpoint Condition: ', default = breakpoint and breakpoint.condition }, function(condition)
-          if condition then
-            dap.set_breakpoint(condition)
+      vim.api.nvim_create_user_command("DapEditBreakpointCondition", function()
+        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line("."))
+        vim.ui.input(
+          { prompt = "Breakpoint Condition: ", default = breakpoint and breakpoint.condition },
+          function(condition)
+            if condition then
+              dap.set_breakpoint(condition)
+            end
           end
-        end)
+        )
       end, {})
 
-      vim.api.nvim_create_user_command('DapEditBreakpointLogMessage', function()
-        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line('.'))
-        vim.ui.input({ prompt = 'Breakpoint Log Message: ', default = breakpoint and breakpoint.logMessage }, function(log_message)
-          if log_message then
-            dap.set_breakpoint(nil, nil, log_message)
+      vim.api.nvim_create_user_command("DapEditBreakpointLogMessage", function()
+        local breakpoint = get_breakpoint(vim.fn.bufnr(), vim.fn.line("."))
+        vim.ui.input(
+          { prompt = "Breakpoint Log Message: ", default = breakpoint and breakpoint.logMessage },
+          function(log_message)
+            if log_message then
+              dap.set_breakpoint(nil, nil, log_message)
+            end
           end
-        end)
+        )
       end, {})
     end,
   },
@@ -202,7 +193,10 @@ return {
 
   {
     "rcarriga/nvim-dap-ui",
-    dependencies = { "mfussenegger/nvim-dap" },
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio",
+    },
 
     lazy = false,
 

@@ -15,6 +15,7 @@ return {
       "vim-matchup",
       "SmiteshP/nvim-navic",
       "williamboman/mason-lspconfig.nvim",
+      "Issafalcon/lsp-overloads.nvim",
     },
 
     config = function()
@@ -58,6 +59,10 @@ return {
         lsp_status.on_attach(client)
         if client.server_capabilities.documentSymbolProvider then
           navic.attach(client, bufnr)
+        end
+
+        if client.server_capabilities.signatureHelpProvider then
+          require("lsp-overloads").setup(client, {})
         end
 
         vim.keymap.set("n", "gD", function()
@@ -154,6 +159,18 @@ return {
             format = "force",
           },
         },
+        yamlls = {
+          settings = {
+            yaml = {
+              schemas = {
+                ["https://raw.githubusercontent.com/docker/compose/v1/compose/config/compose_spec.json"] = {
+                  "/docker-compose.y*ml",
+                  "/docker-compose-*.y*ml",
+                },
+              },
+            },
+          },
+        },
       }
 
       local function setup_language_server(server_name)
@@ -184,6 +201,7 @@ return {
           "bashls",
           "tsserver",
           "eslint",
+          "yamlls",
         },
 
         handlers = {
