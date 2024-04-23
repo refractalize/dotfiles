@@ -1,4 +1,6 @@
-local filename = vim.fn.stdpath("state") .. "/sessions/" .. vim.fn.substitute(vim.fn.getcwd(), "/", "%", "g") .. ".vim"
+local directory = vim.fn.stdpath("state") .. "/sessions"
+vim.fn.mkdir(directory, 'p')
+local filename = directory .. "/" .. vim.fn.substitute(vim.fn.getcwd(), "/", "%", "g") .. ".vim"
 local is_resetting = false
 
 local function save()

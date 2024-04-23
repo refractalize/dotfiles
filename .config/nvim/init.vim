@@ -164,7 +164,6 @@ lua require('search')
 lua require('page')
 lua require('refractalize/renamefile')
 lua require('refractalize/kittycopy').setup()
-lua require('refractalize/knip').setup()
 
 autocmd VimResized * wincmd =
 

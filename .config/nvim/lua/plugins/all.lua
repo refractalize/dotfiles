@@ -579,6 +579,7 @@ return {
 
   {
     "jackMort/ChatGPT.nvim",
+    enabled = false,
     event = "VeryLazy",
     config = function()
       require("chatgpt").setup({
@@ -678,6 +679,8 @@ return {
 
   {
     "refractalize/oil-git-status.nvim",
+
+    dev = false,
 
     dependencies = {
       "stevearc/oil.nvim",

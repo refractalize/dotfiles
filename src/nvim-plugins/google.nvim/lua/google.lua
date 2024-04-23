@@ -5,7 +5,9 @@ local function google(search_term)
     return string.format("%%%02X", string.byte(c))
   end)
 
-  vim.fn.system({ "open", "https://www.google.com/search?q=" .. escaped_search_term })
+  local open_command = vim.fn.has("mac") == 1 and "open" or "xdg-open"
+
+  vim.fn.system({ open_command, "https://www.google.com/search?q=" .. escaped_search_term })
 end
 
 local function google_visual_selection(additional_query)

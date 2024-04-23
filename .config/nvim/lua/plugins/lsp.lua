@@ -151,7 +151,7 @@ return {
           },
         },
         omnisharp = {
-          cmd = { "dotnet", "/Users/tim/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll" },
+          cmd = { "dotnet", os.getenv('HOME') .. "/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll" },
           enable_editorconfig_support = true,
           enable_roslyn_analyzers = true,
           analyze_open_documents_only = true,

@@ -1,9 +1,12 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ "$OSTYPE" = "darwin"* ]]
+  then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+  if type brew &>/dev/null
+  then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
-  autoload -Uz compinit
-  compinit
+    autoload -Uz compinit
+    compinit
+  fi
 fi
