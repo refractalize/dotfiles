@@ -15,8 +15,6 @@
     clean-branches = "!git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d"
 	s = stash
 	sp = stash pop
-[credential]
-    helper = osxkeychain
 [push]
     default = simple
     autoSetupRemote = true
@@ -44,3 +42,5 @@
 	defaultBranch = main
 [fetch]
 	prune = true
+[include]
+    path = ~/.gitconfig.local

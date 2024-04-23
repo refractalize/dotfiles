@@ -1,0 +1,4 @@
+[credential]
+    helper = !git-credential-manager
+	credentialStore = gpg
+	provider = generic
