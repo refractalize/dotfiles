@@ -1,4 +1,2 @@
 [credential]
-    helper = !git-credential-manager
-	credentialStore = gpg
-	provider = generic
+    helper = libsecret

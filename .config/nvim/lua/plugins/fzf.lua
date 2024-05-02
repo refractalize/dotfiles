@@ -211,13 +211,14 @@ return {
           -- Solution is to take the command line text, clear it, escape from the
           -- command line then run the command history with the captured command line text
           local existing_command = vim.fn.getcmdline()
+          local query = existing_command ~= '' and vim.fn.shellescape(existing_command) or nil
           vim.fn.setcmdline("")
 
           vim.schedule(function()
             require("fzf-lua").command_history({
               reverse_list = false,
               fzf_opts = {
-                ["--query"] = vim.fn.shellescape(existing_command),
+                ["--query"] = query,
 
                 -- Sort by most recent
                 ["--no-sort"] = "",
@@ -298,6 +299,13 @@ return {
         })
       end, { nargs = "?" })
 
+      vim.api.nvim_create_user_command("RgOpts", function(opts)
+        require("fzf-lua").grep({
+          rg_opts = opts.args
+            .. " --column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e",
+        })
+      end, { nargs = "?" })
+
       vim.api.nvim_create_user_command("RgLast", function(opts)
         require("fzf-lua").grep_last()
       end, { nargs = 0 })
@@ -314,6 +322,9 @@ return {
           previewer = "builtin",
           actions = {
             ["default"] = actions.file_edit_or_qf,
+          },
+          fzf_opts = {
+            ["--multi"] = "",
           },
         })
       end, {

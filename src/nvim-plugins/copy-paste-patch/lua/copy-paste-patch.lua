@@ -1,10 +1,13 @@
+local copy_command = vim.fn.has('mac') == 1 and "pbcopy" or "xsel -b"
+local paste_command = vim.fn.has('mac') == 1 and "pbpaste" or "xsel -b"
+
 local function copy_patch(fargs)
   local branch = fargs[1] or "HEAD"
-  vim.cmd("silent !git diff " .. branch .. " " .. vim.fn.expand("%:.") .. " | pbcopy")
+  vim.cmd("silent !git diff " .. branch .. " " .. vim.fn.expand("%:.") .. " | " .. copy_command)
 end
 
 local function paste_patch()
-  vim.cmd("silent !pbpaste | git apply")
+  vim.cmd("silent !" .. paste_command .. " | git apply")
 end
 
 local function setup()

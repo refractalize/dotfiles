@@ -202,6 +202,7 @@ return {
           "tsserver",
           "eslint",
           "yamlls",
+          "omnisharp",
         },
 
         handlers = {

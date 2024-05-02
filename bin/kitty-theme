@@ -6,7 +6,7 @@ zparseopts -D -A opts -- -all=all -tab=tab -choose=choose -save=save
 
 THEME=$1
 KITTY_CUSTOM_DIR=~/.config/kitty/themes
-KITTY_THEME_ZIP=~/Library/Caches/kitty/kitty-themes.zip
+KITTY_THEME_ZIP=$([[ $OSTYPE = "darwin"* ]] && echo ~/Library/Caches/kitty/kitty-themes.zip || echo ~/.cache/kitty/kitty-themes.zip)
 
 if [[ -n $tab ]]
 then

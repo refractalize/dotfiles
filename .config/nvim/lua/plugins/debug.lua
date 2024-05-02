@@ -79,7 +79,7 @@ return {
 
       dap.adapters.netcoredbg = {
         type = "executable",
-        command = vim.fn.expand("~/src/netcoredbg/bin/netcoredbg"),
+        command = "netcoredbg",
         args = { "--interpreter=vscode" },
       }
 
