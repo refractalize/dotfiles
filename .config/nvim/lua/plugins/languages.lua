@@ -90,4 +90,8 @@ return {
       vim.g.mkdp_filetypes = { "markdown" }
     end,
   },
+
+  {
+    "datamadsen/vim-compiler-plugin-for-dotnet",
+  },
 }
