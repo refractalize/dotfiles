@@ -1,6 +1,12 @@
 #!/usr/bin/env zsh
 
-set -e
+set -ex
+
+exec >&1 >>log.txt 2>&1
+
+echo "------------------------"
+
+echo "KITTY_LISTEN_ON: $KITTY_LISTEN_ON"
 
 export PATH=/opt/homebrew/bin:$PATH
 
@@ -8,8 +14,13 @@ zparseopts -D -A opts -window-id::
 
 WINDOW_ID=${opts[--window-id]:-$KITTY_WINDOW_ID}
 
-NVIM_WINDOW_ID=$(kitty @ --to unix:$(ls ${TMPDIR}/kitty-*) ls | jq "[.[] | .tabs[] | select(.windows[] | select(.id == $WINDOW_ID)) | .windows[] |  select(.foreground_processes[] | .cmdline[] | . == \"nvim\")][0] | .id")
+echo "WINDOW_ID: $WINDOW_ID"
 
-REMOTE=$HOME/.local/state/nvim/kitty-remotes/window-$NVIM_WINDOW_ID
+kitty @ --to "$KITTY_LISTEN_ON" ls
 
+REMOTE=$(kitty @ --to "$KITTY_LISTEN_ON" ls | jq -r ".[].tabs[] | select(.windows[] | select(.id == $WINDOW_ID)) | .windows[].user_vars.nvim | select(.)")
+
+echo "REMOTE: $REMOTE"
+
+echo "nvim --server $REMOTE --remote $@"
 nvim --server $REMOTE --remote $@

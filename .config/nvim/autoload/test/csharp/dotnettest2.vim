@@ -16,8 +16,7 @@ function! test#csharp#dotnettest2#build_position(type, position) abort
   let project_path = test#csharp#get_project_path(file)
 
   if a:type ==# 'nearest'
-    let names = luaeval("require('csharp_nearest_test').nearest_test()")
-    let nearest_test = join(names, '.')
+    let nearest_test = luaeval("require('csharp_nearest_test').nearest_test()")
     return [project_path, '--filter', 'FullyQualifiedName~' . nearest_test]
   elseif a:type ==# 'file'
     let names = luaeval("require('csharp_nearest_test').file_classes()")

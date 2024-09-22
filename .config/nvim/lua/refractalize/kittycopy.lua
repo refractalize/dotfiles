@@ -6,7 +6,7 @@ local namespace = vim.api.nvim_create_namespace("kitty-user-var")
 local function setup()
   vim.api.nvim_create_autocmd({ "VimEnter" }, {
     callback = function()
-      io.stdout:write("\x1b]1337;SetUserVar=nvim=MQo\007")
+      io.stdout:write("\x1b]1337;SetUserVar=nvim=" .. vim.base64.encode(vim.v.servername) .. "\007")
     end,
   })
 

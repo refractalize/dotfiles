@@ -3,17 +3,14 @@ local global_options = {
 }
 
 local function remove_suffixes(filename)
-  local basename = vim.fn.split(filename, "\\.")[1]
-  local result = basename
-  local suffixes = global_options.basename_suffixes[vim.bo.filetype] or {}
-
-  for _, suffix in ipairs(suffixes) do
-    if string.sub(result, -string.len(suffix)) == suffix then
-      result = string.sub(result, 1, -string.len(suffix) - 1)
+  for _, basename_pattern in ipairs(global_options.basename_patterns or {}) do
+    local start, _, basename = string.find(filename, basename_pattern)
+    if start then
+      return basename
     end
   end
 
-  return result
+  return vim.fn.split(filename, "\\.")[1]
 end
 
 local function show_alternative_files()

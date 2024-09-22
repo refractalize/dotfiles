@@ -168,12 +168,21 @@ return {
       {
         "<c-x><c-h>",
         function()
+          local cmd = "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && printf '%s\\\\t%s\\\\000' \\\"\\${(kv)history[@]}\\\" | perl -0 -ne 'if (\\!\\$seen{(/^\\\\s*[0-9]+\\\\**\\\\t(.*)/s, \\$1)}++) { s/\\\\n/\\n\\\\t/g; print; }'\""
+
+          print(cmd)
+
           require("fzf-lua").fzf_exec(
-            "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 | sed -E 's/^[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
+            -- "zsh -c \"export HISTFILE=~/.zsh_history && fc -R && fc -rl 1 | sed -E 's/^[[:blank:]]*[[:digit:]]*\\*?[[:blank:]]*//'\"",
+            -- "zsh -c \"printf '%s\\t%s\\000' \\\"${(kv)history[@]}\\\" | perl -0 -ne 'if (!$seen{(/^\\s*[0-9]+\\**\\t(.*)/s, $1)}++) { s/\\n/\\n\\t/g; print; }'\"",
+            -- zsh -c "export HISTFILE=~/.zsh_history && fc -R && printf '%s\\t%s\\000' \"\${(kv)history[@]}\""
+            cmd,
             {
               complete = true,
               fzf_opts = {
-                ["--tiebreak"] = "index",
+                ["--scheme"] = "history",
+                ["--highlight-line"] = '',
+                ["--read0"] = '',
               },
             }
           )
@@ -371,8 +380,9 @@ return {
 
     config = function()
       require("alternative-files").setup({
-        basename_suffixes = {
-          cs = { "Tests" },
+        basename_patterns = {
+          "(.*)Tests%.cs",
+          "test_(.*)%.py",
         },
       })
 

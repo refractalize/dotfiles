@@ -90,5 +90,18 @@
     "body": [
       "_logger.LogDuration($1, () => ${TM_SELECTED_TEXT:code})"
     ]
+  },
+  "Context": {
+    "prefix": ["context"],
+    "body": [
+       "var context = new CeresApiDbContext(",
+       "    new DbContextOptionsBuilder<CeresApiDbContext>()",
+       "        .UseSqlServer(Environment.GetEnvironmentVariable(\"CONNECTIONSTRINGS__DB\"))",
+       "        .Options,",
+       "    GlobalSetupFixture.UserScopeFactory,",
+       "    GlobalSetupFixture.MockTimeProvider.Object,",
+       "    new GZipCompressionService()",
+       ");"
+    ]
   }
 }

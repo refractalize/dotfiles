@@ -78,8 +78,8 @@ end
 function LanguageLintIgnorer:ignore_single_line(codes, buffer, line_number)
   local line = vim.api.nvim_get_current_line()
 
-  if self.rules.single_line_suffix and not self.rules.prefer_previous_line then
-    local new_line = self.rules.single_line_suffix(codes, line)
+  if self.rules.current_line then
+    local new_line = self.rules.current_line(codes, line)
     vim.api.nvim_buf_set_text(buffer, line_number - 1, #line, line_number - 1, #line, { new_line })
   elseif self.rules.previous_line then
     local previous_line = vim.api.nvim_buf_get_lines(buffer, line_number - 2, line_number - 1, true)[1]

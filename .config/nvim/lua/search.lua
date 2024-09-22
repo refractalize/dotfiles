@@ -6,7 +6,7 @@ vim.keymap.set("v", "/", function()
 end, { expr = true, noremap = true })
 
 local function escape_query(text)
-  return vim.fn.substitute(vim.fn.substitute(vim.fn.escape(text, "/"), "\n", "\\\\n", "g"), "\t", "\\\\t", "g")
+  return vim.fn.substitute(vim.fn.substitute(vim.fn.escape(text, "/\\"), "\n", "\\\\n", "g"), "\t", "\\\\t", "g")
 end
 
 -- search for the visual selection and jump to the next match

@@ -106,10 +106,11 @@ return {
         nmap <leader>tl :TestNearest<CR>
         nmap <leader>tt :TestLast<CR>
         nmap <leader>tv :TestVisit<CR>
-        nmap <leader>to :copen<CR>
+        nmap <leader>to :copen \| wincmd L<CR>
         let test#strategy = 'dispatch'
         let test#custom_runners = {'csharp': ['dotnettest2']}
         let test#csharp#runner = 'dotnettest2'
+        let test#python#runner = 'pytest'
 
         " autocmd FileType qf call AdjustWindowHeight(30, 40)
         function! AdjustWindowHeight(percent_full_width, percent_full_height)

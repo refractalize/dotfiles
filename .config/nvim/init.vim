@@ -20,7 +20,14 @@ vim.opt.rtp:prepend(lazypath)
 LUA
 
 lua <<LUA
-require("lazy").setup("plugins", {
+require("lazy").setup({
+  spec = {
+    { import = "plugins" }
+  },
+  -- spec2 = bisect({
+  --   'plugins.lsp',
+  --   'plugins.treesitter',
+  -- }),
   dev = {
     path = "~/src/nvim-plugins",
     patterns = { "refractalize" },
@@ -33,6 +40,11 @@ require("lazy").setup("plugins", {
     missing = false
   }
 })
+LUA
+
+lua <<LUA
+local bisect = require('bisect')
+bisect()
 LUA
 
 nmap <leader>cf :let @+=expand("%:.")<CR>
@@ -143,7 +155,7 @@ autocmd FileType conf set syntax=ON
 autocmd FileType git set syntax=ON
 
 nnoremap <Leader>sn :set number!<CR>
-nnoremap <Leader>e :e %:h
+" nnoremap <Leader>e :e %:h
 
 source $HOME/.config/nvim/functions.vim
 source $HOME/.config/nvim/style.vim
@@ -164,6 +176,9 @@ lua require('search')
 lua require('page')
 lua require('refractalize/renamefile')
 lua require('refractalize/kittycopy').setup()
+lua require('refractalize/largefiles')
+
+lua vim.keymap.set({ "n", "v" }, "<D-y>", '"+y', { noremap = true })
 
 autocmd VimResized * wincmd =
 
@@ -187,4 +202,4 @@ vim.api.nvim_create_user_command(
 
 EOF
 
-au FocusGained * wshada | rshada
+" au FocusGained * wshada | rshada

@@ -457,11 +457,12 @@ return {
 
   {
     "jackMort/ChatGPT.nvim",
-    enabled = false,
+    enabled = true,
     event = "VeryLazy",
     config = function()
       require("chatgpt").setup({
-        api_key_cmd = "security find-generic-password -s ChatGPT.nvim -a api_key -w",
+        api_key_cmd = vim.fn.has("mac") == 1 and "security find-generic-password -s ChatGPT.nvim -a api_key -w"
+          or "secret-tool lookup password chatgpt.nvim",
         edit_with_instructions = {
           diff = true,
         },
@@ -678,6 +679,10 @@ return {
       },
     },
 
+    cmd = {
+      "LuaSnipEdit",
+    },
+
     config = function()
       require("luasnip").config.set_config({
         store_selection_keys = "<c-j>",
@@ -786,6 +791,103 @@ return {
   },
 
   {
-    "arthurxavierx/vim-caser"
+    "arthurxavierx/vim-caser",
+  },
+
+  {
+    "nomnivore/ollama.nvim",
+
+    cmd = { "Ollama", "OllamaModel", "OllamaServe", "OllamaServeStop" },
+
+    keys = {
+      -- Sample keybind for prompt menu. Note that the <c-u> is important for selections to work properly.
+      {
+        "<leader>oo",
+        ":<c-u>lua require('ollama').prompt()<cr>",
+        desc = "ollama prompt",
+        mode = { "n", "v" },
+      },
+
+      -- Sample keybind for direct prompting. Note that the <c-u> is important for selections to work properly.
+      {
+        "<leader>oG",
+        ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>",
+        desc = "ollama Generate Code",
+        mode = { "n", "v" },
+      },
+    },
+
+    opts = {
+      model = "llama3",
+
+      -- $ docker run -d --rm --gpus=all -v <volume>:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+      url = "http://127.0.0.1:11434",
+      serve = {
+        command = "docker",
+        args = {
+          "run",
+          "-d",
+          "--rm",
+          "--gpus=all",
+          "-v",
+          "ollama:/root/.ollama",
+          "-p",
+          "11434:11434",
+          "--name",
+          "ollama",
+          "ollama/ollama",
+        },
+        stop_command = "docker",
+        stop_args = { "stop", "ollama" },
+      },
+    },
+  },
+
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*", -- recommended, use latest release instead of latest commit
+    lazy = true,
+    ft = "markdown",
+    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+    -- event = {
+    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
+    --   "BufReadPre path/to/my-vault/**.md",
+    --   "BufNewFile path/to/my-vault/**.md",
+    -- },
+    dependencies = {
+      -- Required.
+      "nvim-lua/plenary.nvim",
+
+      -- see below for full list of optional dependencies 👇
+    },
+    opts = {
+      workspaces = {
+        {
+          name = "notes",
+          path = "~/Notes",
+        },
+      },
+      completion = {
+        -- Set to false to disable completion.
+        nvim_cmp = true,
+        -- Trigger completion at 2 chars.
+        min_chars = 2,
+      },
+      picker = {
+        -- Set your preferred picker. Can be one of 'telescope.nvim', 'fzf-lua', or 'mini.pick'.
+        name = "fzf-lua",
+        -- Optional, configure key mappings for the picker. These are the defaults.
+        -- Not all pickers support all mappings.
+        mappings = {
+          -- Create a new note from your query.
+          new = "<C-x>",
+          -- Insert a link to the selected note.
+          insert_link = "<C-l>",
+        },
+      },
+
+      -- see below for full list of options 👇
+    },
   },
 }

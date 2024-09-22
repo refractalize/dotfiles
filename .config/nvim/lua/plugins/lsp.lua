@@ -34,20 +34,23 @@ return {
         noremap = true,
         silent = true,
       }
-      vim.api.nvim_set_keymap("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-      vim.api.nvim_set_keymap(
-        "n",
-        "[d",
-        "<cmd>lua vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } })<CR>",
-        opts
-      )
-      vim.api.nvim_set_keymap(
-        "n",
-        "]d",
-        "<cmd>lua vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } })<CR>",
-        opts
-      )
-      vim.api.nvim_set_keymap("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
+      local severity = { min = vim.diagnostic.severity.WARN }
+      local float_options = {
+        source = true,
+      }
+
+      vim.keymap.set("n", "<space>e", function()
+        vim.diagnostic.open_float(float_options)
+      end, opts)
+      vim.keymap.set("n", "[d", function()
+        vim.diagnostic.goto_prev({ severity = severity, float = float_options })
+      end, opts)
+      vim.keymap.set("n", "]d", function()
+        vim.diagnostic.goto_next({ severity = severity, float = float_options })
+      end, opts)
+      vim.keymap.set("n", "<space>q", function()
+        vim.diagnostic.setloclist()
+      end, opts)
 
       lsp_status.register_progress()
 
@@ -124,6 +127,29 @@ return {
             setup = function(client, bufnr)
               vim.keymap.set("n", "<M-F>", "<Cmd>EslintFixAll<CR>", { buffer = bufnr })
             end,
+          },
+        },
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                pycodestyle = {
+                  enabled = false,
+                },
+                pyflakes = {
+                  enabled = false,
+                },
+                isort = {
+                  enabled = true,
+                },
+                black = {
+                  enabled = true,
+                },
+                flake8 = {
+                  enabled = true,
+                },
+              },
+            },
           },
         },
         lua_ls = {
@@ -208,6 +234,20 @@ return {
             },
           },
         },
+        basedpyright = {
+          settings = {
+            basedpyright = {
+              -- Using Ruff's import organizer
+              disableOrganizeImports = true,
+              analysis = {
+                diagnosticMode = "workspace",
+              },
+            },
+          },
+          mappings = {
+            format = false,
+          },
+        },
       }
 
       local function setup_language_server(server_name)
@@ -233,13 +273,14 @@ return {
           "html",
           "jsonls",
           "julials",
-          "pylsp",
+          -- "pylsp",
           "rust_analyzer",
           "bashls",
           "tsserver",
           "eslint",
           "yamlls",
           "omnisharp",
+          "basedpyright",
         },
 
         handlers = {
@@ -248,10 +289,10 @@ return {
       })
 
       vim.diagnostic.config({
-        virtual_text = { severity = { min = vim.diagnostic.severity.INFO } },
-        signs = { severity = { min = vim.diagnostic.severity.INFO } },
-        underline = { severity = { min = vim.diagnostic.severity.INFO } },
-        float = { severity = { min = vim.diagnostic.severity.INFO } },
+        virtual_text = { severity = severity },
+        signs = { severity = severity },
+        underline = { severity = severity },
+        float = { severity = severity },
       })
     end,
   },

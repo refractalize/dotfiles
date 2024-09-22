@@ -108,6 +108,16 @@ return {
   {
     "folke/tokyonight.nvim",
     lazy = true,
+
+    config = function()
+      local util = require("tokyonight.util")
+
+      require("tokyonight").setup({
+        on_highlights = function(hi, c)
+          hi.DiagnosticUnnecessary = { fg = util.lighten(hi.DiagnosticUnnecessary.fg, 0.5) }
+        end,
+      })
+    end,
   },
   {
     "catppuccin/nvim",

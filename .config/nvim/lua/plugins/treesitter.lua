@@ -1,49 +1,54 @@
 return {
   {
-    'nvim-treesitter/playground',
-    dependencies = 'nvim-treesitter',
+    "nvim-treesitter/playground",
+    dependencies = "nvim-treesitter",
 
-    cmd = { 'TSPlaygroundToggle' },
+    cmd = { "TSPlaygroundToggle" },
 
     config = function()
-      require "nvim-treesitter.configs".setup {
+      require("nvim-treesitter.configs").setup({
         playground = {
           enable = true,
           disable = {},
           updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
           persist_queries = false, -- Whether the query persists across vim sessions
           keybindings = {
-            toggle_query_editor = 'o',
-            toggle_hl_groups = 'i',
-            toggle_injected_languages = 't',
-            toggle_anonymous_nodes = 'a',
-            toggle_language_display = 'I',
-            focus_language = 'f',
-            unfocus_language = 'F',
-            update = 'R',
-            goto_node = '<cr>',
-            show_help = '?',
+            toggle_query_editor = "o",
+            toggle_hl_groups = "i",
+            toggle_injected_languages = "t",
+            toggle_anonymous_nodes = "a",
+            toggle_language_display = "I",
+            focus_language = "f",
+            unfocus_language = "F",
+            update = "R",
+            goto_node = "<cr>",
+            show_help = "?",
           },
-        }
-      }
-    end
+        },
+      })
+    end,
   },
   {
-    'nvim-treesitter/nvim-treesitter',
-    build = ':TSUpdate',
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
 
     config = function()
-      vim.treesitter.language.register('bash', 'zsh')
+      vim.treesitter.language.register("bash", "zsh")
 
-      function disable(lang, bufnr) -- Disable in large C++ buffers
-        return vim.api.nvim_buf_line_count(bufnr) > 50000
+      function disable(lang, bufnr)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local filename = vim.api.nvim_buf_get_name(bufnr)
+        local ok, stats = pcall(vim.loop.fs_stat, filename)
+        if ok and stats and stats.size > max_filesize then
+          return true
+        end
       end
 
-      require'nvim-treesitter.configs'.setup {
-        ensure_installed = 'all',
-        ignore_install = { 'java', 'smali', 't32' },
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = "all",
+        ignore_install = { "java", "smali", "t32" },
         highlight = {
-          enable = true,              -- false will disable the whole extension
+          enable = true, -- false will disable the whole extension
           disable = disable,
         },
         indent = {
@@ -57,25 +62,25 @@ return {
         incremental_selection = {
           enable = true,
           keymaps = {
-            init_selection = ')',
-            node_incremental = ')',
-            node_decremental = '(',
+            init_selection = ")",
+            node_incremental = ")",
+            node_decremental = "(",
           },
           disable = disable,
         },
-      }
+      })
 
       vim.cmd([[
         nnoremap ( <Nop>
       ]])
-    end
+    end,
   },
   {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    dependencies = 'nvim-treesitter',
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    dependencies = "nvim-treesitter",
 
     config = function()
-      require'nvim-treesitter.configs'.setup {
+      require("nvim-treesitter.configs").setup({
         textobjects = {
           select = {
             enable = true,
@@ -88,14 +93,14 @@ return {
               ["ac"] = "@class.outer",
               ["ic"] = "@class.inner",
               ["aa"] = "@parameter.outer",
-              ["ia"] = "@parameter.inner"
+              ["ia"] = "@parameter.inner",
             },
 
             selection_modes = {
-              ['@function.outer'] = 'V',
-              ['@function.inner'] = 'V',
-              ['@class.outer'] = 'V',
-              ['@class.inner'] = 'V',
+              ["@function.outer"] = "V",
+              ["@function.inner"] = "V",
+              ["@class.outer"] = "V",
+              ["@class.inner"] = "V",
             },
           },
           move = {
@@ -126,9 +131,9 @@ return {
             swap_previous = {
               ["_"] = "@parameter.inner",
             },
-          }
+          },
         },
-      }
-    end
+      })
+    end,
   },
 }

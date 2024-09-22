@@ -1,7 +1,7 @@
 {
   "default": {
     "kitty": "tokyonight_storm",
-    "nvim": "tokyonight-storm"
+    "nvim": "tokyonight-night"
   },
   "light": {
     "kitty": "ayu_light",

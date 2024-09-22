@@ -7,7 +7,15 @@ function! CopyGitRange(line1, count, range, mods, arg, ...)
     let text = getline('.')
   endif
 
-  let @+ = "```" . lang . "\n" . text . "\n```\n" . url
+  let @+ = FileName(a:line1, a:count) . "\n```" . lang . "\n" . text . "\n```\n" . url
+endfunction
+
+function! FileName(line1, count)
+  if a:line1 == a:count
+    return expand('%:.') . ':' . a:line1
+  else
+    return expand('%:.') . ':' . a:line1 . '-' . a:count
+  endif
 endfunction
 
 function! ExtToLang(ext)
