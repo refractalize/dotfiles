@@ -1,0 +1,23 @@
+#!/usr/bin/env zsh
+
+select-workspace() {
+  for D in $(find ~/dev -maxdepth 3 -type d -name .git)
+  do
+    echo $D:h
+  done | fzf --preview 'git -c color.status=always -C {} status' --preview-window=right:60%:wrap
+}
+
+setup-workspace() {
+  d=$1
+  echo "Setting up workspace $d"
+  kitty @ launch --type=tab --cwd $d --no-response
+  kitty @ launch --type=window --cwd $d --no-response
+  kitty @ launch --type=window --cwd $d --no-response
+}
+
+WORKSPACE=$(select-workspace)
+
+if [[ -n $WORKSPACE ]]; then
+  setup-workspace $WORKSPACE
+fi
+
