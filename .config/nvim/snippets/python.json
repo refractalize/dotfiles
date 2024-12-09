@@ -1,0 +1,19 @@
+{
+  "db": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "print(\"$1\", $1)"
+    ]
+  },
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "def test_$1():",
+      "\t$0"
+    ]
+  }
+}

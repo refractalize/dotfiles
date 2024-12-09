@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-set -ex
+set -e
 
 zparseopts -D -A opts -- -all=all -tab=tab -save=save
 

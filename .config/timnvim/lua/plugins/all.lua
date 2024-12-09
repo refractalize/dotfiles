@@ -544,16 +544,11 @@ return {
       },
     },
 
-    config = function()
-      require("oil").setup({
-        view_options = {
-          show_hidden = true,
-        },
-        win_options = {
-          signcolumn = "yes:2",
-        },
-      })
-    end,
+    opts = {
+      view_options = {
+        show_hidden = true,
+      },
+    },
   },
 
   {
@@ -562,7 +557,15 @@ return {
     dev = false,
 
     dependencies = {
-      "stevearc/oil.nvim",
+      {
+        "stevearc/oil.nvim",
+
+        opts = {
+          win_options = {
+            signcolumn = "yes:2",
+          },
+        },
+      },
     },
 
     config = { show_ignored = false },

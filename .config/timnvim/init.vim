@@ -157,17 +157,17 @@ autocmd FileType git set syntax=ON
 nnoremap <Leader>sn :set number!<CR>
 " nnoremap <Leader>e :e %:h
 
-source $HOME/.config/nvim/functions.vim
-source $HOME/.config/nvim/style.vim
-source $HOME/.config/nvim/diff.vim
-source $HOME/.config/nvim/spelling.vim
-source $HOME/.config/nvim/tabs.vim
-source $HOME/.config/nvim/windows.vim
-source $HOME/.config/nvim/titlestring.vim
-source $HOME/.config/nvim/quickfix.vim
-source $HOME/.config/nvim/watch.vim
-source $HOME/.config/nvim/javascript.vim
-source $HOME/.config/nvim/csharp.vim
+source $HOME/.config/$NVIM_APPNAME/functions.vim
+source $HOME/.config/$NVIM_APPNAME/style.vim
+source $HOME/.config/$NVIM_APPNAME/diff.vim
+source $HOME/.config/$NVIM_APPNAME/spelling.vim
+source $HOME/.config/$NVIM_APPNAME/tabs.vim
+source $HOME/.config/$NVIM_APPNAME/windows.vim
+source $HOME/.config/$NVIM_APPNAME/titlestring.vim
+source $HOME/.config/$NVIM_APPNAME/quickfix.vim
+source $HOME/.config/$NVIM_APPNAME/watch.vim
+source $HOME/.config/$NVIM_APPNAME/javascript.vim
+source $HOME/.config/$NVIM_APPNAME/csharp.vim
 
 let g:vim_json_conceal=0
 
@@ -191,14 +191,6 @@ lua <<EOF
 function unload(name)
   package.loaded[name] = nil
 end
-
-vim.api.nvim_create_user_command(
-  'Browse',
-  function (opts)
-    vim.fn.system { 'open', opts.fargs[1] }
-  end,
-  { nargs = 1 }
-)
 
 EOF
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+set -e
+set -o pipefail
+
+echo "Running:" "$@"
+
+"$@" 2>&1 | cat

@@ -4,6 +4,20 @@ return {
     config = function()
       require("nvim-navic").setup({
         highlight = true,
+        lsp = {
+          auto_attach = true,
+        },
+      })
+      vim.api.nvim_create_autocmd("LspDetach", {
+		callback = function(args)
+          local bufnr = args.buf
+          local navic_augroup = vim.api.nvim_create_augroup("navic", { clear = false })
+          vim.api.nvim_clear_autocmds({
+              buffer = bufnr,
+              group = navic_augroup,
+          })
+          print('cleared')
+        end
       })
     end,
   },

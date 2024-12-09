@@ -1,0 +1,23 @@
+{
+  "env": {
+    "prefix": [ "env" ],
+    "body": [
+      "#!/usr/bin/env $1"
+    ]
+  },
+  "uuid": {
+    "prefix": [ "uuid" ],
+    "body": [
+      "$FN_UUID"
+    ]
+  },
+  "basename": {
+    "prefix": [
+      "basename"
+    ],
+    "body": [
+      "${TM_FILENAME_BASE}"
+    ],
+    "description": "inserts current basename"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "#[test]",
+      "fn test_$1() {",
+      "    $0",
+      "}"
+    ],
+    "description": "Adds a test"
+  },
+  "tests": {
+    "prefix": [
+      "tests"
+    ],
+    "body": [
+      "#[cfg(test)]",
+      "mod tests {",
+      "    use super::*;",
+      "",
+      "    $0",
+      "}"
+    ],
+    "description": "Adds a test"
+  },
+  "debug": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "println!(\"$1: {:?}\", $1);"
+    ],
+    "description": "Prints a value to the console"
+  }
+}

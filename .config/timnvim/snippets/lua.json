@@ -1,0 +1,36 @@
+{
+  "class": {
+    "prefix": [
+      "class"
+    ],
+    "body": [
+      "local $1 = {}",
+      "",
+      "function $1:new(o)",
+      "  o = o or {}",
+      "  setmetatable(o, self)",
+      "  self.__index = self",
+      "  return o",
+      "end"
+    ],
+    "description": "Add a class"
+  },
+  "debug": {
+    "prefix": [
+      "db"
+    ],
+    "body": [
+      "print('$1: ' .. vim.inspect($1))"
+    ]
+  },
+  "wrap": {
+    "prefix": [
+      "wrap"
+    ],
+    "body": [
+      "{",
+      "  $TM_SELECTED_TEXT",
+      "}"
+    ]
+  }
+}

@@ -1,26 +1,43 @@
 return {
   {
-    "tpope/vim-fugitive", -- git commands
+    "refractalize/diff-patch",
+  },
 
-    lazy = false,
+  {
+    "refractalize/copy-paste-patch",
+
+    cmd = {
+      "PatchCopy",
+      "PatchPaste",
+    },
+
+    config = true,
+  },
+
+  {
+    "refractalize/diff-lines",
+  },
+
+  {
+    "refractalize/diff-conflicts",
+
+    cmd = {
+      "DiffConflicts",
+    },
 
     keys = {
       {
-        "<M-d>",
-        "<Cmd>Gdiffsplit!<CR>",
-        desc = "Show diffs",
-      },
-      {
-        "<M-D>",
-        "<Cmd>Gdiffsplit! origin/master...<CR>",
-        desc = "Show diffs with master",
+        "<Leader>dc",
+        function()
+          require("diff-conflicts").show_diff_select()
+        end,
+        desc = "Show diff",
       },
     },
+
+    config = true,
   },
-  "cedarbaum/fugitive-azure-devops.vim",
-  {
-    "tpope/vim-rhubarb",
-  },
+
   {
     "sindrets/diffview.nvim",
     dependencies = "nvim-lua/plenary.nvim",
@@ -48,30 +65,11 @@ return {
             return {
               position = "left",
               width = math.floor(math.max(40, vim.o.columns * 0.15)),
-              win_opts = {},
+              win_opts = {}
             }
           end,
-        },
+        }
       })
     end,
-  },
-  {
-    "refractalize/diff-conflicts",
-
-    cmd = {
-      "DiffConflicts",
-    },
-
-    keys = {
-      {
-        "<Leader>ddc",
-        function()
-          require("diff-conflicts").show_diff_select()
-        end,
-        desc = "Show diff",
-      },
-    },
-
-    config = true,
   },
 }

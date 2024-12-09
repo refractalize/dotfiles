@@ -1,1 +1,1 @@
-export LESS="-XSRi"
+export LESS="-SRi"

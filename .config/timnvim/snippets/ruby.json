@@ -1,0 +1,143 @@
+{
+  "frozen": {
+    "prefix": [
+      "frozen"
+    ],
+    "body": [
+      "# frozen_string_literal: true"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "metric": {
+    "prefix": [
+      "metric"
+    ],
+    "body": [
+      "# rubocop:disable Metrics/${1|MethodLength,BlockLength,ModuleLength,CyclomaticComplexity,PerceivedComplexity|}",
+      "$TM_SELECTED_TEXT",
+      "# rubocop:enable Metrics/$1"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "surround": {
+    "prefix": [
+      "surround"
+    ],
+    "body": [
+      "start",
+      "  $TM_SELECTED_TEXT",
+      "end"
+    ],
+    "description": "Add frozen string literal comment"
+  },
+  "here": {
+    "prefix": [
+      "here"
+    ],
+    "body": [
+      "puts \"here: #{__FILE__}:#{__LINE__}\""
+    ],
+    "description": "debug line"
+  },
+  "method": {
+    "prefix": [
+      "def"
+    ],
+    "body": [
+      "def $1",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "init": {
+    "prefix": [
+      "init"
+    ],
+    "body": [
+      "def initialize$1",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "test": {
+    "prefix": [
+      "test"
+    ],
+    "body": [
+      "test '$1' do",
+      "  $0",
+      "end"
+    ],
+    "description": "debug line"
+  },
+  "setup": {
+    "prefix": [
+      "setup"
+    ],
+    "body": [
+      "setup do",
+      "  $0",
+      "end"
+    ]
+  },
+  "teardown": {
+    "prefix": [
+      "teardown"
+    ],
+    "body": [
+      "teardown do",
+      "  $0",
+      "end"
+    ]
+  },
+  "ap": {
+    "prefix": [
+      "ap"
+    ],
+    "body": [
+      "ap $1: $1"
+    ],
+    "description": "debug"
+  },
+  "test_case": {
+    "prefix": [
+      "test_case"
+    ],
+    "body": [
+      "# frozen_string_literal: true",
+      "",
+      "class ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/} < ActiveSupport::TestCase",
+      "  $0",
+      "end"
+    ],
+    "description": "debug"
+  },
+  "cls": {
+    "prefix": [
+      "cls"
+    ],
+    "body": [
+      "${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}"
+    ]
+  },
+  "hash_entry": {
+    "prefix": [
+      ":"
+    ],
+    "body": [
+      "$1: $1"
+    ]
+  },
+  "nocov": {
+    "prefix": [
+      "nocov"
+    ],
+    "body": [
+      "# :nocov:",
+      "$TM_SELECTED_TEXT",
+      "# :nocov:"
+    ]
+  }
+}
