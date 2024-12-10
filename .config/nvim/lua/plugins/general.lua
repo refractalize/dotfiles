@@ -48,16 +48,15 @@ return {
   },
   {
     "gregorias/coerce.nvim",
-    opts = function()
+    config = function()
       local coerce = require("coerce")
-      local modes = coerce.get_default_modes(coerce.default_mode_keymap_prefixes)
-      for _, mode in ipairs(modes) do
-        -- turn off LSP renaming
-        mode.transformer = require("coerce.transformer").transform_local
-      end
-      return {
-        modes = modes,
-      }
+      coerce.setup({
+        default_mode_mask = {
+          normal_mode = false,
+          motion_mode = false,
+          visual_mode = false,
+        }
+      })
     end,
   },
   {
@@ -265,7 +264,8 @@ return {
   },
 
   {
-    "Wansmer/treesj",
+    "refractalize/treesj",
+    branch = "support-for-csharp",
     keys = {
       {
         "<Leader>j",
@@ -366,43 +366,6 @@ return {
     "wsdjeg/vim-fetch",
   },
 
-  {
-    "refractalize/environment-variable-toggles",
-
-    keys = {
-      {
-        "<Leader>uv",
-        function()
-          local environment_variable_names = {
-            "CERES_TEST_LOG",
-            "CERES_TEST_DB_KEEP_DATA",
-            "CERES_TEST_DB_LOG",
-          }
-
-          local function is_variable_set(variable_name)
-            local value = vim.fn.getenv(variable_name)
-            return (value ~= "" and value ~= nil and value ~= vim.NIL)
-          end
-
-          vim.ui.select(environment_variable_names, {
-            prompt = "Toggle environment variable",
-            format_item = function(item)
-              local badge = is_variable_set(item) and "✔" or " "
-              return badge .. " " .. item
-            end,
-          }, function(selected)
-            if selected then
-              if is_variable_set(selected) then
-                vim.fn.setenv(selected, nil)
-              else
-                vim.fn.setenv(selected, "true")
-              end
-            end
-          end)
-        end,
-      },
-    },
-  },
   {
     "luukvbaal/statuscol.nvim",
     opts = {},

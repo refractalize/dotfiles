@@ -1,4 +1,4 @@
-local ts_utils = require("refractalize.ts_utils")
+local utils = require('runtest.languages.utils')
 
 local function tbl_compact(table)
   return vim.tbl_filter(function(item)
@@ -7,7 +7,11 @@ local function tbl_compact(table)
 end
 
 local function string_fragment_to_regex(string_fragment, buf)
-  return vim.fn.escape(ts_utils.node_text(string_fragment, buf), '"?+*\\^$.|{}[]()')
+  return vim.fn.escape(vim.treesitter.get_node_text(string_fragment, buf), '"?+*\\^$.|{}[]()')
+end
+
+local function escape_sequence_to_regex(escape_sequence, buf)
+  return "."
 end
 
 local function string_child_to_regex(string_child, buf)
@@ -23,7 +27,7 @@ local function description_to_regex(description, buf)
   return vim.fn.join(
     tbl_compact(vim.tbl_map(function(child)
       return string_child_to_regex(child, buf)
-    end, ts_utils.node_children(description))),
+    end, vim.iter(description:iter_chilldren()))),
     ""
   )
 end
@@ -41,23 +45,15 @@ local function line_tests()
     [[
       (call_expression
         function: ((identifier) @function_name (#match? @function_name "^(describe|test)$"))
-        arguments: (arguments . (string) @description)) @call
+        arguments: (arguments . (string) @description)) @node
     ]]
   )
 
-  local matches = ts_utils.find_all(query, buf)
-
-  local enclosing_matches = vim.tbl_filter(function(match)
-    return ts_utils.node_contains_cursor(match.call)
-  end, matches)
-
-  local lexically_sorted = ts_utils.sort_matches_by_lexical_order(enclosing_matches, function(item)
-    return item.call
-  end)
+  local matches = utils.find_surrounding_matches(query)
 
   local test_names = vim.tbl_map(function(match)
     return description_to_regex(match.description, buf)
-  end, lexically_sorted)
+  end, matches)
 
   return test_names
 end

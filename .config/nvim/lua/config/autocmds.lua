@@ -33,3 +33,19 @@ vim.api.nvim_create_autocmd({"WinLeave"}, {
 function unload(module)
   package.loaded[module] = nil
 end
+
+vim.api.nvim_create_user_command("Gdiff", function(opts)
+  local actions = require("fzf-lua.actions")
+  require("fzf-lua").fzf_exec("git diff " .. opts.args .. " | diff2vimgrep", {
+    previewer = "builtin",
+    actions = {
+      ["default"] = actions.file_edit_or_qf,
+    },
+    fzf_opts = {
+      ["--multi"] = "",
+    },
+  })
+end, {
+  nargs = "*",
+  complete = "customlist,fugitive#ReadComplete",
+})

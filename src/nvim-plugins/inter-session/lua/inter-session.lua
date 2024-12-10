@@ -18,6 +18,8 @@ local function load()
     if not status then
       vim.notify(vim.inspect(err))
     end
+  else
+    vim.notify("No session found: " .. filename)
   end
 end
 
