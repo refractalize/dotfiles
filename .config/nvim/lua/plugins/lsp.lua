@@ -124,13 +124,19 @@ return {
         },
         setup = {
           pylsp = function()
+            --- @param client vim.lsp.Client
             LazyVim.lsp.on_attach(function(client, _)
-              -- Disable hover in favor of Pyright
-              -- client.server_capabilities.completionProvider = false
-              client.server_capabilities.signatureHelpProvider = false
+              client.server_capabilities.signatureHelpProvider = nil
               client.server_capabilities.hoverProvider = false
               client.server_capabilities.renameProvider = false
             end, "pylsp")
+          end,
+          vtsls = function()
+            --- @param client vim.lsp.Client
+            LazyVim.lsp.on_attach(function(client, _)
+              client.server_capabilities.inlayHintProvider = false
+              client.server_capabilities.documentFormattingProvider = false
+            end, "vtsls")
           end,
         },
       })

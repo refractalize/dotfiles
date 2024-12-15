@@ -1,14 +1,5 @@
 return {
   {
-    "nvim-neotest/neotest",
-
-    enabled = false,
-  },
-
-  "tpope/vim-dispatch",
-  "tpope/vim-eunuch",
-  "mfussenegger/nvim-dap",
-  {
     "refractalize/runtest.nvim",
 
     enabled = true,
@@ -23,6 +14,12 @@ return {
         "<leader>to",
         function()
           require("runtest").open()
+        end,
+      },
+      {
+        "<leader>tO",
+        function()
+          require("runtest").open('split')
         end,
       },
       {
@@ -77,6 +74,12 @@ return {
         "<leader>rl",
         function()
           require("runtest").run_lint()
+        end,
+      },
+      {
+        "<leader>fs",
+        function()
+          require("runtest").send_entries_to_fzf()
         end,
       },
     },

@@ -55,7 +55,7 @@ return {
           normal_mode = false,
           motion_mode = false,
           visual_mode = false,
-        }
+        },
       })
     end,
   },
@@ -115,7 +115,7 @@ return {
   {
     "folke/noice.nvim",
 
-    enabled = true,
+    enabled = false,
 
     opts = {
       cmdline = {
@@ -207,19 +207,17 @@ return {
     "folke/tokyonight.nvim",
     lazy = true,
 
-    config = function()
-      local util = require("tokyonight.util")
-
-      require("tokyonight").setup({
+    opts = {
+        style = "night",
         on_highlights = function(hi, c)
+          local util = require("tokyonight.util")
           hi.DiagnosticUnnecessary =
             { fg = util.lighten(hi.DiagnosticUnnecessary.fg, 0.5), bg = hi.DiagnosticUnnecessary.bg }
           if hi.CmpGhostText then
             hi.CmpGhostText = { fg = util.lighten(hi.CmpGhostText.fg, 0.5), bg = hi.CmpGhostText.bg }
           end
         end,
-      })
-    end,
+      },
   },
 
   {
@@ -243,6 +241,9 @@ return {
           open = false,
           git_hl = false,
         },
+      },
+      notifier = {
+        enabled = true,
       },
       dashboard = {
         sections = {
@@ -381,4 +382,5 @@ return {
       load_session = false,
     },
   },
+  "tpope/vim-eunuch",
 }

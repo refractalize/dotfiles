@@ -20,6 +20,9 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end)
 
+vim.keymap.del('v', '>')
+vim.keymap.del('v', '<')
+
 require("refractalize.search")
 
 -- windows
@@ -42,6 +45,10 @@ vim.keymap.set("n", "<M-K> <Cmd>resize", "+2<CR>")
 vim.keymap.set("n", "<M-L> <Cmd>vertical resize", "+2<CR>")
 vim.keymap.set("n", "<M-H> <Cmd>vertical resize", "-2<CR>")
 vim.keymap.set("n", "<leader>bn", "<Cmd>enew<CR>")
+vim.keymap.set("n", "<M-Left>", "<C-W><")
+vim.keymap.set("n", "<M-Right>", "<C-W>>")
+vim.keymap.set("n", "<M-Up>", "<C-W>+")
+vim.keymap.set("n", "<M-Down>", "<C-W>-")
 
 -- tabs
 vim.keymap.set("n", "<M-1>", "1gt")
@@ -145,7 +152,7 @@ vim.keymap.set('n', ']s', function()
   if dap.session() ~= nil then
     dap.up()
   else
-    require('runtest').goto_next_file()
+    require('runtest').goto_next_entry()
   end
 end)
 
@@ -154,7 +161,7 @@ vim.keymap.set('n', '[s', function()
   if dap.session() ~= nil then
     dap.down()
   else
-    require('runtest').goto_previous_file()
+    require('runtest').goto_previous_entry()
   end
 end)
 

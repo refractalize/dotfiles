@@ -3,6 +3,13 @@ local utils = require("runtest.utils")
 
 local M = {}
 
+M.file_patterns = {
+  '\\vFile "(\\f+)",\\s*line\\s*(\\d+),',
+  "\\v^(\\f+):(\\d+)",
+}
+
+M.name = 'pytest'
+
 --- @param runner_config RunnerConfig
 --- @param args string[]
 --- @param start_config StartConfig
@@ -61,10 +68,5 @@ function M.file_tests(runner_config)
 
   return pytest_profile(runner_config, args)
 end
-
-M.file_patterns = {
-  '\\vFile "(\\f+)",\\s*line\\s*(\\d+),',
-  "\\v^(\\f+):(\\d+)",
-}
 
 return M

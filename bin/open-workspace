@@ -1,10 +1,14 @@
 #!/usr/bin/env zsh
 
+set -e
+
+BASE_DIR=$1
+
 select-workspace() {
-  for D in $(find ~/dev -maxdepth 3 -type d -name .git)
+  for D in $(find $BASE_DIR -maxdepth 2 -type d -name .git)
   do
-    echo $D:h
-  done | fzf --preview 'git -c color.status=always -C {} status' --preview-window=right:60%:wrap
+    echo "$D:h  $(git -C $D:h rev-parse --abbrev-ref HEAD)"
+  done | fzf --preview 'git -c color.status=always -C {1} status' --preview-window=right:60%:wrap | awk '{print $1}'
 }
 
 setup-workspace() {

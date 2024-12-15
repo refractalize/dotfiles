@@ -27,7 +27,7 @@ local exec_no_tty = debug.getinfo(1, "S").source:sub(2):match("(.*/)") .. "exec-
 local M = {}
 
 local function handle_error(err)
-  if type(err) == "table" and type(err.message) == 'string' then
+  if type(err) == "table" and type(err.message) == "string" then
     vim.notify(err.message, err.level or vim.log.levels.ERROR)
   else
     vim.notify("Error: " .. err, vim.log.levels.ERROR)
@@ -129,9 +129,13 @@ end
 --- @returns string[]
 local function render_command_line(job_spec)
   local env = (job_spec[2] or {}).env
-  local env_str = env and vim.fn.join(vim.tbl_map(function(key)
-    return key .. "=" .. vim.fn.shellescape(env[key])
-  end, vim.tbl_keys(env)), " ")
+  local env_str = env
+    and vim.fn.join(
+      vim.tbl_map(function(key)
+        return key .. "=" .. vim.fn.shellescape(env[key])
+      end, vim.tbl_keys(env)),
+      " "
+    )
   local command_str = vim.fn.join(vim.tbl_map(function(arg)
     return vim.fn.shellescape(arg)
   end, job_spec[1]))
@@ -169,7 +173,12 @@ function Runner:run_terminal(profile, job_spec)
 
   local on_exit = function(_, exit_code)
     vim.api.nvim_buf_delete(terminal_buf, { force = true })
-    self:tests_finished(exit_code, output_lines:get_lines(), profile.runner.file_patterns, render_command_line(job_spec))
+    self:tests_finished(
+      exit_code,
+      output_lines:get_lines(),
+      profile.runner.file_patterns,
+      render_command_line(job_spec)
+    )
   end
 
   local no_tty_command = vim.list_extend({ exec_no_tty }, job_spec[1])
@@ -282,8 +291,11 @@ function Runner:resolve_profile(profile_name)
 
   local profile_fn = runner_config[profile_name]
 
-  if profile_fn == nil then
-    error({ message = "No profile " .. profile_name .. " for runner " .. runner_config.name, level = vim.log.levels.WARN })
+  if not profile_fn then
+    error({
+      message = "No profile " .. profile_name .. " for runner " .. runner_config.name,
+      level = vim.log.levels.WARN,
+    })
   end
 
   return profile_fn(runner_config)
@@ -356,8 +368,9 @@ function M.setup(config)
   runner:setup(config)
 end
 
-function M.open()
-  runner:get_output_window():open()
+--- @param new_window_command string|nil The VIM command to run to create the window, default's to `vsplit`
+function M.open(new_window_command)
+  runner:get_output_window():open(new_window_command or "vsplit")
 end
 
 for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests", "lint", "build" }) do
@@ -373,10 +386,14 @@ for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests", "lint",
   end
 end
 
-for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests", }) do
+for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests" }) do
   M["debug_" .. profile_name] = function(start_config)
     error_wrapper(function(callback)
-      runner:start_profile_name(profile_name, vim.tbl_extend("force", start_config or {}, { debugger = true }), callback)
+      runner:start_profile_name(
+        profile_name,
+        vim.tbl_extend("force", start_config or {}, { debugger = true }),
+        callback
+      )
     end)
   end
 end
@@ -398,15 +415,56 @@ function M.last_profile()
   return runner.last_profile
 end
 
-function M.goto_next_file()
+function M.goto_next_entry()
   error_wrapper(function()
-    runner:get_output_window():goto_next_file()
+    runner:get_output_window():goto_next_entry()
   end)
 end
 
-function M.goto_previous_file()
+function M.goto_previous_entry()
   error_wrapper(function()
-    runner:get_output_window():goto_previous_file()
+    runner:get_output_window():goto_previous_entry()
+  end)
+end
+
+function M.send_entries_to_quickfix()
+  error_wrapper(function()
+    local entries = runner:get_output_window().entries
+    local quickfix_entries = vim
+      .iter(entries)
+      :map(function(entry)
+        return {
+          filename = entry.filename,
+          lnum = entry.line_number,
+          col = entry.column_number,
+          text = entry.output_line,
+        }
+      end)
+      :totable()
+    vim.fn.setqflist(quickfix_entries, "r")
+  end)
+end
+
+function M.send_entries_to_fzf()
+  error_wrapper(function()
+    local fzf_lua = require("fzf-lua")
+    local entries = runner:get_output_window().entries
+    local fzf_entries = vim
+      .iter(entries)
+      :map(function(entry)
+        return entry.filename .. ":" .. entry.line_number .. ":" .. entry.column_number
+      end)
+      :totable()
+    fzf_lua.fzf_exec(fzf_entries, {
+      fzf_opts = {
+        ["--no-sort"] = "",
+      },
+      fn_transform = function(x)
+        return fzf_lua.make_entry.file(x, { file_icons = true, color_icons = true })
+      end,
+      actions = fzf_lua.config.globals.actions.files,
+      previewer = "builtin",
+    })
   end)
 end
 

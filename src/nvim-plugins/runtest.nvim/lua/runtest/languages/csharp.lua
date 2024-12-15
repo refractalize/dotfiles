@@ -37,7 +37,29 @@ local function find_file_namespace()
   return matches[1]
 end
 
+local test_method_query = vim.treesitter.query.parse(
+  "c_sharp",
+  [[
+      (method_declaration
+        (attribute_list
+          (attribute name:
+            (identifier) @attr
+              (#match? @attr "^Test$")))) @node
+  ]]
+)
+
+local function matches_with_test_methods(matches, buf)
+  return vim
+    .iter(matches)
+    :filter(function(match)
+      return vim.iter(test_method_query:iter_matches(match._node, buf, 0, -1, { all = true })):next()
+    end)
+    :totable()
+end
+
 local function line_tests()
+  local buf = vim.api.nvim_get_current_buf()
+
   local query = vim.treesitter.query.parse(
     "c_sharp",
     [[
@@ -49,7 +71,7 @@ local function line_tests()
     ]]
   )
 
-  local matches = utils.find_surrounding_matches(query)
+  local matches = matches_with_test_methods(utils.find_surrounding_matches(query), buf)
 
   local names = vim.tbl_map(function(match)
     if match.method then
@@ -63,7 +85,7 @@ local function line_tests()
 
   local ns = find_file_namespace()
 
-  if ns then
+  if ns and #names > 0 then
     table.insert(names, 1, { type = "namespace", text = ns.name[1].text })
   end
 
@@ -94,12 +116,13 @@ local function file_tests()
     ]]
   )
 
-  local matches = utils.find_matches(query)
+  local matches = matches_with_test_methods(utils.find_matches(query), buf)
+
   local match_tree = utils.to_tree(matches)
 
   local file_namespace = find_file_namespace()
 
-  if file_namespace then
+  if file_namespace and #match_tree > 0 then
     file_namespace.children = match_tree
     match_tree = { file_namespace }
   end

@@ -10,6 +10,8 @@ M.file_patterns = {
   "\\v^(\\f+)\\((\\d+),(\\d+)\\):",
 }
 
+M.dap_adapter = 'coreclr'
+
 --- @returns string
 local function buffer_csproj()
   local current_dir = vim.fn.expand("%:p:h")
@@ -54,7 +56,7 @@ local function start_debugger(profile, command)
             if dotnet_test_pid ~= nil then
               launched_debugger = true
               runner:debug(profile, {
-                type = "netcoredbg",
+                type = runner.dap_adapter,
                 name = "attach - netcoredbg",
                 request = "attach",
                 processId = dotnet_test_pid,
@@ -124,6 +126,12 @@ end
 
 --- @returns Profile
 function M.line_tests(runner_config)
+  local line_tests = csharp_ts.line_tests()
+
+  if #line_tests == 0 then
+    error({ message = "No tests found", level = vim.log.levels.WARN })
+  end
+
   return dotnet_test_profile(runner_config, {
     "--filter",
     "FullyQualifiedName~" .. csharp_ts.line_tests(),
@@ -132,6 +140,12 @@ end
 
 --- @returns Profile
 function M.file_tests(runner_config)
+  local file_tests = csharp_ts.file_tests()
+
+  if #file_tests == 0 then
+    error({ message = "No tests found", level = vim.log.levels.WARN })
+  end
+
   return dotnet_test_profile(runner_config, {
     "--filter",
     vim.fn.join(
