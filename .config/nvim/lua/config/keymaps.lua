@@ -174,7 +174,11 @@ local function open_buffer_in_tab(count, close)
   local tabcount = vim.fn.tabpagenr("$")
 
   if close then
-    vim.api.nvim_win_close(0, false)
+    if count > 0 then
+      vim.api.nvim_win_close(0, false)
+    else
+      vim.fn.normal('<C-W>T')
+    end
   end
 
   if count > 0 and count <= tabcount then

@@ -13,13 +13,13 @@ return {
       {
         "<leader>to",
         function()
-          require("runtest").open()
+          require("runtest").open_output()
         end,
       },
       {
         "<leader>tO",
         function()
-          require("runtest").open('split')
+          require("runtest").open_output('split')
         end,
       },
       {
@@ -62,6 +62,18 @@ return {
         "<leader>td",
         function()
           require("runtest").debug_line_tests()
+        end,
+      },
+      {
+        "<leader>tt",
+        function()
+          require("runtest").open_terminal()
+        end,
+      },
+      {
+        "<leader>tT",
+        function()
+          require("runtest").open_terminal('split')
         end,
       },
       {

@@ -2,6 +2,7 @@ local namespace_name = "runtest"
 local ns_id = vim.api.nvim_create_namespace(namespace_name)
 local OutputWindow = require("runtest.output_window")
 local OutputLines = require("runtest.output_lines")
+local window_layout = require("runtest.window_layout")
 
 --- @class StartConfig
 --- @field debugger boolean
@@ -36,6 +37,11 @@ local function handle_error(err)
 end
 
 --- @class Runner
+--- @field output_window OutputWindow
+--- @field last_profile Profile | nil
+--- @field last_buffer number | nil
+--- @field last_ext_mark number | nil
+--- @field terminal_buf number | nil
 local Runner = {}
 Runner.__index = Runner
 
@@ -43,6 +49,17 @@ function Runner.new()
   local self = setmetatable({}, Runner)
   self.output_window = nil
   self.config = {
+    windows = {
+      output = {
+        vertical = true,
+      },
+      terminal = {
+        vertical = false,
+        size = 0.25,
+        min = 10,
+        max = 40,
+      },
+    },
     filetypes = {
       cs = require("runtest.runners.dotnet"),
       python = require("runtest.runners.pytest"),
@@ -163,16 +180,19 @@ function Runner:run_terminal(profile, job_spec)
   end)
   local current_window = vim.api.nvim_get_current_win()
 
-  local terminal_size = math.max(vim.o.lines / 4, 10)
-  vim.cmd(terminal_size .. "new")
-  local terminal_buf = vim.api.nvim_get_current_buf()
+  local win, buf = window_layout.new_window(self.config.windows.terminal)
+  self.terminal_win = win
+  self.terminal_buf = buf
 
   local function on_data(_, data)
     output_lines:append(data)
   end
 
   local on_exit = function(_, exit_code)
-    vim.api.nvim_buf_delete(terminal_buf, { force = true })
+    vim.api.nvim_buf_delete(self.terminal_buf, { force = true })
+    self.terminal_buf = nil
+    self.terminal_win = nil
+
     self:tests_finished(
       exit_code,
       output_lines:get_lines(),
@@ -243,6 +263,19 @@ function Runner:get_output_window()
   end
 
   return self.output_window
+end
+
+function Runner:open_terminal_window(new_window_command)
+  if
+    self.terminal_win
+    and vim.api.nvim_win_is_valid(self.terminal_win)
+    and vim.api.nvim_win_get_buf(self.terminal_win) == self.terminal_buf
+  then
+    vim.api.nvim_set_current_win(self.terminal_win)
+  elseif self.terminal_buf then
+    vim.cmd(new_window_command)
+    vim.api.nvim_set_current_buf(self.terminal_buf)
+  end
 end
 
 --- @return RunnerConfig
@@ -369,8 +402,13 @@ function M.setup(config)
 end
 
 --- @param new_window_command string|nil The VIM command to run to create the window, default's to `vsplit`
-function M.open(new_window_command)
+function M.open_output(new_window_command)
   runner:get_output_window():open(new_window_command or "vsplit")
+end
+
+--- @param new_window_command string|nil The VIM command to run to create the window, default's to `split`
+function M.open_terminal(new_window_command)
+  runner:open_terminal_window(new_window_command or "split")
 end
 
 for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests", "lint", "build" }) do

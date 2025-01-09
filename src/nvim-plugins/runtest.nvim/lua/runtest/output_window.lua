@@ -72,6 +72,11 @@ function OutputWindow:goto_entry(entry)
 
     self.current_entry_index = entry.index
     self:highlight_entry(entry)
+
+    local current_window = self:current_window()
+    if current_window then
+      vim.api.nvim_win_set_cursor(current_window, { entry.output_line_number, 0 })
+    end
   end
 end
 

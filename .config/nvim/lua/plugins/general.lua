@@ -2,6 +2,26 @@
 return {
   {
     "direnv/direnv.vim",
+
+    config = function()
+      vim.api.nvim_create_autocmd({ "User" }, {
+        pattern = "DirenvLoaded",
+        callback = function()
+          local path = require("mason-core.path")
+          local platform = require("mason-core.platform")
+
+          local paths = vim.fn.split(vim.env.PATH, platform.path_sep)
+
+          local already_in_path = vim.iter(paths):any(function(p)
+            return p == path.bin_prefix()
+          end)
+
+          if not already_in_path then
+            vim.env.PATH = vim.env.PATH .. platform.path_sep .. path.bin_prefix()
+          end
+        end,
+      })
+    end,
   },
   {
     "refractalize/auto-save",
@@ -48,14 +68,20 @@ return {
   },
   {
     "gregorias/coerce.nvim",
+
     config = function()
       local coerce = require("coerce")
       coerce.setup({
         default_mode_mask = {
           normal_mode = false,
-          motion_mode = false,
-          visual_mode = false,
         },
+      })
+
+      require("coerce").register_mode({
+        vim_mode = "n",
+        keymap_prefix = "cr",
+        selector = require("coerce.selector").select_current_word,
+        transformer = require("coerce.transformer").transform_local,
       })
     end,
   },
@@ -202,22 +228,6 @@ return {
         end,
       })
     end,
-  },
-  {
-    "folke/tokyonight.nvim",
-    lazy = true,
-
-    opts = {
-        style = "night",
-        on_highlights = function(hi, c)
-          local util = require("tokyonight.util")
-          hi.DiagnosticUnnecessary =
-            { fg = util.lighten(hi.DiagnosticUnnecessary.fg, 0.5), bg = hi.DiagnosticUnnecessary.bg }
-          if hi.CmpGhostText then
-            hi.CmpGhostText = { fg = util.lighten(hi.CmpGhostText.fg, 0.5), bg = hi.CmpGhostText.bg }
-          end
-        end,
-      },
   },
 
   {
@@ -383,4 +393,15 @@ return {
     },
   },
   "tpope/vim-eunuch",
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+
+    opts = {
+      auto_insert_mode = false,
+      window = {
+        width = 0,
+        height = 0,
+      },
+    },
+  },
 }

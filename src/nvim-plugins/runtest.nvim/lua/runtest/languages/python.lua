@@ -30,7 +30,7 @@ local function test_path()
     elseif match.class_name then
       return match.class_name[1].text
     end
-  end, matches)
+  end, test_matches)
 
   return test_path
 end

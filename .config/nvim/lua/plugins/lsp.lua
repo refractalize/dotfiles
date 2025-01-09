@@ -105,6 +105,15 @@ return {
               },
             },
           },
+          vtsls = {
+            settings = {
+              typescript = {
+                suggest = {
+                  completeFunctionCalls = false
+                }
+              }
+            }
+          }
           -- pyright = {
           --   ---  @param params lsp.InitializeParams
           --   ---  @param config vim.lsp.ClientConfig

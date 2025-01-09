@@ -1,6 +1,7 @@
 local csharp_ts = require("runtest.languages.csharp")
 local utils = require("runtest.utils")
 
+--- @class M
 local M = {}
 
 M.name = "dotnet"
@@ -28,8 +29,9 @@ end
 
 --- @param profile Profile
 --- @param command [string[], { env: table<string, string>, pty: boolean, on_stdout: fun(data: string[]) }]
+--- @param runner_config M
 --- @returns fun(cb: fun(err: any, result: dap.Configuration))
-local function start_debugger(profile, command)
+local function start_debugger(profile, command, runner_config)
   return function(runner, cb)
     local stdout = { "" }
     local launched_debugger = false
@@ -56,7 +58,7 @@ local function start_debugger(profile, command)
             if dotnet_test_pid ~= nil then
               launched_debugger = true
               runner:debug(profile, {
-                type = runner.dap_adapter,
+                type = runner_config.dap_adapter,
                 name = "attach - netcoredbg",
                 request = "attach",
                 processId = dotnet_test_pid,
@@ -98,7 +100,7 @@ local function dotnet_test_profile(runner_config, args)
   P.runner = M
 
   function P.debug_spec(start_config)
-    return start_debugger(P, dotnet_test(runner_config, args, start_config))
+    return start_debugger(P, dotnet_test(runner_config, args, start_config), runner_config)
   end
 
   function P.run_spec(start_config)

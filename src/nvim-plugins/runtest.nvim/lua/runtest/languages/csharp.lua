@@ -1,5 +1,7 @@
 local utils = require("runtest.languages.utils")
 
+--- @param names { type: string, text: string }[]
+--- @returns string
 local function join_names(names)
   local result = ""
   local last_type = nil
@@ -44,7 +46,7 @@ local test_method_query = vim.treesitter.query.parse(
         (attribute_list
           (attribute name:
             (identifier) @attr
-              (#match? @attr "^Test$")))) @node
+              (#match? @attr "^(Test|TestCase)$")))) @node
   ]]
 )
 
@@ -110,8 +112,8 @@ local function file_tests()
     "c_sharp",
     [[
       [
-        (class_declaration name: (_) @name)
-        (namespace_declaration name: (_) @name)
+        (class_declaration name: (_) @name) @class
+        (namespace_declaration name: (_) @name) @namespace
       ] @node
     ]]
   )
@@ -129,14 +131,22 @@ local function file_tests()
 
   local names = {}
 
+  local function node_type(node)
+    if node.class then
+      return "class"
+    elseif node.namespace then
+      return "namespace"
+    end
+  end
+
   local function traverse_tree(tree, path)
     for _, node in ipairs(tree) do
-      local new_path = list_concat(path, { node.name[1].text })
+      local new_path = list_concat(path, { { type = node_type(node), text = node.name[1].text } })
 
       if #node.children > 0 then
         traverse_tree(node.children, new_path)
       else
-        table.insert(names, vim.fn.join(new_path, "."))
+        table.insert(names, join_names(new_path))
       end
     end
   end

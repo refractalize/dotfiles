@@ -15,6 +15,17 @@ return {
         desc = "Debugger Step Over",
       },
     },
+
+    dependencies = {
+      {
+        "Joakker/lua-json5",
+        build = "./install.sh",
+      },
+    },
+
+    opts = function()
+      -- require("dap.ext.vscode").json_decode = require("json5").parse
+    end,
   },
 
   {

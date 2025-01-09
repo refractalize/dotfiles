@@ -19,7 +19,7 @@ end
 
 local function run_pytest(runner_config, args, start_config)
   return {
-    utils.build_command_line({ "pytest" }, pytest_args(runner_config, args, start_config)),
+    utils.build_command_line({ "python", "-m", "pytest" }, pytest_args(runner_config, args, start_config)),
   }
 end
 

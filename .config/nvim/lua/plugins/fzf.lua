@@ -36,6 +36,28 @@ return {
         mode = "v",
       },
       {
+        "<Leader>fd",
+        function()
+          local fzf_lua = require("fzf-lua")
+          local env_files = vim.fn.findfile(".envrc", ".;", -1)
+          local abs_env_files = vim
+            .iter(env_files)
+            :map(function(f)
+              return vim.fn.fnamemodify(f, ":p")
+            end)
+            :totable()
+
+          require("fzf-lua").fzf_exec(abs_env_files, {
+            fn_transform = function(x)
+              return fzf_lua.make_entry.file(x, { file_icons = true, color_icons = true })
+            end,
+            actions = fzf_lua.config.globals.actions.files,
+            previewer = "builtin",
+          })
+        end,
+        desc = "Direnv envrcs",
+      },
+      {
         "<c-x><c-h>",
         function()
           local cmd =
@@ -135,7 +157,6 @@ return {
       },
     },
 
-    opts = {
-    },
+    opts = {},
   },
 }
