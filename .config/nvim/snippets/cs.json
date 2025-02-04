@@ -99,8 +99,7 @@
        "        .UseSqlServer(Environment.GetEnvironmentVariable(\"CONNECTIONSTRINGS__DB\"))",
        "        .Options,",
        "    GlobalSetupFixture.UserScopeFactory,",
-       "    GlobalSetupFixture.MockTimeProvider.Object,",
-       "    new GZipCompressionService()",
+       "    GlobalSetupFixture.MockTimeProvider.Object",
        ");"
     ]
   }

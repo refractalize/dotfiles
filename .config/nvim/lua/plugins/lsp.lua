@@ -109,27 +109,29 @@ return {
             settings = {
               typescript = {
                 suggest = {
-                  completeFunctionCalls = false
-                }
-              }
-            }
-          }
-          -- pyright = {
-          --   ---  @param params lsp.InitializeParams
-          --   ---  @param config vim.lsp.ClientConfig
-          --   before_init = function(params, config)
-          --     local venvPath = params.rootPath .. "/.venv"
-          --     vim.notify("Checking virtual environment in " .. venvPath, vim.log.levels.INFO)
-          --
-          --     local stat = vim.uv.fs_stat(venvPath)
-          --     local exists = stat and stat.type == 'directory'
-          --
-          --     if exists then
-          --       vim.notify("Using virtual environment in " .. venvPath, vim.log.levels.INFO)
-          --       config.settings.python.pythonPath = venvPath .. "/bin/python"
-          --     end
-          --   end,
-          -- },
+                  completeFunctionCalls = false,
+                },
+              },
+            },
+          },
+          dockerls = {
+            settings = {
+              docker = {
+                languageserver = {
+                  diagnostics = {
+                    deprecatedMaintainer = "error",
+                    directiveCasing = "error",
+                    emptyContinuationLine = "error",
+                    instructionCasing = "error",
+                    instructionCmdMultiple = "error",
+                    instructionEntrypointMultiple = "error",
+                    instructionHealthcheckMultiple = "error",
+                    instructionJSONInSingleQuotes = "error",
+                  },
+                },
+              },
+            },
+          },
         },
         setup = {
           pylsp = function()
@@ -150,5 +152,11 @@ return {
         },
       })
     end,
+  },
+  {
+    "j-hui/fidget.nvim",
+    opts = {
+      -- options
+    },
   },
 }

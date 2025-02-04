@@ -57,12 +57,12 @@ local function start_debugger(profile, command, runner_config)
 
             if dotnet_test_pid ~= nil then
               launched_debugger = true
-              runner:debug(profile, {
+              runner:debug({
                 type = runner_config.dap_adapter,
                 name = "attach - netcoredbg",
                 request = "attach",
                 processId = dotnet_test_pid,
-              })
+              }, profile.runner_config)
             end
           end
         end,
@@ -97,7 +97,7 @@ local function dotnet_test_profile(runner_config, args)
 
   local P = {}
 
-  P.runner = M
+  P.runner_config = M
 
   function P.debug_spec(start_config)
     return start_debugger(P, dotnet_test(runner_config, args, start_config), runner_config)
@@ -117,7 +117,7 @@ local function dotnet_build_profile(runner_config, args)
 
   local P = {}
 
-  P.runner = M
+  P.runner_config = M
 
   function P.run_spec(start_config)
     return dotnet("build", runner_config, args, start_config)

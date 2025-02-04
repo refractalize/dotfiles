@@ -197,6 +197,10 @@ local function show_diff_select()
       prompt = "Show diff: ",
     },
     function(choice, index)
+      if choice == nil then
+        return
+      end
+
       show_diff(change_names[index][2])
     end
   )

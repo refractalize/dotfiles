@@ -16,6 +16,8 @@ vim.api.nvim_set_hl(0, sign_highlight, {
 ---@field column_number number
 ---@field output_line_number number
 ---@field output_line string
+---@field bufnr number
+---@field ext_mark? number
 
 ---@class OutputWindow
 ---@field buf number
@@ -25,9 +27,7 @@ vim.api.nvim_set_hl(0, sign_highlight, {
 ---@field config { file_patterns: string[] }
 local OutputWindow = {
   win = nil,
-  config = {
-    file_patterns = {},
-  },
+  file_patterns = {},
 }
 OutputWindow.__index = OutputWindow
 
@@ -47,10 +47,25 @@ function OutputWindow:get_target_window_id()
 end
 
 function OutputWindow:match_filename(line)
-  for i, pattern in ipairs(self.config.file_patterns or {}) do
+  for i, pattern in ipairs(self.file_patterns or {}) do
     local matches = vim.fn.matchlist(line, pattern)
     if matches[1] ~= nil then
       return matches
+    end
+  end
+end
+
+--- @param entry Entry
+--- @return number
+function create_entry_ext_mark(entry)
+  return vim.api.nvim_buf_set_extmark(entry.bufnr, sign_ns_id, entry.line_number - 1, entry.column_number - 1, {})
+end
+
+--- @param bufnr number
+function OutputWindow:load_buffer_ext_marks(bufnr)
+  for i, entry in ipairs(self.entries) do
+    if entry.bufnr == bufnr and not entry.ext_mark then
+      entry.ext_mark = create_entry_ext_mark(entry)
     end
   end
 end
@@ -61,14 +76,17 @@ function OutputWindow:goto_entry(entry)
   if vim.api.nvim_win_is_valid(target_window_id) and vim.fn.filereadable(entry.filename) > 0 then
     vim.api.nvim_set_current_win(target_window_id)
 
-    local absolute_filename = vim.fn.fnamemodify(entry.filename, ":p")
-    local file_uri = vim.uri_from_fname(absolute_filename)
-    local target_buffer = vim.uri_to_bufnr(file_uri)
-
-    if vim.api.nvim_get_current_buf() ~= target_buffer then
-      vim.api.nvim_set_current_buf(target_buffer)
+    if vim.fn.bufloaded(entry.bufnr) == 0 then
+      vim.fn.bufload(entry.bufnr)
+      self:load_buffer_ext_marks(entry.bufnr)
     end
-    vim.api.nvim_win_set_cursor(target_window_id, { entry.line_number, entry.column_number })
+
+    if vim.api.nvim_get_current_buf() ~= entry.bufnr then
+      vim.api.nvim_set_current_buf(entry.bufnr)
+    end
+
+    local position = vim.api.nvim_buf_get_extmark_by_id(entry.bufnr, sign_ns_id, entry.ext_mark, {})
+    vim.api.nvim_win_set_cursor(target_window_id, { position[1] + 1, position[2] })
 
     self.current_entry_index = entry.index
     self:highlight_entry(entry)
@@ -118,21 +136,31 @@ function OutputWindow:parse_filenames()
       local column_number = tonumber(matches[4]) or 0
 
       local index = #self.entries + 1
-      self.entries[index] = {
+
+      local absolute_filename = vim.fn.fnamemodify(filename, ":p")
+      local file_uri = vim.uri_from_fname(absolute_filename)
+      local bufnr = vim.uri_to_bufnr(file_uri)
+
+      local entry = {
         index = index,
         filename = filename,
+        bufnr = bufnr,
         line_number = line_number,
         column_number = column_number,
         output_line_number = output_line_number,
-        output_line = line
+        output_line = line,
       }
+
+      if vim.fn.bufloaded(bufnr) == 1 then
+        entry.ext_mark = create_entry_ext_mark(entry)
+      end
+
+      self.entries[index] = entry
     end
   end
 end
 
 function OutputWindow:set_entry_signs()
-  vim.api.nvim_buf_clear_namespace(self.buf, sign_ns_id, 0, -1)
-
   for i, entry in ipairs(self.entries) do
     vim.api.nvim_buf_set_extmark(self.buf, sign_ns_id, entry.output_line_number - 1, 0, {
       end_col = #entry.output_line,
@@ -143,7 +171,9 @@ function OutputWindow:set_entry_signs()
 end
 
 function OutputWindow:set_lines(lines, file_patterns)
-  self.config.file_patterns = file_patterns
+  vim.api.nvim_buf_clear_namespace(self.buf, sign_ns_id, 0, -1)
+
+  self.file_patterns = file_patterns
 
   vim.api.nvim_set_option_value("modifiable", true, { buf = self.buf })
 
@@ -158,7 +188,7 @@ function OutputWindow:set_lines(lines, file_patterns)
 end
 
 local function create_output_buffer()
-  local buf = vim.uri_to_bufnr('runtest://output')
+  local buf = vim.uri_to_bufnr("runtest://output")
   vim.api.nvim_set_option_value("buflisted", true, { buf = buf })
   vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf })
   vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
@@ -175,12 +205,20 @@ function OutputWindow:new()
     local current_window = vim.api.nvim_get_current_win()
     self.win = current_window
     local current_line_number = vim.api.nvim_win_get_cursor(current_window)[1]
-    local entry = vim.iter(self.entries):find(function (entry) return entry.output_line_number == current_line_number end)
+    local entry = vim.iter(self.entries):find(function(entry)
+      return entry.output_line_number == current_line_number
+    end)
 
     if entry then
       self:goto_entry(entry)
     end
   end, { buffer = self.buf })
+
+  vim.api.nvim_create_autocmd("BufWinEnter", {
+    callback = function(event)
+      self:load_buffer_ext_marks(event.buf)
+    end,
+  })
 
   return self
 end

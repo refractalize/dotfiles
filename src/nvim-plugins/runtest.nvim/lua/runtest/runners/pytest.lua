@@ -34,7 +34,7 @@ end
 
 local function pytest_profile(runner_config, args)
   return {
-    runner = M,
+    runner_config = M,
     debug_spec = function(start_config)
       return debug_pytest(runner_config, args, start_config)
     end,

@@ -8,12 +8,12 @@ local window_layout = require("runtest.window_layout")
 --- @field debugger boolean
 --- @field args string[]
 
---- @alias RunSpec [string[], { on_exit: fun(_, number), on_stdout: fun(_, string) }]
+--- @alias RunSpec [string[], { on_exit: fun(_, number), on_stdout: fun(_, string), on_stderr: fun(_, string), env?: table<string, string> }]
 
 --- @class Profile
 --- @field debug_spec (fun(start_config: StartConfig): dap.Configuration | fun(callback: fun(error: string, result: dap.Configuration)))
 --- @field run_spec (fun(start_config: StartConfig): table)
---- @field runner RunnerConfig
+--- @field runner_config RunnerConfig
 
 --- @class RunnerConfig
 --- @field args string[]
@@ -113,7 +113,7 @@ function Runner:debug(profile, debug_spec)
 
   dap.listeners.before["event_exited"][namespace_name] = function(_session, body)
     if listen then
-      self:tests_finished(body.exitCode, output_lines:get_lines(), profile.runner.file_patterns)
+      self:tests_finished(body.exitCode, output_lines:get_lines(), profile.runner_config.file_patterns)
     end
   end
 
@@ -143,6 +143,7 @@ function Runner:tests_finished(exit_code, output_lines, file_patterns, detail_li
   output_window:set_lines(vim.list_extend(detail_lines or {}, output_lines), file_patterns)
 end
 
+--- @param job_spec RunSpec
 --- @returns string[]
 local function render_command_line(job_spec)
   local env = (job_spec[2] or {}).env
@@ -160,6 +161,7 @@ local function render_command_line(job_spec)
   return { env_str and env_str .. " " .. command_str or command_str }
 end
 
+--- @param job_spec RunSpec
 local function parse_job_spec(job_spec)
   if type(job_spec) ~= "table" then
     error("expected run_spec to be a table, got " .. type(job_spec))
@@ -172,6 +174,8 @@ local function parse_job_spec(job_spec)
   return job_spec
 end
 
+--- @param profile Profile
+--- @param job_spec RunSpec
 function Runner:run_terminal(profile, job_spec)
   job_spec = parse_job_spec(job_spec)
 
@@ -196,7 +200,7 @@ function Runner:run_terminal(profile, job_spec)
     self:tests_finished(
       exit_code,
       output_lines:get_lines(),
-      profile.runner.file_patterns,
+      profile.runner_config.file_patterns,
       render_command_line(job_spec)
     )
   end
@@ -229,6 +233,8 @@ local function optional_combine(fn1, fn2)
   end
 end
 
+--- @param profile Profile
+--- @param job_spec RunSpec
 function Runner:run_job(profile, job_spec)
   job_spec = parse_job_spec(job_spec)
 
@@ -241,7 +247,7 @@ function Runner:run_job(profile, job_spec)
   end
 
   local on_exit = function(_, exit_code)
-    self:tests_finished(exit_code, output_lines:get_lines(), profile.runner.file_patterns)
+    self:tests_finished(exit_code, output_lines:get_lines(), profile.runner_config.file_patterns)
   end
 
   local no_tty_command = vim.list_extend({ exec_no_tty }, job_spec[1])
@@ -257,6 +263,7 @@ function Runner:run_job(profile, job_spec)
   vim.fn.jobstart(no_tty_command, options)
 end
 
+--- @return OutputWindow
 function Runner:get_output_window()
   if self.output_window == nil then
     self.output_window = OutputWindow:new()
@@ -265,6 +272,7 @@ function Runner:get_output_window()
   return self.output_window
 end
 
+--- @param new_window_command string
 function Runner:open_terminal_window(new_window_command)
   if
     self.terminal_win

@@ -49,7 +49,11 @@ return {
 
     opts = {
       options = {
+        indicator = {
+          style = "underline",
+        },
         mode = "tabs",
+        separator_style = "slant",
       },
     },
   },
@@ -102,26 +106,23 @@ return {
       },
     },
 
-    config = function()
-      require("oil").setup({
-        keymaps = {
-          ["<C-h>"] = false,
-          ["<C-l>"] = false,
-        },
-        view_options = {
-          show_hidden = true,
-        },
-        win_options = {
-          signcolumn = "yes:2",
-        },
-      })
-    end,
+    opts = {
+      keymaps = {
+        ["<C-h>"] = false,
+        ["<C-l>"] = false,
+      },
+      view_options = {
+        show_hidden = true,
+      },
+      buf_options = {
+        buflisted = true,
+        bufhidden = "",
+      },
+    },
   },
 
   {
     "refractalize/oil-git-status.nvim",
-
-    dev = false,
 
     dependencies = {
       {
@@ -135,7 +136,7 @@ return {
       },
     },
 
-    config = { show_ignored = false },
+    opts = { show_ignored = true },
   },
 
   {
@@ -271,12 +272,24 @@ return {
           { section = "startup" },
         },
       },
+      scroll = {
+        enabled = false,
+      },
+      indent = {
+        animate = {
+          enabled = false,
+        },
+      },
+      scope = {
+        enabled = false,
+      },
     },
   },
 
   {
     "refractalize/treesj",
     branch = "support-for-csharp",
+    dev = false,
     keys = {
       {
         "<Leader>j",
@@ -403,5 +416,11 @@ return {
         height = 0,
       },
     },
+  },
+
+  {
+    "refractalize/pager.nvim",
+
+    opts = {},
   },
 }

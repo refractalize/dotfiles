@@ -20,8 +20,8 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end)
 
-vim.keymap.del('v', '>')
-vim.keymap.del('v', '<')
+vim.keymap.del("v", ">")
+vim.keymap.del("v", "<")
 
 require("refractalize.search")
 
@@ -130,7 +130,7 @@ vim.keymap.set("n", "<leader>dda", function()
   vim.ui.select(options, {
     prompt = "Diff Algorithm",
     format_item = function(item)
-      if vim.tbl_contains(active_algorithms, item) or (#active_algorithms == 0 and item == 'myers') then
+      if vim.tbl_contains(active_algorithms, item) or (#active_algorithms == 0 and item == "myers") then
         return "✔ " .. item
       else
         return "  " .. item
@@ -147,21 +147,21 @@ vim.keymap.set("n", "<leader>dda", function()
   end)
 end)
 
-vim.keymap.set('n', ']s', function()
-  local dap = require('dap')
+vim.keymap.set("n", "]s", function()
+  local dap = require("dap")
   if dap.session() ~= nil then
     dap.up()
   else
-    require('runtest').goto_next_entry()
+    require("runtest").goto_next_entry()
   end
 end)
 
-vim.keymap.set('n', '[s', function()
-  local dap = require('dap')
+vim.keymap.set("n", "[s", function()
+  local dap = require("dap")
   if dap.session() ~= nil then
     dap.down()
   else
-    require('runtest').goto_previous_entry()
+    require("runtest").goto_previous_entry()
   end
 end)
 
@@ -177,7 +177,7 @@ local function open_buffer_in_tab(count, close)
     if count > 0 then
       vim.api.nvim_win_close(0, false)
     else
-      vim.fn.normal('<C-W>T')
+      vim.fn.normal("<C-W>T")
     end
   end
 
@@ -202,7 +202,7 @@ end)
 vim.keymap.set("n", "<leader>lr", "<Cmd>LspRestart<CR>")
 vim.keymap.set("n", "<leader>li", "<Cmd>LspInfo<CR>")
 
-vim.keymap.set('n', '<leader>uv', function()
+vim.keymap.set("n", "<leader>uv", function()
   local environment_variable_names = {
     "CERES_TEST_LOG",
     "CERES_TEST_DB_KEEP_DATA",
@@ -227,6 +227,61 @@ vim.keymap.set('n', '<leader>uv', function()
       else
         vim.fn.setenv(selected, "true")
       end
+    end
+  end)
+end)
+
+function lsp_client_root_dirs()
+  local lsp_clients = vim.lsp.get_clients({ bufnr = 0 })
+  local lsp_root_dirs = vim
+    .iter(lsp_clients)
+    :map(function(client)
+      local dirs = { client.root_dir }
+      if client.config.workspace_folders then
+        vim.list_extend(dirs, vim.iter(client.config.workspace_folders):map(function(folder)
+          return vim.uri_to_fname(folder.uri)
+        end):totable())
+      end
+      return dirs
+    end)
+    :flatten()
+    :totable()
+
+  return lsp_root_dirs
+end
+
+function git_root_dirs()
+  return vim
+    .iter(vim.fn.finddir(".git", ".;", -1))
+    :map(function(path)
+      return vim.fn.fnamemodify(path, ":p:h:h")
+    end)
+    :totable()
+end
+
+local function remove_duplicates(t)
+  local seen = {}
+  local result = {}
+  for _, v in ipairs(t) do
+    if not seen[v] then
+      seen[v] = true
+      result[#result + 1] = v
+    end
+  end
+  return result
+end
+
+vim.keymap.set("n", "<leader>cd", function()
+  local dirs = {}
+  vim.list_extend(dirs, lsp_client_root_dirs())
+  vim.list_extend(dirs, git_root_dirs())
+  dirs = remove_duplicates(dirs)
+
+  vim.ui.select(dirs, {
+    prompt = "Change directory",
+  }, function(selected)
+    if selected then
+      vim.cmd.tcd(selected)
     end
   end)
 end)

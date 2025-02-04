@@ -28,7 +28,7 @@ end
 
 function jest_profile(args)
   return {
-    runner = M,
+    runner_config = M,
     debug_spec = function(run_config)
       return debug_jest(args, run_config)
     end,
