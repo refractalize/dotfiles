@@ -80,7 +80,9 @@ end
 --- @param profile Profile
 function Runner:set_last_profile(profile)
   if self.last_ext_mark ~= nil then
-    vim.api.nvim_buf_del_extmark(self.last_buffer, ns_id, self.last_ext_mark)
+    if self.last_buffer ~= nil and vim.api.nvim_buf_is_valid(self.last_buffer) then
+      vim.api.nvim_buf_del_extmark(self.last_buffer, ns_id, self.last_ext_mark)
+    end
   end
 
   self.last_profile = profile

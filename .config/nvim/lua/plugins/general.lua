@@ -380,7 +380,7 @@ return {
         watch.start("jq {new:jq}", { stdin = true, filetype = "json" })
       end, { nargs = 0 })
 
-      vim.api.nvim_create_user_command("WatchAwk", function(opts)
+      vim.api.nvim_create_user_command("WatchGawk", function(opts)
         watch.start("gawk {new:gawk}", { stdin = true })
       end, { nargs = 0 })
     end,
