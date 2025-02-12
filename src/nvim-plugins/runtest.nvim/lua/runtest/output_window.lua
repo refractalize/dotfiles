@@ -133,7 +133,7 @@ function OutputWindow:parse_filenames()
     if matches then
       local filename = matches[2]
       local line_number = tonumber(matches[3]) or 1
-      local column_number = tonumber(matches[4]) or 0
+      local column_number = tonumber(matches[4]) or 1
 
       local index = #self.entries + 1
 
