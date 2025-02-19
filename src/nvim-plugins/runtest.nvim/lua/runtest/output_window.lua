@@ -46,6 +46,13 @@ function OutputWindow:get_target_window_id()
   end
 end
 
+function OutputWindow:is_output_window_focussed()
+  local current_window = vim.api.nvim_get_current_win()
+  local windows = vim.fn.win_findbuf(self.buf)
+
+  return vim.list_contains(windows, current_window)
+end
+
 function OutputWindow:match_filename(line)
   for i, pattern in ipairs(self.file_patterns or {}) do
     local matches = vim.fn.matchlist(line, pattern)
@@ -103,21 +110,56 @@ function OutputWindow:highlight_entry(entry)
   vim.api.nvim_buf_add_highlight(self.buf, line_ns_id, "QuickFixLine", entry.output_line_number - 1, 0, -1)
 end
 
+function OutputWindow:get_next_entry()
+  local current_window = self:current_window()
+
+  if current_window then
+    local current_line_number = vim.api.nvim_win_get_cursor(current_window)[1]
+
+    for i, entry in ipairs(self.entries) do
+      if entry.output_line_number > current_line_number then
+        return entry, i
+      end
+    end
+  elseif self.current_entry_index then
+    return self.entries[self.current_entry_index + 1], self.current_entry_index + 1
+  elseif #self.entries > 0 then
+    return self.entries[1], 1
+  end
+end
+
 function OutputWindow:goto_next_entry()
-  local entry_index = (self.current_entry_index or 0) + 1
-  local entry = self.entries[entry_index]
+  local entry, index = self:get_next_entry()
 
   if entry then
+    self.current_entry_index = index
     self:goto_entry(entry)
   end
 end
 
+function OutputWindow:get_previous_entry()
+  local current_window = self:current_window()
+
+  if current_window then
+    local current_line_number = vim.api.nvim_win_get_cursor(current_window)[1]
+
+    for i = #self.entries, 1, -1 do
+      local entry = self.entries[i]
+      if entry.output_line_number < current_line_number then
+        return entry, i
+      end
+    end
+  elseif self.current_entry_index then
+    local index = self.current_entry_index - 1
+    return self.entries[index], index
+  end
+end
+
 function OutputWindow:goto_previous_entry()
-  local entry_index = (self.current_entry_index or 0) - 1
-  local entry = self.entries[entry_index]
+  local entry, index = self:get_previous_entry()
 
   if entry then
-    self.current_entry_index = entry_index
+    self.current_entry_index = index
     self:goto_entry(entry)
   end
 end
@@ -192,6 +234,14 @@ local function create_output_buffer()
   vim.api.nvim_set_option_value("buflisted", true, { buf = buf })
   vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf })
   vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
+
+  vim.api.nvim_create_autocmd("BufReadPre", {
+    buffer = buf,
+    callback = function()
+      -- Do nothing
+    end,
+  })
+
   return buf
 end
 

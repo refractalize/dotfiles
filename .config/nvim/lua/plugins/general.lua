@@ -423,4 +423,10 @@ return {
 
     opts = {},
   },
+
+  {
+    "refractalize/curl.nvim",
+
+    opts = {},
+  }
 }

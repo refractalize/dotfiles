@@ -5,6 +5,8 @@ vim.keymap.set("v", "/", function()
   return "<Esc>/\\%V"
 end, { expr = true, noremap = true })
 
+vim.keymap.set("v", "g/", "/", { noremap = true })
+
 local function escape_query(text)
   return vim.fn.substitute(vim.fn.substitute(vim.fn.escape(text, "/\\"), "\n", "\\\\n", "g"), "\t", "\\\\t", "g")
 end

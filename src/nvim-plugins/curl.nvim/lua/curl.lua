@@ -1,3 +1,5 @@
+local host_args = {}
+
 local function shell(cmd, cb)
   local output = { "" }
 
@@ -28,18 +30,13 @@ local function shell(cmd, cb)
   })
 end
 
-local function host_args(host)
-  local filename = vim.fn.findfile('.curl.nvim.json', ";.")
-  if vim.fn.filereadable(filename) == 0 then
-    return
-  end
+local function setup(options)
+  options = vim.tbl_extend("force", {
+    host_args = {},
+  }, options)
 
-  print('filename: ' .. vim.inspect(filename))
+  host_args = options.host_args
 
-  return vim.fn.json_decode(vim.fn.readfile(filename))[host]
-end
-
-local function setup()
   vim.api.nvim_create_autocmd("BufReadCmd", {
     pattern = { "http://*", "https://*" },
     callback = function()
@@ -47,14 +44,11 @@ local function setup()
       shell("trurl " .. vim.fn.shellescape(url) .. " --json", function(url_json_string)
         local url_json = vim.fn.json_decode(url_json_string)[1].parts
         local host = url_json.host .. (url_json.port and ":" .. url_json.port or "")
-        print('host: ' .. vim.inspect(host))
         if not host then
           return
         end
-        local args = host_args(host) or ""
-        print('args: ' .. vim.inspect(args))
-        local lines = shell("curl -s " .. args .. " " .. vim.fn.shellescape(url), function(lines)
-          print('lines: ' .. vim.inspect(lines))
+        local args = host_args[host] or ""
+        local lines = shell("curl -sL " .. args .. " " .. vim.fn.shellescape(url), function(lines)
           if not lines then
             return
           end
@@ -68,4 +62,5 @@ end
 
 return {
   setup = setup,
+  host_args = host_args,
 }

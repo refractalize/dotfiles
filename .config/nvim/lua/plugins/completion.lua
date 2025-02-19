@@ -37,16 +37,6 @@ return {
   {
     "blink.cmp",
     optional = true,
-    opts = {
-      keymap = "default",
-      sources = {
-        providers = {
-          copilot = {
-            score_offset = 20,
-          },
-        },
-      },
-    },
   },
   {
     "zbirenbaum/copilot.lua",

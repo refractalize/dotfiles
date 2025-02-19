@@ -106,8 +106,8 @@ return {
           actions = vim.tbl_extend("force", {}, opts.buffers and opts.grep.actions or {}, file_actions),
         },
         lsp = {
-          jump_to_single_result = true,
-          jump_to_single_result_action = actions.file_edit,
+          jump1 = true,
+          jump1_action = actions.file_edit,
         },
         diagnostics = {
           severity_limit = vim.diagnostic.severity.WARN,
