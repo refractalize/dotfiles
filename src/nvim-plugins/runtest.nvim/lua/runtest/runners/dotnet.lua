@@ -30,45 +30,48 @@ end
 --- @param profile Profile
 --- @param command [string[], { env: table<string, string>, pty: boolean, on_stdout: fun(data: string[]) }]
 --- @param runner_config M
+--- @param runner Runner
 --- @returns fun(cb: fun(err: any, result: dap.Configuration))
-local function start_debugger(profile, command, runner_config)
-  return function(runner, cb)
-    local stdout = { "" }
-    local launched_debugger = false
+local function start_debugger(profile, command, runner_config, runner)
+  return {
+    type = runner_config.dap_adapter,
+    name = "attach - netcoredbg",
+    request = "attach",
+    processId = function()
+      return coroutine.create(function (dap_run_co)
+        local stdout = { "" }
+        local launched_debugger = false
 
-    runner:run_job(profile, {
-      command[1],
-      vim.tbl_deep_extend("force", command[2] or {}, {
-        env = { ["VSTEST_HOST_DEBUG"] = "1" },
-        pty = true,
-        on_stdout = function(_, data)
-          if launched_debugger then
-            return
-          end
+        runner:run_job(profile, {
+          command[1],
+          vim.tbl_deep_extend("force", command[2] or {}, {
+            env = { ["VSTEST_HOST_DEBUG"] = "1" },
+            pty = true,
+            on_stdout = function(_, data)
+              if launched_debugger then
+                return
+              end
 
-          stdout[#stdout] = stdout[#stdout] .. data[1]
+              stdout[#stdout] = stdout[#stdout] .. data[1]
 
-          for i = 2, #data do
-            table.insert(stdout, data[i])
-          end
+              for i = 2, #data do
+                table.insert(stdout, data[i])
+              end
 
-          for _, line in ipairs(stdout) do
-            local dotnet_test_pid = string.match(line, "Process Id%p%s(%d+)")
+              for _, line in ipairs(stdout) do
+                local dotnet_test_pid = string.match(line, "Process Id%p%s(%d+)")
 
-            if dotnet_test_pid ~= nil then
-              launched_debugger = true
-              runner:debug({
-                type = runner_config.dap_adapter,
-                name = "attach - netcoredbg",
-                request = "attach",
-                processId = dotnet_test_pid,
-              }, profile.runner_config)
-            end
-          end
-        end,
-      }),
-    })
-  end
+                if dotnet_test_pid ~= nil then
+                  launched_debugger = true
+                  coroutine.resume(dap_run_co, dotnet_test_pid)
+                end
+              end
+            end,
+          }),
+        })
+      end)
+    end,
+  }
 end
 
 --- @param command string
@@ -99,10 +102,13 @@ local function dotnet_test_profile(runner_config, args)
 
   P.runner_config = M
 
-  function P.debug_spec(start_config)
-    return start_debugger(P, dotnet_test(runner_config, args, start_config), runner_config)
+  --- @param start_config StartConfig
+  --- @param runner Runner
+  function P.debug_spec(start_config, runner)
+    return start_debugger(P, dotnet_test(runner_config, args, start_config), runner_config, runner)
   end
 
+  --- @param start_config StartConfig
   function P.run_spec(start_config)
     return dotnet_test(runner_config, args, start_config)
   end

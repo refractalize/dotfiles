@@ -22,6 +22,7 @@ function fzf_mru(options)
     vim.tbl_deep_extend("keep", options, {
       fzf_opts = {
         ["--no-sort"] = "",
+        ["--multi"] = "",
       },
       fn_transform = function(x)
         return fzf_lua.make_entry.file(x, { file_icons = true, color_icons = true })

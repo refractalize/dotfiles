@@ -192,12 +192,11 @@ local function open_buffer_in_tab(count, close)
 end
 
 vim.keymap.set("n", "<M-t>", function()
-  open_buffer_in_tab(vim.v.count, false)
+  local count = vim.v.count > 0 and vim.v.count or ''
+  vim.cmd(count .. "tab split")
 end)
 
-vim.keymap.set("n", "<M-T>", function()
-  open_buffer_in_tab(vim.v.count, true)
-end)
+vim.keymap.set("n", "<M-T>", "<C-W>T")
 
 vim.keymap.set("n", "<leader>lr", "<Cmd>LspRestart<CR>")
 vim.keymap.set("n", "<leader>li", "<Cmd>LspInfo<CR>")

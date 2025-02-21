@@ -8,11 +8,11 @@ local window_layout = require("runtest.window_layout")
 --- @field debugger boolean
 --- @field args string[]
 
---- @alias RunSpec [string[], { on_exit: fun(_, number), on_stdout: fun(_, string), on_stderr: fun(_, string), env?: table<string, string> }]
+--- @alias RunSpec [string[], table?]
 
 --- @class Profile
---- @field debug_spec (fun(start_config: StartConfig): dap.Configuration | fun(callback: fun(error: string, result: dap.Configuration)))
---- @field run_spec (fun(start_config: StartConfig): table)
+--- @field debug_spec (fun(start_config: StartConfig, runner: Runner): dap.Configuration)
+--- @field run_spec (fun(start_config: StartConfig, runner: Runner): RunSpec)
 --- @field runner_config RunnerConfig
 
 --- @class RunnerConfig
@@ -91,25 +91,11 @@ function Runner:set_last_profile(profile)
   self.last_ext_mark = vim.api.nvim_buf_set_extmark(self.last_buffer, ns_id, cursor[1] - 1, cursor[2], {})
 end
 
-function Runner:resolve_runner_spec(spec, callback)
-  if type(spec) == "function" then
-    return spec(self, function(error, result)
-      if error then
-        callback("Error resolving runner spec: " .. error)
-      else
-        return callback(nil, result)
-      end
-    end)
-  end
-
-  return callback(nil, spec)
-end
-
 --- @param profile Profile
 --- @param debug_spec dap.Configuration
 function Runner:debug(profile, debug_spec)
   local dap = require("dap")
-  local listen = debug_spec.request ~= "attach"
+  local listen = type(debug_spec) == 'table' and debug_spec.request ~= "attach"
 
   local output_lines = OutputLines:new()
 
@@ -302,18 +288,12 @@ end
 
 --- @param profile Profile
 --- @param start_config StartConfig
-function Runner:start_profile(profile, start_config, callback)
+function Runner:start_profile(profile, start_config)
   if start_config.debugger then
-    local debug_spec = profile.debug_spec(start_config)
-    return Runner:resolve_runner_spec(debug_spec, function(err, resolved_debug_spec)
-      if err then
-        callback(err)
-      else
-        self:debug(profile, resolved_debug_spec)
-      end
-    end)
+    local debug_spec = profile.debug_spec(start_config, self)
+    self:debug(profile, debug_spec)
   else
-    local run_spec = profile.run_spec(start_config)
+    local run_spec = profile.run_spec(start_config, self)
     self:run_terminal(profile, run_spec)
   end
 end
@@ -346,14 +326,14 @@ end
 
 --- @param profile_name string
 --- @param start_config StartConfig | nil
-function Runner:start_profile_name(profile_name, start_config, callback)
+function Runner:start_profile_name(profile_name, start_config)
   start_config = parse_start_config(start_config)
 
   local profile = self:resolve_profile(profile_name)
 
   self:set_last_profile(profile)
 
-  self:start_profile(profile, start_config, callback)
+  self:start_profile(profile, start_config)
 end
 
 --- @param profile_name string
@@ -363,16 +343,16 @@ function Runner:get_profile_command(profile_name, start_config)
 
   local profile = self:resolve_profile(profile_name)
 
-  return profile.run_spec(start_config)
+  return profile.run_spec(start_config, self)
 end
 
 --- @param start_config StartConfig | nil
-function Runner:run_last_tests(start_config, callback)
+function Runner:run_last_tests(start_config)
   if self.last_profile == nil then
     error({ message = "No last test", level = vim.log.levels.INFO })
   end
 
-  self:start_profile(self.last_profile, parse_start_config(start_config), callback)
+  self:start_profile(self.last_profile, parse_start_config(start_config))
 end
 
 function Runner:goto_last()
@@ -387,15 +367,12 @@ end
 
 local runner = Runner.new()
 
+--- @generic T
+--- @param fn fun(): T?
+--- @return T?
 local function error_wrapper(fn)
-  local function callback(err)
-    if err then
-      handle_error(err)
-    end
-  end
-
   local status, result = xpcall(function()
-    return fn(callback)
+    return fn()
   end, function(err)
     return debug.traceback(err, 2)
   end)
@@ -423,8 +400,8 @@ end
 
 for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests", "lint", "build" }) do
   M["run_" .. profile_name] = function(start_config)
-    error_wrapper(function(callback)
-      runner:start_profile_name(profile_name, start_config, callback)
+    error_wrapper(function()
+      runner:start_profile_name(profile_name, start_config)
     end)
   end
   M["get_" .. profile_name .. "_command"] = function(start_config)
@@ -436,19 +413,18 @@ end
 
 for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests" }) do
   M["debug_" .. profile_name] = function(start_config)
-    error_wrapper(function(callback)
+    error_wrapper(function()
       runner:start_profile_name(
         profile_name,
-        vim.tbl_extend("force", start_config or {}, { debugger = true }),
-        callback
+        vim.tbl_extend("force", start_config or {}, { debugger = true })
       )
     end)
   end
 end
 
 function M.run_last_tests(start_config)
-  error_wrapper(function(callback)
-    runner:run_last_tests(start_config, callback)
+  error_wrapper(function()
+    runner:run_last_tests(start_config)
   end)
 end
 
