@@ -5,8 +5,8 @@ local OutputLines = require("runtest.output_lines")
 local window_layout = require("runtest.window_layout")
 
 --- @class StartConfig
---- @field debugger boolean
---- @field args string[]
+--- @field debugger? boolean
+--- @field args? string[]
 
 --- @alias RunSpec [string[], table?]
 
@@ -62,6 +62,7 @@ function Runner.new()
     },
     filetypes = {
       cs = require("runtest.runners.dotnet"),
+      ruby = require('runtest.runners.rails'),
       python = require("runtest.runners.pytest"),
       typescriptreact = require("runtest.runners.jest"),
       typescript = require("runtest.runners.jest"),
@@ -157,6 +158,12 @@ local function parse_job_spec(job_spec)
 
   if type(job_spec[1]) ~= "table" then
     error("expected run_spec[1] to be a table, got " .. type(job_spec[1]))
+  end
+
+  if vim.iter(job_spec[1]):any(function(arg)
+    return type(arg) ~= "string"
+  end) then
+    error("expected run_spec[1] to be a list of strings")
   end
 
   return job_spec
@@ -274,6 +281,13 @@ function Runner:open_terminal_window(new_window_command)
   end
 end
 
+--- @param runner_config RunnerConfig
+local function validate_runner_config(runner_config)
+  if type(runner_config.name) ~= "string" then
+    error({ message = "RunnerConfig.name must be a string", level = vim.log.levels.ERROR })
+  end
+end
+
 --- @return RunnerConfig
 function Runner:runner_config()
   local filetype = vim.bo.filetype
@@ -282,6 +296,8 @@ function Runner:runner_config()
   if runner_config == nil then
     error({ message = "No test runner configured for " .. filetype, level = vim.log.levels.WARN })
   end
+
+  validate_runner_config(runner_config)
 
   return runner_config
 end
@@ -347,7 +363,18 @@ function Runner:get_profile_command(profile_name, start_config)
 end
 
 --- @param start_config StartConfig | nil
-function Runner:run_last_tests(start_config)
+function Runner:debug_last(start_config)
+  if start_config then
+    start_config.debugger = true
+  else
+    start_config = { debugger = true }
+  end
+
+  self:run_last(start_config)
+end
+
+--- @param start_config StartConfig | nil
+function Runner:run_last(start_config)
   if self.last_profile == nil then
     error({ message = "No last test", level = vim.log.levels.INFO })
   end
@@ -422,9 +449,15 @@ for _, profile_name in ipairs({ "line_tests", "all_tests", "file_tests" }) do
   end
 end
 
-function M.run_last_tests(start_config)
+function M.run_last(start_config)
   error_wrapper(function()
-    runner:run_last_tests(start_config)
+    runner:run_last(start_config)
+  end)
+end
+
+function M.debug_last(start_config)
+  error_wrapper(function()
+    runner:debug_last(start_config)
   end)
 end
 

@@ -24,6 +24,13 @@ return {
     end,
   },
   {
+    "folke/trouble.nvim",
+
+    opts = {
+      follow = false,
+    },
+  },
+  {
     "refractalize/auto-save",
     config = function()
       if vim.g.started_by_firenvim then
@@ -68,7 +75,7 @@ return {
   {
     "folke/which-key.nvim",
     -- doesn't play nice with :FzfLua keymaps
-    enabled = false,
+    enabled = true,
   },
   {
     "gregorias/coerce.nvim",
@@ -428,5 +435,19 @@ return {
     "refractalize/curl.nvim",
 
     opts = {},
-  }
+  },
+
+  {
+    "refractalize/envtoggle.nvim",
+
+    keys = {
+      {
+        "<Leader>uv",
+        function()
+          require("envtoggle").select_environment_variable()
+        end,
+        desc = "Select environment variable to toggle",
+      },
+    },
+  },
 }

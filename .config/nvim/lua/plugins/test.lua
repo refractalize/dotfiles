@@ -11,88 +11,102 @@ return {
 
     keys = {
       {
-        "<leader>to",
+        "<leader>ro",
         function()
           require("runtest").open_output()
         end,
+        desc = "Open Run Output",
       },
       {
-        "<leader>tO",
+        "<leader>rO",
         function()
-          require("runtest").open_output('split')
+          require("runtest").open_output("split")
         end,
+        desc = "Open Run Output in Split",
       },
       {
-        "<leader>tr",
+        "<leader>rtt",
         function()
           require("runtest").run_line_tests()
         end,
+        desc = "Run Tests at Line",
       },
       {
-        "<leader>tl",
+        "<leader>rl",
         function()
-          require("runtest").run_last_tests()
+          require("runtest").run_last()
         end,
+        desc = "Run Last Profile",
       },
       {
-        "<leader>tL",
+        "<leader>rL",
         function()
-          require("runtest").debug_last_tests()
+          require("runtest").debug_last()
         end,
+        desc = "Debug Last Profile",
       },
       {
         "<leader>tf",
         function()
           require("runtest").run_file_tests()
         end,
+        desc = "Run Tests in File",
       },
       {
         "<leader>ta",
         function()
           require("runtest").run_all_tests()
         end,
+        desc = "Run All Tests",
       },
       {
-        "<leader>tv",
+        "<leader>rgl",
         function()
           require("runtest").goto_last()
         end,
+        desc = "Go to Last Test",
       },
       {
-        "<leader>td",
+        "<leader>rtT",
         function()
           require("runtest").debug_line_tests()
         end,
+        desc = "Debug Tests at Line",
       },
       {
-        "<leader>tt",
+        "<leader>rto",
         function()
           require("runtest").open_terminal()
         end,
+        desc = "Open Run Terminal",
       },
       {
-        "<leader>tT",
+        "<leader>rtO",
         function()
-          require("runtest").open_terminal('split')
+          require("runtest").open_terminal("split")
         end,
+        desc = "Open Run Terminal in Split",
       },
       {
         "<leader>rb",
         function()
           require("runtest").run_build()
         end,
+        desc = "Run Build",
       },
       {
-        "<leader>rl",
+        "<leader>rc",
         function()
           require("runtest").run_lint()
         end,
+        desc = "Run Lint",
       },
       {
-        "<leader>fs",
+        "<leader>rf",
         function()
           require("runtest").send_entries_to_fzf()
         end,
+        desc = "Send Run Entries to FZF",
       },
     },
 

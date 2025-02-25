@@ -2,7 +2,6 @@ local utils = require('runtest.languages.utils')
 
 local function test_path()
   local buf = vim.api.nvim_get_current_buf()
-  local current_node = vim.treesitter.get_node()
 
   local query = vim.treesitter.query.parse(
     "python",

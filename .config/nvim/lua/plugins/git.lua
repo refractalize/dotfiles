@@ -74,4 +74,7 @@ return {
 
     config = true,
   },
+  {
+    "NeogitOrg/neogit",
+  },
 }

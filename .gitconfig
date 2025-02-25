@@ -19,7 +19,7 @@
     default = simple
     autoSetupRemote = true
 [merge]
-    conflictstyle = diff3
+    conflictstyle = zdiff3
     tool = nvimdiff
 [mergetool "vimdiff"]
     layout = "BASE,LOCAL + LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED"
@@ -49,3 +49,8 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true

@@ -201,35 +201,6 @@ vim.keymap.set("n", "<M-T>", "<C-W>T")
 vim.keymap.set("n", "<leader>lr", "<Cmd>LspRestart<CR>")
 vim.keymap.set("n", "<leader>li", "<Cmd>LspInfo<CR>")
 
-vim.keymap.set("n", "<leader>uv", function()
-  local environment_variable_names = {
-    "CERES_TEST_LOG",
-    "CERES_TEST_DB_KEEP_DATA",
-    "CERES_TEST_DB_LOG",
-  }
-
-  local function is_variable_set(variable_name)
-    local value = vim.fn.getenv(variable_name)
-    return (value ~= "" and value ~= nil and value ~= vim.NIL)
-  end
-
-  vim.ui.select(environment_variable_names, {
-    prompt = "Toggle environment variable",
-    format_item = function(item)
-      local badge = is_variable_set(item) and "✔" or " "
-      return badge .. " " .. item
-    end,
-  }, function(selected)
-    if selected then
-      if is_variable_set(selected) then
-        vim.fn.setenv(selected, nil)
-      else
-        vim.fn.setenv(selected, "true")
-      end
-    end
-  end)
-end)
-
 function lsp_client_root_dirs()
   local lsp_clients = vim.lsp.get_clients({ bufnr = 0 })
   local lsp_root_dirs = vim
