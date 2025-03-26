@@ -1,7 +1,7 @@
 local csharp_ts = require("runtest.languages.csharp")
 local utils = require("runtest.utils")
 
---- @class M
+--- @class M: RunnerConfig
 local M = {}
 
 M.name = "dotnet"
@@ -142,7 +142,7 @@ function M.line_tests(runner_config)
 
   return dotnet_test_profile(runner_config, {
     "--filter",
-    "FullyQualifiedName~" .. csharp_ts.line_tests(),
+    "FullyQualifiedName=" .. csharp_ts.line_tests(),
   })
 end
 

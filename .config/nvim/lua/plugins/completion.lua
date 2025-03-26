@@ -35,8 +35,18 @@ return {
     enabled = false,
   },
   {
-    "blink.cmp",
-    optional = true,
+    "saghen/blink.cmp",
+
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+      signature = {
+        enabled = false,
+      },
+      snippets = {
+        preset = 'luasnip',
+      },
+    },
   },
   {
     "zbirenbaum/copilot.lua",
@@ -63,8 +73,7 @@ return {
     "L3MON4D3/LuaSnip",
 
     config = function(opts)
-      require("luasnip").config.set_config({
-      })
+      require("luasnip").config.set_config({})
 
       require("luasnip.loaders.from_vscode").lazy_load({
         paths = vim.fn.stdpath("config") .. "/snippets",

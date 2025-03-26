@@ -1,5 +1,6 @@
 local javascript_ts = require("runtest.languages.javascript")
 
+--- @class M: RunnerConfig
 local M = {}
 
 function run_jest(args, run_config)

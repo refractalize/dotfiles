@@ -46,14 +46,14 @@ return {
         desc = "Debug Last Profile",
       },
       {
-        "<leader>tf",
+        "<leader>rtf",
         function()
           require("runtest").run_file_tests()
         end,
         desc = "Run Tests in File",
       },
       {
-        "<leader>ta",
+        "<leader>rta",
         function()
           require("runtest").run_all_tests()
         end,
@@ -110,7 +110,9 @@ return {
       },
     },
 
+    --- @type runtest.Config
     opts = {
+      open_output_on_failure = true,
       filetypes = {
         python = {
           args = { ["--log-cli-level"] = "INFO", "-s" },

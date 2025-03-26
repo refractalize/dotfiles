@@ -22,7 +22,7 @@
     conflictstyle = zdiff3
     tool = nvimdiff
 [mergetool "vimdiff"]
-    layout = "BASE,LOCAL + LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED"
+    layout = "BASE,LOCAL + LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED + LOCAL,REMOTE"
 [core]
     editor = nvim
     trustctime = false
@@ -34,7 +34,7 @@
 [core]
     attributesFile = ~/.gitattributes
     pager = delta --hyperlinks
-	excludesfile = ~/.gitignore
+	  excludesfile = ~/.gitignore
 [delta]
     features = side-by-side line-numbers
     syntax-theme = OneHalfDark

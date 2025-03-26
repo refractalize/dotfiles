@@ -225,7 +225,10 @@ function OutputWindow:set_lines(lines, file_patterns)
 
   vim.api.nvim_set_option_value("modifiable", false, { buf = self.buf })
 
-  vim.api.nvim_win_set_cursor(self.buf, { 1, 0 })
+  local current_window = self:current_window()
+  if current_window and current_window == vim.api.nvim_get_current_win() then
+    vim.api.nvim_win_set_cursor(current_window, { 1, 0 })
+  end
 
   self:parse_filenames()
   self:set_entry_signs()

@@ -2,7 +2,8 @@
 local function build_command_line(...)
   local command_line = {}
 
-  for i, arguments in ipairs({ ... }) do
+
+  for i, arguments in pairs({ ... }) do
     for i, arg in pairs(arguments or {}) do
       if type(i) == "string" then
         if type(arg) == "boolean" then

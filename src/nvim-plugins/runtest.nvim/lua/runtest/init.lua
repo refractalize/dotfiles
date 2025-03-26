@@ -36,12 +36,18 @@ local function handle_error(err)
   end
 end
 
+--- @class Config
+--- @field open_output_on_failure boolean
+--- @field windows { output: WindowProfile, terminal: WindowProfile }
+--- @field filetypes { [string]: RunnerConfig }
+
 --- @class Runner
 --- @field output_window OutputWindow
 --- @field last_profile Profile | nil
 --- @field last_buffer number | nil
 --- @field last_ext_mark number | nil
 --- @field terminal_buf number | nil
+--- @field config Config
 local Runner = {}
 Runner.__index = Runner
 
@@ -49,6 +55,7 @@ function Runner.new()
   local self = setmetatable({}, Runner)
   self.output_window = nil
   self.config = {
+    open_output_on_failure = false,
     windows = {
       output = {
         vertical = true,
@@ -122,14 +129,24 @@ end
 --- @param file_patterns string[]
 --- @param detail_lines? string[]
 function Runner:tests_finished(exit_code, output_lines, file_patterns, detail_lines)
-  if exit_code == 0 then
-    vim.notify("Tests passed", vim.log.levels.INFO)
-  else
+  local failed = exit_code ~= 0
+  if failed then
     vim.notify("Tests failed", vim.log.levels.ERROR)
+  else
+    vim.notify("Tests passed", vim.log.levels.INFO)
   end
 
   local output_window = self:get_output_window()
   output_window:set_lines(vim.list_extend(detail_lines or {}, output_lines), file_patterns)
+
+  if failed and self.config.open_output_on_failure then
+    self:open_output_window()
+  end
+end
+
+--- @param new_window_command string|nil The VIM command to run to create the window, default's to `vsplit`
+function Runner:open_output_window(new_window_command)
+  self:get_output_window():open(new_window_command or "vsplit")
 end
 
 --- @param job_spec RunSpec
@@ -188,7 +205,9 @@ function Runner:run_terminal(profile, job_spec)
   end
 
   local on_exit = function(_, exit_code)
-    vim.api.nvim_buf_delete(self.terminal_buf, { force = true })
+    if vim.api.nvim_buf_is_valid(self.terminal_buf) then
+      vim.api.nvim_buf_delete(self.terminal_buf, { force = true })
+    end
     self.terminal_buf = nil
     self.terminal_win = nil
 
@@ -417,7 +436,7 @@ end
 
 --- @param new_window_command string|nil The VIM command to run to create the window, default's to `vsplit`
 function M.open_output(new_window_command)
-  runner:get_output_window():open(new_window_command or "vsplit")
+  runner:open_output_window(new_window_command)
 end
 
 --- @param new_window_command string|nil The VIM command to run to create the window, default's to `split`

@@ -30,6 +30,12 @@ vim.keymap.set("n", "<M-j>", "<C-W>j")
 vim.keymap.set("n", "<M-k>", "<C-W>k")
 vim.keymap.set("n", "<M-l>", "<C-W>l")
 vim.keymap.set("n", "<M-h>", "<C-W>h")
+
+vim.keymap.set("n", "<M-Down>", "<C-W>j")
+vim.keymap.set("n", "<M-Up>", "<C-W>k")
+vim.keymap.set("n", "<M-Right>", "<C-W>l")
+vim.keymap.set("n", "<M-Left>", "<C-W>h")
+
 vim.keymap.set("n", "<M-;>", "<C-W>p")
 vim.keymap.set("n", "<M-r>", "<C-W>r")
 vim.keymap.set("n", "<M-x>", "<C-W>x")
@@ -45,10 +51,6 @@ vim.keymap.set("n", "<M-K> <Cmd>resize", "+2<CR>")
 vim.keymap.set("n", "<M-L> <Cmd>vertical resize", "+2<CR>")
 vim.keymap.set("n", "<M-H> <Cmd>vertical resize", "-2<CR>")
 vim.keymap.set("n", "<leader>bn", "<Cmd>enew<CR>")
-vim.keymap.set("n", "<M-Left>", "<C-W><")
-vim.keymap.set("n", "<M-Right>", "<C-W>>")
-vim.keymap.set("n", "<M-Up>", "<C-W>+")
-vim.keymap.set("n", "<M-Down>", "<C-W>-")
 
 -- tabs
 vim.keymap.set("n", "<M-1>", "1gt")
@@ -169,34 +171,48 @@ end)
 vim.keymap.set("", "<ScrollWheelUp>", "<C-Y>")
 vim.keymap.set("", "<ScrollWheelDown>", "<C-E>")
 
-local function open_buffer_in_tab(count, close)
-  local buf = vim.fn.bufnr()
-  local tabcount = vim.fn.tabpagenr("$")
+local function open_buffer_in_tab(tabnumber, close, vertical)
+  local buf = vim.api.nvim_get_current_buf()
+  local win = vim.api.nvim_get_current_win()
+  
+  if tabnumber ~= nil then
+    local tabpages = vim.api.nvim_list_tabpages()
 
-  if close then
-    if count > 0 then
-      vim.api.nvim_win_close(0, false)
-    else
-      vim.fn.normal("<C-W>T")
+    if tabnumber > #tabpages then
+      tabnumber = #tabpages
     end
-  end
 
-  if count > 0 and count <= tabcount then
-    vim.cmd.tabnext(count)
-    vim.cmd.vnew()
+    if tabnumber < 1 then
+      tabnumber = 1
+    end
+
+    local tabhandle = tabpages[tabnumber]
+    vim.api.nvim_set_current_tabpage(tabhandle)
+    if vertical then
+      vim.cmd.vnew()
+    else
+      vim.cmd.new()
+    end
+    vim.api.nvim_set_current_buf(buf)
   else
     vim.cmd.tabnew()
+    vim.api.nvim_set_current_buf(buf)
   end
 
-  vim.api.nvim_set_current_buf(buf)
+  if close then
+    vim.api.nvim_win_close(win, false)
+  end
 end
 
 vim.keymap.set("n", "<M-t>", function()
-  local count = vim.v.count > 0 and vim.v.count or ''
-  vim.cmd(count .. "tab split")
+  local count = vim.v.count > 0 and vim.v.count or nil
+  open_buffer_in_tab(count, false, true)
 end)
 
-vim.keymap.set("n", "<M-T>", "<C-W>T")
+vim.keymap.set("n", "<M-T>", function()
+  local count = vim.v.count > 0 and vim.v.count or nil
+  open_buffer_in_tab(count, true, true)
+end)
 
 vim.keymap.set("n", "<leader>lr", "<Cmd>LspRestart<CR>")
 vim.keymap.set("n", "<leader>li", "<Cmd>LspInfo<CR>")

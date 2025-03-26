@@ -18,11 +18,10 @@
 # bold_italic_font JetBrains Mono NL Bold Italic
 
 symbol_map U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0 Symbols Nerd Font Mono
-
-font_family      Iosevka Light
-bold_font        Iosevka Bold
-italic_font      Iosevka Light Italic
-bold_italic_font Iosevka Bold Italic
+# font_family      Iosevka Light
+# bold_font        Iosevka Bold
+# italic_font      Iosevka Light Italic
+# bold_italic_font Iosevka Bold Italic
 
 # font_family      Iosevka Fixed Thin Extended
 # bold_font        Iosevka Fixed Bold
@@ -1186,6 +1185,12 @@ map super+h combine : goto_layout tall : neighboring_window left
 map super+l combine : goto_layout tall : neighboring_window right
 map super+k combine : goto_layout tall : neighboring_window up
 map super+j combine : goto_layout tall : neighboring_window down
+
+map ctrl+left combine : goto_layout tall : neighboring_window left
+map ctrl+right combine : goto_layout tall : neighboring_window right
+map ctrl+up combine : goto_layout tall : neighboring_window up
+map ctrl+down combine : goto_layout tall : neighboring_window down
+
 map super+; nth_window -1
 map kitty_mod+r layout_action rotate
 map kitty_mod+super+k resize_window taller
@@ -1200,6 +1205,10 @@ map ctrl+shift+right next_tab
 map ctrl+shift+right next_tab
 map kitty_mod+alt [ previous_tab
 map kitty_mod+alt ] next_tab
+
+map ctrl+page_up previous_tab
+map ctrl+page_down next_tab
+
 # map ctrl+shift+t     new_tab_with_cwd !neighbor
 map ctrl+shift+q     close_tab
 map super+ctrl+shift l move_tab_forward
@@ -1367,6 +1376,7 @@ map super+f launch --cwd=current --stdin-source=@last_cmd_output --stdin-add-for
 map super+shift+f launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay show-all-kitty-output
 map kitty_mod+s launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay save-kitty-output
 map super+r load_config_file
+map ctrl+shift+r load_config_file
 # map kitty_mod+alt+k scroll_to_prompt -1
 # map kitty_mod+alt+j scroll_to_prompt 1
 map kitty_mod+o launch --type=background --cwd=current nvrtab --window-id @active-kitty-window-id @selection
@@ -1433,3 +1443,11 @@ include env.conf
 
 # default theme
 include themes/current.conf
+
+
+# BEGIN_KITTY_FONTS
+font_family      family="Iosevka"
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS

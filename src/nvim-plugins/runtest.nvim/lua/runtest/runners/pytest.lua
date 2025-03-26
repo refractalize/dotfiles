@@ -1,6 +1,7 @@
 local python_ts = require("runtest.languages.python")
 local utils = require("runtest.utils")
 
+--- @class M: RunnerConfig
 local M = {}
 
 M.file_patterns = {

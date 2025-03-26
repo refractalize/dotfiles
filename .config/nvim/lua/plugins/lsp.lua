@@ -1,5 +1,9 @@
 return {
   {
+    "omnisharp-extended-lsp.nvim",
+    enabled = true,
+  },
+  {
     "neovim/nvim-lspconfig",
 
     opts = function(_, opts)
@@ -14,6 +18,7 @@ return {
         servers = {
           omnisharp = {
             settings = {
+              useModernNet = true,
               FormattingOptions = {
                 -- Enables support for reading code style, naming convention and analyzer
                 -- settings from .editorconfig.

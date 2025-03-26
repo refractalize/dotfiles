@@ -296,7 +296,6 @@ return {
   {
     "refractalize/treesj",
     branch = "support-for-csharp",
-    dev = false,
     keys = {
       {
         "<Leader>j",
@@ -449,5 +448,19 @@ return {
         desc = "Select environment variable to toggle",
       },
     },
+
+    opts = {},
   },
+  {
+    "refractalize/editreg",
+
+    config = function()
+      vim.api.nvim_create_user_command("EditReg", function(opts)
+        require("editreg").edit_register(opts.args)
+      end, { nargs = 1 })
+    end,
+  },
+  {
+    "refractalize/qmkformat.nvim",
+  }
 }

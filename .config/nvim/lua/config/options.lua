@@ -14,3 +14,4 @@ vim.g.root_spec = { "cwd" }
 vim.g.vim_json_syntax_conceal = 0
 vim.g.vim_json_conceal = 0
 vim.opt.fillchars:append("foldsep:│")
+vim.opt.splitkeep = "cursor"

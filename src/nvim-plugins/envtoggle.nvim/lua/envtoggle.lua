@@ -42,19 +42,16 @@ local function toggle_environment_variable(name)
 end
 
 local function select_environment_variable()
-  vim.keymap.set("n", "<leader>uv", function()
-
-    vim.ui.select(vim.tbl_keys(environment_variables), {
-      prompt = "Toggle environment variable",
-      format_item = function(item)
-        local badge = is_variable_set(item) and "✔" or " "
-        return badge .. " " .. item
-      end,
-    }, function(selected)
-      if selected then
-        toggle_environment_variable(selected)
-      end
-    end)
+  vim.ui.select(vim.tbl_keys(environment_variables), {
+    prompt = "Toggle environment variable",
+    format_item = function(item)
+      local badge = is_variable_set(item) and "✔" or " "
+      return badge .. " " .. item
+    end,
+  }, function(selected)
+    if selected then
+      toggle_environment_variable(selected)
+    end
   end)
 end
 
