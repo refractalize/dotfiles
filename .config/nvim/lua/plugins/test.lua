@@ -110,7 +110,8 @@ return {
       },
     },
 
-    --- @type runtest.Config
+    ---@module 'runtest'
+    ---@type runtest.Config
     opts = {
       open_output_on_failure = true,
       filetypes = {

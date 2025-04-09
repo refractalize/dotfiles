@@ -136,6 +136,7 @@ return {
         "stevearc/oil.nvim",
 
         opts = {
+          watch_for_changes = true,
           win_options = {
             signcolumn = "yes:2",
           },
@@ -143,7 +144,9 @@ return {
       },
     },
 
-    opts = { show_ignored = true },
+    opts = {
+      show_ignored = true,
+    },
   },
 
   {
@@ -462,5 +465,8 @@ return {
   },
   {
     "refractalize/qmkformat.nvim",
+  },
+  {
+    "refractalize/ignore-lint",
   }
 }

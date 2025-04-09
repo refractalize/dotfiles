@@ -44,7 +44,19 @@ return {
         enabled = false,
       },
       snippets = {
-        preset = 'luasnip',
+        preset = "luasnip",
+      },
+      completion = {
+        list = {
+          selection = {
+            preselect = false,
+          },
+        },
+        accept = {
+          auto_brackets = {
+            enabled = false,
+          },
+        }
       },
     },
   },
