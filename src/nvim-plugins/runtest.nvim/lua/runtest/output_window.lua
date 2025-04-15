@@ -258,7 +258,6 @@ function OutputWindow:new()
 
   vim.keymap.set("n", "<Enter>", function()
     local current_window = vim.api.nvim_get_current_win()
-    self.win = current_window
     local current_line_number = vim.api.nvim_win_get_cursor(current_window)[1]
     local entry = vim.iter(self.entries):find(function(entry)
       return entry.output_line_number == current_line_number
@@ -278,12 +277,19 @@ function OutputWindow:new()
   return self
 end
 
-function OutputWindow:current_window()
-  if self.win and vim.api.nvim_win_is_valid(self.win) and vim.api.nvim_win_get_buf(self.win) == self.buf then
-    return self.win
-  else
-    self.win = nil
+function find_window_in_current_tab(bufnr)
+  local current_tab = vim.api.nvim_get_current_tabpage()
+  local windows = vim.fn.win_findbuf(bufnr)
+
+  for _, window in ipairs(windows) do
+    if vim.api.nvim_win_get_tabpage(window) == current_tab then
+      return window
+    end
   end
+end
+
+function OutputWindow:current_window()
+  return find_window_in_current_tab(self.buf)
 end
 
 --- @param new_window_command string
@@ -294,7 +300,6 @@ function OutputWindow:open(new_window_command)
     vim.api.nvim_set_current_win(current_window)
   else
     vim.cmd(new_window_command)
-    self.win = vim.api.nvim_get_current_win()
     vim.api.nvim_set_current_buf(self.buf)
   end
 end
