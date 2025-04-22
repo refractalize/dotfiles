@@ -271,3 +271,17 @@ vim.keymap.set("n", "<leader>cd", function()
     end
   end)
 end)
+
+vim.keymap.set("n", "<leader>cR", function()
+  local input_options = {
+    prompt = "New File Name",
+    default = vim.fn.expand("%:."),
+    completion = "file",
+  }
+  vim.ui.input(input_options, function(filename)
+    if filename then
+      vim.cmd.Move({ filename })
+      vim.notify("Renamed file to " .. filename)
+    end
+  end)
+end)

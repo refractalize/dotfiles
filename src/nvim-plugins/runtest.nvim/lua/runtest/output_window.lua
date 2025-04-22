@@ -1,3 +1,4 @@
+local window_layout = require("runtest.window_layout")
 local sign_ns_id = vim.api.nvim_create_namespace("runtest.sign")
 local line_ns_id = vim.api.nvim_create_namespace("runtest.line")
 local highlight = "NeotestFileOutputFilename"
@@ -35,12 +36,19 @@ function OutputWindow:setup(config)
   self.config = vim.tbl_deep_extend("force", self.config, config)
 end
 
-function OutputWindow:get_target_window_id()
+--- @param bufnr number
+function OutputWindow:get_target_window_id(bufnr)
   local current_window_id = vim.api.nvim_get_current_win()
 
   if current_window_id == self:current_window() then
-    local last_window = vim.fn.winnr("#")
-    return vim.fn.win_getid(last_window)
+    local buffer_window = find_window_in_current_tab(bufnr)
+
+    if buffer_window then
+      return buffer_window
+    else
+      local last_window = vim.fn.winnr("#")
+      return vim.fn.win_getid(last_window)
+    end
   else
     return current_window_id
   end
@@ -78,15 +86,14 @@ function OutputWindow:load_buffer_ext_marks(bufnr)
 end
 
 function OutputWindow:goto_entry(entry)
-  local target_window_id = self:get_target_window_id()
-
-  if vim.api.nvim_win_is_valid(target_window_id) and vim.fn.filereadable(entry.filename) > 0 then
-    vim.api.nvim_set_current_win(target_window_id)
-
+  if vim.fn.filereadable(entry.filename) > 0 then
     if vim.fn.bufloaded(entry.bufnr) == 0 then
       vim.fn.bufload(entry.bufnr)
       self:load_buffer_ext_marks(entry.bufnr)
     end
+
+    local target_window_id = self:get_target_window_id(entry.bufnr)
+    vim.api.nvim_set_current_win(target_window_id)
 
     if vim.api.nvim_get_current_buf() ~= entry.bufnr then
       vim.api.nvim_set_current_buf(entry.bufnr)
@@ -277,6 +284,8 @@ function OutputWindow:new()
   return self
 end
 
+--- @param bufnr number
+--- @return number | nil
 function find_window_in_current_tab(bufnr)
   local current_tab = vim.api.nvim_get_current_tabpage()
   local windows = vim.fn.win_findbuf(bufnr)
