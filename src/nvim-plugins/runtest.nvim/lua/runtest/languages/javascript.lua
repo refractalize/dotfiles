@@ -1,11 +1,15 @@
 local utils = require('runtest.languages.utils')
 
+--- @generic T
+--- @param table T[]
+--- @return T[]
 local function tbl_compact(table)
   return vim.tbl_filter(function(item)
     return item
   end, table)
 end
 
+--- @param string_fragment TSNode
 local function string_fragment_to_regex(string_fragment, buf)
   return vim.fn.escape(vim.treesitter.get_node_text(string_fragment, buf), '"?+*\\^$.|{}[]()')
 end
@@ -23,11 +27,19 @@ local function string_child_to_regex(string_child, buf)
   end
 end
 
+--- @param description TSNode
 local function description_to_regex(description, buf)
-  return vim.fn.join(
-    tbl_compact(vim.tbl_map(function(child)
+  local descriptions = vim.iter(description:iter_children())
+    :map(function(child)
       return string_child_to_regex(child, buf)
-    end, vim.iter(description:iter_chilldren()))),
+    end)
+    :filter(function(desc)
+      return desc
+    end)
+    :totable()
+
+  return vim.fn.join(
+    descriptions,
     ""
   )
 end
@@ -51,9 +63,9 @@ local function line_tests()
 
   local matches = utils.find_surrounding_matches(query)
 
-  local test_names = vim.tbl_map(function(match)
-    return description_to_regex(match.description, buf)
-  end, matches)
+  local test_names = vim.iter(matches):map(function(match)
+    return description_to_regex(match.description[1].node, buf)
+  end):totable()
 
   return test_names
 end

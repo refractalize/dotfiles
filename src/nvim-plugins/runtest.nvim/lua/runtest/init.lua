@@ -18,7 +18,7 @@ local window_layout = require("runtest.window_layout")
 --- @class RunnerConfig
 --- @field args string[]
 --- @field name string
---- @field file_patterns string[]
+--- @field file_patterns (string | fun(profile: Profile, line: string): ([string, string, string, string] | nil))[]
 --- @field line_tests fun(): Profile
 --- @field all_tests fun(): Profile
 --- @field file_tests fun(): Profile
@@ -109,7 +109,7 @@ function Runner:debug(profile, debug_spec)
 
   dap.listeners.before["event_exited"][namespace_name] = function(_session, body)
     if listen then
-      self:tests_finished(body.exitCode, output_lines:get_lines(), profile.runner_config.file_patterns)
+      self:tests_finished(body.exitCode, output_lines:get_lines(), profile)
     end
   end
 
@@ -126,9 +126,9 @@ end
 
 --- @param exit_code number
 --- @param output_lines string[]
---- @param file_patterns string[]
+--- @param profile Profile
 --- @param detail_lines? string[]
-function Runner:tests_finished(exit_code, output_lines, file_patterns, detail_lines)
+function Runner:tests_finished(exit_code, output_lines, profile, detail_lines)
   local failed = exit_code ~= 0
   if failed then
     vim.notify("Tests failed", vim.log.levels.ERROR)
@@ -137,7 +137,7 @@ function Runner:tests_finished(exit_code, output_lines, file_patterns, detail_li
   end
 
   local output_window = self:get_output_window()
-  output_window:set_lines(vim.list_extend(detail_lines or {}, output_lines), file_patterns)
+  output_window:set_lines(vim.list_extend(detail_lines or {}, output_lines), profile)
 
   if failed and self.config.open_output_on_failure then
     self:open_output_window()
@@ -214,7 +214,7 @@ function Runner:run_terminal(profile, job_spec)
     self:tests_finished(
       exit_code,
       output_lines:get_lines(),
-      profile.runner_config.file_patterns,
+      profile,
       render_command_line(job_spec)
     )
   end

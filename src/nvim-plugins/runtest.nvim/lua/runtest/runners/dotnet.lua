@@ -2,16 +2,16 @@ local csharp_ts = require("runtest.languages.csharp")
 local utils = require("runtest.utils")
 
 --- @class M: RunnerConfig
-local M = {}
-
-M.name = "dotnet"
+local M = {
+  name = "dotnet",
+}
 
 M.file_patterns = {
   "\\v(\\f+):line (\\d+)",
   "\\v^(\\f+)\\((\\d+),(\\d+)\\):",
 }
 
-M.dap_adapter = 'coreclr'
+M.dap_adapter = "coreclr"
 
 --- @returns string
 local function buffer_csproj()
@@ -38,7 +38,7 @@ local function start_debugger(profile, command, runner_config, runner)
     name = "attach - netcoredbg",
     request = "attach",
     processId = function()
-      return coroutine.create(function (dap_run_co)
+      return coroutine.create(function(dap_run_co)
         local stdout = { "" }
         local launched_debugger = false
 

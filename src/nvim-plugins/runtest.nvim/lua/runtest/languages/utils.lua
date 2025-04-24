@@ -1,3 +1,18 @@
+--- @class runtest.languages.Match
+--- @field _node TSNode
+--- @field [string] runtest.languages.MatchNode
+
+--- @class runtest.languages.MatchTree: runtest.languages.Match
+--- @field children runtest.languages.MatchTree[]
+
+--- @class runtest.languages.MatchNode
+--- @field node TSNode
+--- @field text string
+
+--- @param query vim.treesitter.Query
+--- @param captures table<number, TSNode[]>
+--- @param buf integer
+--- @return runtest.languages.Match
 local function build_match(query, captures, buf)
   local named_captures = {}
   for capture_id, capture_nodes in pairs(captures) do
@@ -18,6 +33,7 @@ local function build_match(query, captures, buf)
   return named_captures
 end
 
+--- @return TSNode
 local function get_node()
   local node = vim.treesitter.get_node()
 
@@ -28,9 +44,13 @@ local function get_node()
   return node
 end
 
+--- @param query vim.treesitter.Query
+--- @param node TSNode | nil
+--- @param buf integer | nil
+--- @return runtest.languages.Match[]
 local function find_matches(query, node, buf)
   buf = buf or vim.api.nvim_get_current_buf()
-  node = node or get_node():root()
+  node = node or get_node():tree():root()
 
   local matches = {}
 
@@ -41,11 +61,15 @@ local function find_matches(query, node, buf)
   return matches
 end
 
+--- @param query vim.treesitter.Query
+--- @param node TSNode | nil
+--- @param buf integer | nil
+--- @return runtest.languages.Match[]
 local function find_surrounding_matches(query, node, buf)
   buf = buf or vim.api.nvim_get_current_buf()
   node = node or get_node()
 
-  local matches = find_matches(query, node:root(), buf)
+  local matches = find_matches(query, node:tree():root(), buf)
 
   local enclosing_matches = vim.tbl_filter(function(match)
     return vim.treesitter.is_ancestor(match._node, node)
@@ -54,7 +78,12 @@ local function find_surrounding_matches(query, node, buf)
   return enclosing_matches
 end
 
+--- @param matches runtest.languages.Match[]
+--- @return runtest.languages.MatchTree[]
 local function to_tree(matches)
+  --- @param parent runtest.languages.Match
+  --- @param matches runtest.languages.Match[]
+  --- @return runtest.languages.Match[], runtest.languages.Match[]
   local function split_descendants(parent, matches)
     local descendants = {}
     local rest = {}
@@ -68,12 +97,14 @@ local function to_tree(matches)
     return descendants, rest
   end
 
+  --- @param matches runtest.languages.Match[]
+  --- @return runtest.languages.MatchTree[]
   local function build_tree(matches)
     if #matches == 0 then
       return {}
     end
 
-    local parent = matches[1]
+    local parent = matches[1] --[[@as runtest.languages.MatchTree]]
     matches = table.move(matches, 2, #matches, 1, {})
 
     local descendants, rest = split_descendants(parent, matches)

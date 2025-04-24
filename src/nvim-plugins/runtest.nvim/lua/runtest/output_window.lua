@@ -23,12 +23,8 @@ vim.api.nvim_set_hl(0, sign_highlight, {
 ---@class OutputWindow
 ---@field buf number
 ---@field entries Entry[]
----@field current_entry_index number
----@field win number | nil
----@field config { file_patterns: string[] }
+---@field current_entry_index number | nil
 local OutputWindow = {
-  win = nil,
-  file_patterns = {},
 }
 OutputWindow.__index = OutputWindow
 
@@ -61,11 +57,18 @@ function OutputWindow:is_output_window_focussed()
   return vim.list_contains(windows, current_window)
 end
 
-function OutputWindow:match_filename(line)
-  for i, pattern in ipairs(self.file_patterns or {}) do
-    local matches = vim.fn.matchlist(line, pattern)
-    if matches[1] ~= nil then
-      return matches
+--- @param profile Profile
+--- @param line string
+--- @return [string, string, string, string] | nil
+function OutputWindow:match_filename(profile, line)
+  for i, pattern in ipairs(profile.runner_config.file_patterns or {}) do
+    if type(pattern) == "function" then
+      return pattern(profile, line)
+    else
+      local matches = vim.fn.matchlist(line, pattern)
+      if matches[1] ~= nil then
+        return matches
+      end
     end
   end
 end
@@ -73,7 +76,10 @@ end
 --- @param entry Entry
 --- @return number
 function create_entry_ext_mark(entry)
-  return vim.api.nvim_buf_set_extmark(entry.bufnr, sign_ns_id, entry.line_number - 1, entry.column_number - 1, {})
+  local success, extmark_id = pcall(vim.api.nvim_buf_set_extmark, entry.bufnr, sign_ns_id, entry.line_number - 1, entry.column_number - 1, {})
+  if success then
+    return extmark_id
+  end
 end
 
 --- @param bufnr number
@@ -97,6 +103,10 @@ function OutputWindow:goto_entry(entry)
 
     if vim.api.nvim_get_current_buf() ~= entry.bufnr then
       vim.api.nvim_set_current_buf(entry.bufnr)
+    end
+
+    if entry.ext_mark == nil then
+      return
     end
 
     local position = vim.api.nvim_buf_get_extmark_by_id(entry.bufnr, sign_ns_id, entry.ext_mark, {})
@@ -171,14 +181,15 @@ function OutputWindow:goto_previous_entry()
   end
 end
 
-function OutputWindow:parse_filenames()
+--- @param profile Profile
+function OutputWindow:parse_filenames(profile)
   local lines = vim.api.nvim_buf_get_lines(self.buf, 0, -1, false)
 
   self.entries = {}
   self.current_entry_index = nil
 
   for output_line_number, line in ipairs(lines) do
-    local matches = self:match_filename(line)
+    local matches = self:match_filename(profile, line)
     if matches then
       local filename = matches[2]
       local line_number = tonumber(matches[3]) or 1
@@ -219,10 +230,10 @@ function OutputWindow:set_entry_signs()
   end
 end
 
-function OutputWindow:set_lines(lines, file_patterns)
+--- @param lines string[]
+--- @param profile Profile
+function OutputWindow:set_lines(lines, profile)
   vim.api.nvim_buf_clear_namespace(self.buf, sign_ns_id, 0, -1)
-
-  self.file_patterns = file_patterns
 
   vim.api.nvim_set_option_value("modifiable", true, { buf = self.buf })
 
@@ -237,7 +248,7 @@ function OutputWindow:set_lines(lines, file_patterns)
     vim.api.nvim_win_set_cursor(current_window, { 1, 0 })
   end
 
-  self:parse_filenames()
+  self:parse_filenames(profile)
   self:set_entry_signs()
 end
 
