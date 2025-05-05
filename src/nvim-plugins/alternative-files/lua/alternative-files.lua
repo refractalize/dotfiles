@@ -1,5 +1,5 @@
 local global_options = {
-  basename_suffixes = {},
+  basename_patterns = {},
 }
 
 local function remove_suffixes(filename)

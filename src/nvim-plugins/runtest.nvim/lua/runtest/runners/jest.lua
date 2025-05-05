@@ -91,12 +91,4 @@ function M.line_tests(runner_config)
   return jest_profile({ test_filename, "--testNamePattern", pattern })
 end
 
---- @param runner_config RunnerConfig
---- @returns Profile
-function M.file_tests(runner_config)
-  local test_filename = vim.fn.expand("%:p")
-
-  return jest_profile({ test_filename })
-end
-
 return M
