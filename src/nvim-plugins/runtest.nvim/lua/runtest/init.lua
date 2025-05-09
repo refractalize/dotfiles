@@ -8,7 +8,7 @@ local window_layout = require("runtest.window_layout")
 --- @field debugger? boolean
 --- @field args? string[]
 
---- @alias RunSpec [string[], table?]
+--- @alias RunSpec [string[], table?, table?]
 
 --- @class Profile
 --- @field debug_spec (fun(start_config: StartConfig, runner: Runner): dap.Configuration)
@@ -36,10 +36,15 @@ local function handle_error(err)
   end
 end
 
---- @class Config
+--- @class runtest.Config
 --- @field open_output_on_failure boolean
 --- @field windows { output: WindowProfile, terminal: WindowProfile }
 --- @field filetypes { [string]: RunnerConfig }
+
+--- @class runtest.UserConfig
+--- @field open_output_on_failure boolean | nil
+--- @field windows { output: WindowProfile, terminal: WindowProfile } | nil
+--- @field filetypes { [string]: RunnerConfig } | nil
 
 --- @class Runner
 --- @field output_window OutputWindow
@@ -47,7 +52,7 @@ end
 --- @field last_buffer number | nil
 --- @field last_ext_mark number | nil
 --- @field terminal_buf number | nil
---- @field config Config
+--- @field config runtest.Config
 local Runner = {}
 Runner.__index = Runner
 
@@ -186,6 +191,10 @@ local function parse_job_spec(job_spec)
   return job_spec
 end
 
+local function follow_latest_output()
+  vim.cmd.normal("G")
+end
+
 --- @param profile Profile
 --- @param job_spec RunSpec
 function Runner:run_terminal(profile, job_spec)
@@ -219,15 +228,21 @@ function Runner:run_terminal(profile, job_spec)
     )
   end
 
-  local no_tty_command = vim.list_extend({ exec_no_tty }, job_spec[1])
+  local options = vim.tbl_extend("keep", job_spec[3] or {}, {
+    tty = true,
+  })
+  local command = options.tty and vim.list_extend({ exec_no_tty }, job_spec[1]) or job_spec[1]
+
   vim.fn.termopen(
-    no_tty_command,
+    command,
     vim.tbl_extend("force", job_spec[2] or {}, {
       on_exit = on_exit,
       stdout_buffered = true,
       on_stdout = on_data,
     })
   )
+
+  follow_latest_output()
 
   vim.api.nvim_set_current_win(current_window)
 end

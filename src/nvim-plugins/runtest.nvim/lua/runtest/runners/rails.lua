@@ -1,10 +1,13 @@
 local utils = require("runtest.utils")
-local ruby_ts = require("runtest.languages.ruby")
 
 --- @class RailsRunnerConfig: RunnerConfig
 local M = {}
 
 M.name = "rails"
+
+M.file_patterns = {
+  "\\v^\\s*(\\f+):(\\d+):",
+}
 
 --- @param command string
 --- @param runner_config RunnerConfig
@@ -14,6 +17,10 @@ M.name = "rails"
 local function rails_command(command, runner_config, args, start_config)
   return {
     utils.build_command_line({ "rails", command, '--color' }, args, runner_config.args, start_config.args),
+    {},
+    {
+      tty = false,
+    }
   }
 end
 
@@ -60,11 +67,8 @@ end
 --- @returns Profile
 function M.line_tests(runner_config)
   local filename = vim.fn.expand("%:p")
-  local names = vim.iter(ruby_ts.line_tests()):map(function(name)
-    return { '--name', name }
-  end):flatten():totable()
-  local args = vim.list_extend({ filename }, names)
-  return rails_test_profile(runner_config, args)
+  local line_number = vim.fn.line(".")
+  return rails_test_profile(runner_config, { filename .. ':' .. line_number })
 end
 
 --- @param runner_config RunnerConfig
