@@ -108,12 +108,27 @@ return {
         end,
         desc = "Send Run Entries to FZF",
       },
+      {
+        "]r",
+        function()
+          require("runtest").next_output_history()
+        end,
+        desc = "Next Output History",
+      },
+      {
+        "[r",
+        function()
+          require("runtest").previous_output_history()
+        end,
+        desc = "Previous Output History",
+      },
     },
 
     ---@module 'runtest'
     ---@type runtest.Config
     opts = {
       open_output_on_failure = true,
+      close_output_on_success = true,
       filetypes = {
         python = {
           args = { ["--log-cli-level"] = "INFO", "-s" },
