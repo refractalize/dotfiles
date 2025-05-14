@@ -49,3 +49,24 @@ end, {
   nargs = "*",
   complete = "customlist,fugitive#ReadComplete",
 })
+
+local function JumpToLastGlobalEdit()
+  if vim.g.last_global_edit and vim.g.last_global_edit.buf and vim.fn.bufexists(vim.g.last_global_edit.buf) == 1 then
+    vim.cmd('buffer ' .. vim.g.last_global_edit.buf)
+    vim.fn.setpos('.', vim.g.last_global_edit.pos)
+  else
+    print("No global edit recorded")
+  end
+end
+
+vim.api.nvim_create_user_command('JumpLastEdit', JumpToLastGlobalEdit, {})
+vim.api.nvim_set_keymap('n', 'g:', ':lua JumpToLastGlobalEdit()<CR>', { noremap = true, silent = true })
+
+vim.g.last_global_edit = {}
+
+vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+  callback = function()
+    vim.g.last_global_edit = { buf = vim.fn.bufnr('%'), pos = vim.fn.getpos('.') }
+  end,
+})
+
