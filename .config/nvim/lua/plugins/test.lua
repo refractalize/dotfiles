@@ -125,7 +125,7 @@ return {
     },
 
     ---@module 'runtest'
-    ---@type runtest.Config
+    ---@type runtest.PartialConfig
     opts = {
       open_output_on_failure = true,
       close_output_on_success = true,
