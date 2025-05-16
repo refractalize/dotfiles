@@ -1145,7 +1145,9 @@ map ctrl+shift+super+n detach_window ask
 
 #: For more details, see launch.
 
-map ctrl+shift+super+n new_os_window
+map ctrl+shift+super+n launch --type=os-window --cwd=current
+map ctrl+super+n launch --type=os-window --cwd=current
+map ctrl+shift+s launch --type=os-window --cwd=current
 map kitty_mod+super+; nth_os_window -1
 map kitty_mod+super+1 nth_os_window 1
 map kitty_mod+super+2 nth_os_window 2
@@ -1216,18 +1218,31 @@ map super+ctrl+shift h move_tab_backward
 # map ctrl+shift+alt+t set_tab_title
 
 map --new-mode windows super+w
+map --new-mode windows ctrl+shift+w
 map --mode windows k neighboring_window up
 map --mode windows j neighboring_window down
 map --mode windows l neighboring_window right
 map --mode windows h neighboring_window left
+map --mode windows up neighboring_window up
+map --mode windows down neighboring_window down
+map --mode windows right neighboring_window right
+map --mode windows left neighboring_window left
 map --mode windows shift+k resize_window taller
 map --mode windows shift+j resize_window shorter
 map --mode windows shift+l resize_window wider
 map --mode windows shift+h resize_window narrower
+map --mode windows shift+up resize_window taller
+map --mode windows shift+down resize_window shorter
+map --mode windows shift+right resize_window wider
+map --mode windows shift+left resize_window narrower
 map --mode windows alt+k move_window up
 map --mode windows alt+j move_window down
 map --mode windows alt+h move_window left
 map --mode windows alt+l move_window right
+map --mode windows alt+up move_window up
+map --mode windows alt+down move_window down
+map --mode windows alt+left move_window left
+map --mode windows alt+right move_window right
 map --mode windows m combine : pop_keyboard_mode : detach_window ask
 
 map --mode windows ctrl+l next_tab
@@ -1374,7 +1389,7 @@ map ctrl+shift+a>d    set_background_opacity default
 map ctrl+shift+delete clear_terminal reset active
 map super+f launch --cwd=current --stdin-source=@last_cmd_output --stdin-add-formatting --type=overlay less +G -R
 map super+shift+f launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay show-all-kitty-output
-map kitty_mod+s launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay save-kitty-output
+# map kitty_mod+s launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay save-kitty-output
 map super+r load_config_file
 map ctrl+shift+r load_config_file
 # map kitty_mod+alt+k scroll_to_prompt -1
@@ -1436,7 +1451,10 @@ mouse_map left click ungrabbed mouse_handle_click selection prompt
 mouse_map kitty_mod+left release grabbed,ungrabbed mouse_handle_click link
 mouse_map kitty_mod+left triplepress ungrabbed mouse_selection line_from_point
 
-map --when-focus-on var:nvim kitty_mod+c send_text all \x1by
+map --when-focus-on var:nvim ctrl+c no_op
+map --when-focus-on var:nvim ctrl+shift+v no_op
+map ctrl+c copy_or_interrupt
+map ctrl+v paste_from_clipboard
 
 map kitty_mod+alt+i launch --type=overlay show-window-info @active-kitty-window-id
 include env.conf
