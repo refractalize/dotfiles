@@ -13,7 +13,18 @@ return {
         diagnostics = {
           underline = { severity = { min = vim.diagnostic.severity.WARN } },
           virtual_text = { severity = { min = vim.diagnostic.severity.WARN } },
-          float = { source = true },
+          float = { source = true, prefix = function(diagnostic)
+            if not diagnostic.user_data or not diagnostic.user_data.lsp then
+              return ""
+            end
+            return string.format(
+              "[%s]: ",
+              diagnostic.user_data.lsp.code
+            )
+          end },
+        },
+        inlay_hints = {
+          enabled = false,
         },
         servers = {
           omnisharp = {

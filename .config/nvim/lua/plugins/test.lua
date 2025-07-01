@@ -2,8 +2,6 @@ return {
   {
     "refractalize/runtest.nvim",
 
-    enabled = true,
-
     dependencies = {
       "mfussenegger/nvim-dap",
       "mfussenegger/nvim-dap-python",

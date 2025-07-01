@@ -103,6 +103,7 @@ return {
           actions = vim.tbl_extend("force", {}, opts.buffers and opts.buffers.actions or {}, file_actions),
         },
         grep = {
+          RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
           actions = vim.tbl_extend("force", {}, opts.buffers and opts.grep.actions or {}, file_actions),
         },
         lsp = {
@@ -157,6 +158,10 @@ return {
       },
     },
 
-    opts = {},
+    opts = {
+      fzf_mru = {
+        RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
+      }
+    },
   },
 }

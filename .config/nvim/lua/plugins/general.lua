@@ -419,11 +419,21 @@ return {
     "CopilotC-Nvim/CopilotChat.nvim",
 
     opts = {
+      model = "claude-3.7-sonnet",
       auto_insert_mode = false,
       window = {
         width = 0,
         height = 0,
       },
+    },
+  },
+  {
+    "olimorris/codecompanion.nvim",
+    opts = {
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
     },
   },
 
@@ -468,5 +478,15 @@ return {
   },
   {
     "refractalize/ignore-lint",
-  }
+  },
+  {
+    "refractalize/movement-repeat",
+    enabled = false,
+
+    opts = {
+      capture_keys = {
+        ["[q"] = "]q",
+      },
+    },
+  },
 }

@@ -10,6 +10,13 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "kdl" },
+  callback = function()
+    vim.opt_local.shiftwidth = 4
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
   pattern = { "lua" },
   callback = function()
     vim.keymap.set('n', '<leader>rl', '<Cmd>%lua<CR>', { buffer = true })

@@ -12,7 +12,7 @@ return {
       },
       {
         "<M-D>",
-        "<Cmd>Gdiffsplit! origin/master...<CR>",
+        "<Cmd>Gdiffsplit! origin/main...<CR>",
         desc = "Show diffs with master",
       },
     },

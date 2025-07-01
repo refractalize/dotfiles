@@ -1,8 +1,9 @@
 local mru_dir = vim.fn.stdpath("data") .. "/fzf-mru"
 local mru_filename = mru_dir .. "/mru"
+local global_options = {}
 
 function fzf_mru(options)
-  options = options or {}
+  options = vim.tbl_deep_extend("force", {}, global_options.fzf_mru or {}, options or {})
 
   local all = options.all
   options.all = nil
@@ -57,7 +58,7 @@ local function write_mru_line(line)
 end
 
 local function setup(config)
-  config = vim.tbl_deep_extend("force", {
+  global_options = vim.tbl_deep_extend("force", {
     ignore = {
       filename_patterns = {
         "\\/\\.git\\/",
@@ -72,7 +73,7 @@ local function setup(config)
   vim.fn.mkdir(mru_dir, "p")
 
   local ignore_filename_lpegs = vim
-    .iter(config.ignore.filename_patterns)
+    .iter(global_options.ignore.filename_patterns)
     :map(function(pattern)
       return vim.regex(pattern)
     end)
@@ -90,7 +91,7 @@ local function setup(config)
       local full_filename = vim.fn.fnamemodify(buffer_name, ":p")
       local filetype = vim.api.nvim_get_option_value("filetype", { buf = buffer })
 
-      if not ignore_buffer(ignore_filename_lpegs, config.ignore.filetypes, full_filename, filetype) then
+      if not ignore_buffer(ignore_filename_lpegs, global_options.ignore.filetypes, full_filename, filetype) then
         write_mru_line(os.time() .. " " .. full_filename .. "\n")
       end
     end,

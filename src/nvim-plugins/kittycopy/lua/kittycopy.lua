@@ -19,6 +19,7 @@ local function setup()
     end,
   })
 
+  vim.keymap.set("v", "<C-S-c>", '"+y', { noremap = true })
   vim.keymap.set("v", "<C-c>", '"+y', { noremap = true })
   vim.keymap.set("n", "<C-S-v>", '<C-v>', { noremap = true })
 end
