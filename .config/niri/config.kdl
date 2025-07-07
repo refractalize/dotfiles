@@ -696,7 +696,7 @@ window-rule {
 }
 
 workspace "windows" {
-    open-on-output "DP-3"
+    open-on-output "DP-2"
 }
 
 window-rule {

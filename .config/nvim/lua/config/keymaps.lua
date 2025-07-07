@@ -83,6 +83,13 @@ vim.keymap.set("c", "<M-b>", "<S-Left>")
 vim.keymap.set("c", "<M-f>", "<S-Right>")
 vim.keymap.set("c", "<M-BS>", "<C-W>")
 
+-- ghostty copy/paste
+-- keybind = performable:ctrl+c=copy_to_clipboard
+-- keybind = ctrl+v=paste_from_clipboard
+vim.keymap.set("v", "<C-c>", '"+y', { noremap = true, silent = true, desc = "Copy visual text to clipboard" })
+-- Allow blockwise visual mode as a replacement for the default <C-v> mapping
+vim.keymap.set("n", "<C-S-v>", '<C-v>', { noremap = true, silent = true, desc = "Blockwise visual mode" })
+
 Snacks.toggle
   .option("diff", {
     name = "Diff",
