@@ -3,5 +3,10 @@
 /.config/*
 !/.config/kitty
 !/.config/nvim
+!/.config/niri
+!/.config/waybar
+!/.config/swayidle
+!/.config/swaylock
+!/.config/qmk
 !/.zsh
 !/bin

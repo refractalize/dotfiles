@@ -1,24 +1,37 @@
+---@type {write_delay: number, ignore_files: {[string]: function|string}, ignore_buffer: function|nil}
 local defaults = {
-  write_delay = 135,
+  write_delay = 0,
   ignore_files = {},
-  ignore_buffer = nil,
 }
 
+---@param options {write_delay: number, ignore_files: {[string]: function|string}, ignore_buffer: function|nil}
+---@param buffer number
+---@return boolean
 function ignore_buffer(options, buffer)
   local filename = vim.api.nvim_buf_get_name(buffer)
 
-  local ignored = vim.tbl_filter(
-    function(ignore_path)
-      local pattern = string.sub(vim.fn.glob2regpat(ignore_path), 2)
+  for ignore_file_name, ignore_file in pairs(options.ignore_files) do
+    if type(ignore_file) == "function" then
+      local ignore = ignore_file(buffer)
+      if ignore then
+        return true
+      end
+    elseif type(ignore_file) == "string" then
+      local pattern = string.sub(vim.fn.glob2regpat(ignore_file), 2)
       local match = vim.fn.match(filename, pattern)
-      return match >= 0
-    end,
-    options.ignore_files
-  )
+      if match >= 0 then
+        return true
+      end
+    else
+      error("Invalid type for ignore_files[" .. ignore_file_name .. "]: " .. type(ignore_file))
+    end
+  end
 
-  return next(ignored) or (options.ignore_buffer and options.ignore_buffer(buffer))
+  return false
 end
 
+---@param fn function
+---@param write_delay number|nil
 function delay(fn, write_delay)
   if write_delay then
     vim.defer_fn(fn, write_delay)
@@ -27,6 +40,7 @@ function delay(fn, write_delay)
   end
 end
 
+--- @param options {write_delay: number, ignore_files: {[string]: function|string}, ignore_buffer: function|nil}
 function setup(options)
   options = vim.tbl_deep_extend('force', defaults, options or {})
 
@@ -52,5 +66,5 @@ function setup(options)
 end
 
 return {
-  setup = setup
+  setup = setup,
 }

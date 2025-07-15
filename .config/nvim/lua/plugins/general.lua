@@ -32,18 +32,17 @@ return {
   },
   {
     "refractalize/auto-save",
-    config = function()
-      if vim.g.started_by_firenvim then
-        return
-      end
-
-      require("auto-save").setup({
-        write_delay = 0,
-        ignore_buffer = function(bufnr)
-          return vim.api.nvim_buf_line_count(bufnr) > 50000 or vim.bo[bufnr].filetype == "oil"
-        end,
-      })
+    enabled = function()
+      return not vim.g.started_by_firenvim
     end,
+    opts = {
+      write_delay = 0,
+      ignore_files = {
+        large_files = function(bufnr)
+          return vim.api.nvim_buf_line_count(bufnr) > 50000
+        end,
+      },
+    },
   },
   {
     "akinsho/bufferline.nvim",
@@ -100,6 +99,19 @@ return {
     "stevearc/oil.nvim",
 
     dependencies = { "nvim-tree/nvim-web-devicons" },
+    specs = {
+      {
+
+        "refractalize/auto-save",
+        opts = {
+          ignore_files = {
+            oil = function(bufnr)
+              return vim.bo[bufnr].filetype == "oil"
+            end,
+          },
+        },
+      },
+    },
 
     lazy = false,
 
@@ -411,18 +423,6 @@ return {
   },
   "tpope/vim-eunuch",
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-
-    opts = {
-      model = "claude-3.7-sonnet",
-      auto_insert_mode = false,
-      window = {
-        width = 0,
-        height = 0,
-      },
-    },
-  },
-  {
     "ravitemer/mcphub.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -431,53 +431,6 @@ return {
     config = function()
       require("mcphub").setup()
     end,
-  },
-  {
-    "olimorris/codecompanion.nvim",
-    opts = {
-      strategies = {
-        chat = {
-          adapter = "anthropic",
-        },
-        inline = {
-          adapter = "anthropic",
-        },
-        cmd = {
-          adapter = "anthropic",
-        },
-      },
-      adapters = {
-        anthropic = function()
-          return require("codecompanion.adapters").extend("anthropic", {
-            env = {
-              api_key = "cmd: secret-tool lookup service claude api-type token",
-            },
-          })
-        end,
-      },
-      display = {
-        chat = {
-          window = {
-            width = "auto",
-          },
-        },
-      },
-      extensions = {
-        mcphub = {
-          callback = "mcphub.extensions.codecompanion",
-          opts = {
-            show_result_in_chat = true, -- Show mcp tool results in chat
-            make_vars = true, -- Convert resources to #variables
-            make_slash_commands = true, -- Add prompts as /slash commands
-          },
-        },
-      },
-    },
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "ravitemer/mcphub.nvim",
-    },
   },
 
   {

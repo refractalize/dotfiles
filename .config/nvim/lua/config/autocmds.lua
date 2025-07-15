@@ -19,22 +19,22 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "lua" },
   callback = function()
-    vim.keymap.set('n', '<leader>rl', '<Cmd>%lua<CR>', { buffer = true })
+    vim.keymap.set("n", "<leader>rl", "<Cmd>%lua<CR>", { buffer = true })
   end,
 })
 
 local id = vim.api.nvim_create_augroup("CursorLine", {})
-vim.api.nvim_create_autocmd({"WinEnter"}, {
+vim.api.nvim_create_autocmd({ "WinEnter" }, {
   group = id,
   callback = function()
     vim.wo.cursorline = true
-  end
+  end,
 })
-vim.api.nvim_create_autocmd({"WinLeave"}, {
+vim.api.nvim_create_autocmd({ "WinLeave" }, {
   group = id,
   callback = function()
     vim.wo.cursorline = false
-  end
+  end,
 })
 
 function unload(module)
@@ -57,23 +57,40 @@ end, {
   complete = "customlist,fugitive#ReadComplete",
 })
 
+vim.api.nvim_create_user_command("ClaudeCodeCopyCommand", function(opts)
+  local claudecode = require("claudecode")
+  if not claudecode.state or not claudecode.state.port then
+    vim.notify("Claude Code Neovim MCP Server is not running", vim.log.levels.ERROR)
+    return
+  end
+  local port = claudecode.state.port
+  vim.fn.setreg(
+    "+",
+    "(cd "
+      .. vim.fn.getcwd()
+      .. " && CLAUDE_CODE_SSE_PORT="
+      .. port
+      .. " ENABLE_IDE_INTEGRATION=true FORCE_CODE_TERMINAL=true claude)"
+  )
+  vim.notify("Claude Code command copied to clipboard", vim.log.levels.INFO)
+end, {})
+
 local function JumpToLastGlobalEdit()
   if vim.g.last_global_edit and vim.g.last_global_edit.buf and vim.fn.bufexists(vim.g.last_global_edit.buf) == 1 then
-    vim.cmd('buffer ' .. vim.g.last_global_edit.buf)
-    vim.fn.setpos('.', vim.g.last_global_edit.pos)
+    vim.cmd("buffer " .. vim.g.last_global_edit.buf)
+    vim.fn.setpos(".", vim.g.last_global_edit.pos)
   else
     print("No global edit recorded")
   end
 end
 
-vim.api.nvim_create_user_command('JumpLastEdit', JumpToLastGlobalEdit, {})
-vim.api.nvim_set_keymap('n', 'g:', ':lua JumpToLastGlobalEdit()<CR>', { noremap = true, silent = true })
+vim.api.nvim_create_user_command("JumpLastEdit", JumpToLastGlobalEdit, {})
+vim.api.nvim_set_keymap("n", "g:", ":lua JumpToLastGlobalEdit()<CR>", { noremap = true, silent = true })
 
 vim.g.last_global_edit = {}
 
-vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
   callback = function()
-    vim.g.last_global_edit = { buf = vim.fn.bufnr('%'), pos = vim.fn.getpos('.') }
+    vim.g.last_global_edit = { buf = vim.fn.bufnr("%"), pos = vim.fn.getpos(".") }
   end,
 })
-
