@@ -127,8 +127,8 @@ return {
     opts = {
       open_output_on_failure = true,
       close_output_on_success = true,
-      filetypes = {
-        python = {
+      runners = {
+        pytest = {
           args = { ["--log-cli-level"] = "INFO", "-s" },
         },
       },
