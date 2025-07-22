@@ -305,6 +305,8 @@ return {
       scope = {
         enabled = false,
       },
+      image = {
+      },
     },
   },
 
@@ -490,5 +492,10 @@ return {
     "willmcpherson2/gnome.nvim",
 
     opts = {},
+  },
+
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    enabled = false,
   },
 }

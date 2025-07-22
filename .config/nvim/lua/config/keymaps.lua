@@ -25,6 +25,13 @@ vim.keymap.del("v", "<")
 
 require("refractalize.search")
 
+-- for the Graphite keyboard layout we swap the 'a' and 'n' keys
+-- so we put less pressure on the left pinky when searching
+vim.keymap.set({'n'}, 'a', 'n', { noremap = true })
+vim.keymap.set({'n'}, 'A', 'N', { noremap = true })
+vim.keymap.set({'n'}, 'n', 'a', { noremap = true })
+vim.keymap.set({'n'}, 'N', 'A', { noremap = true })
+
 -- windows
 vim.keymap.set("n", "<M-j>", "<C-W>j")
 vim.keymap.set("n", "<M-k>", "<C-W>k")

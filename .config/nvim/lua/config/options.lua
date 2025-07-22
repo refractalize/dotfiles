@@ -16,3 +16,4 @@ vim.g.vim_json_conceal = 0
 vim.opt.fillchars:append("foldsep:│")
 vim.opt.splitkeep = "cursor"
 vim.g.lazyvim_python_lsp = "basedpyright"
+vim.opt.winborder = "rounded"

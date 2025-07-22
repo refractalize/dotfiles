@@ -1,49 +1,50 @@
 [user]
-    name = Tim Macfarlane
-    email = timmacfarlane@gmail.com
+  name = Tim Macfarlane
+  email = timmacfarlane@gmail.com
 [color]
-    ui = true
+  ui = true
 [alias]
-    co = checkout
-    st = status
-    br = branch
-    l = log -1
-    sm = submodule update --init --recursive
-    local = log @{u}..
-    unpushed = log @{u}..
-    unreleased = log $(git describe --abbrev=0)..
-    clean-branches = "!git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d"
+  re = restore
+  sw = switch
+  st = status
+  br = branch
+  l = log -1
 	s = stash
 	sp = stash pop
+  sm = submodule update --init --recursive
+  local = log @{u}..
+  unpushed = log @{u}..
+  unreleased = log $(git describe --abbrev=0)..
+  clean-branches = "!git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d"
 [push]
-    default = simple
-    autoSetupRemote = true
+  default = simple
+  autoSetupRemote = true
 [merge]
-    conflictstyle = zdiff3
-    tool = nvimdiff
+  conflictstyle = zdiff3
+  tool = nvimdiff
 [mergetool "vimdiff"]
-    layout = "BASE,LOCAL + LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED + LOCAL,REMOTE"
+  layout = "BASE,LOCAL + LOCAL,MERGED + BASE,REMOTE + REMOTE,MERGED + LOCAL,REMOTE"
 [core]
-    editor = nvim
-    trustctime = false
+  editor = nvim
+  trustctime = false
 [pull]
-    rebase = true
+  rebase = true
 [mergetool]
-    keepBackup = false
-    prompt = false
+  keepBackup = false
+  prompt = false
 [core]
-    attributesFile = ~/.gitattributes
-    pager = delta --hyperlinks
-	  excludesfile = ~/.gitignore
+  attributesFile = ~/.gitattributes
+  pager = delta --hyperlinks
+  excludesfile = ~/.gitignore
 [delta]
-    features = side-by-side line-numbers
-    syntax-theme = OneHalfDark
+  features = side-by-side line-numbers
+  syntax-theme = OneHalfDark
 [init]
 	defaultBranch = main
 [fetch]
 	prune = true
 [include]
-    path = ~/.gitconfig.local
+  path = ~/.gitconfig.local
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

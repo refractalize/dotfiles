@@ -71,7 +71,10 @@ return {
         "refractalize/auto-save",
         opts = {
           ignore_files = {
-            claudecode = "%[Claude Code%]",
+            claudecode = function(bufno)
+              local filename = vim.api.nvim_buf_get_name(bufno)
+              return filename:match("%[Claude Code%]")
+            end,
           },
         },
       },
@@ -82,7 +85,7 @@ return {
     keys = {
       { "<leader>a", nil, desc = "AI/Claude Code" },
       { "<leader>ac", "<cmd>ClaudeCodeCopyCommand<cr>", desc = "Copy Claude Code Command" },
-      { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+      { "<leader>as", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
       { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
       {
         "<leader>as",
