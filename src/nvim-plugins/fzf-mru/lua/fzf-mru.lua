@@ -2,13 +2,12 @@ local mru_dir = vim.fn.stdpath("data") .. "/fzf-mru"
 local mru_filename = mru_dir .. "/mru"
 local global_options = {}
 
-function fzf_mru(options)
+local function fzf_mru(options)
   options = vim.tbl_deep_extend("force", {}, global_options.fzf_mru or {}, options or {})
 
   local all = options.all
   options.all = nil
 
-  local open_buffers_temp_file = vim.fn.tempname()
   local command
   if all then
     command = "fzf-mru " .. mru_filename .. " --all"
@@ -25,8 +24,9 @@ function fzf_mru(options)
         ["--no-sort"] = "",
         ["--multi"] = "",
       },
+      file_icons = true,
       fn_transform = function(x)
-        return fzf_lua.make_entry.file(x, { file_icons = true, color_icons = true })
+        return FzfLua.make_entry.file(x, { file_icons = true, color_icons = true })
       end,
       actions = fzf_lua.config.globals.actions.files,
       previewer = "builtin",
