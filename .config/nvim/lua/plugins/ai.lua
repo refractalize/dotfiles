@@ -81,10 +81,17 @@ return {
     },
     opts = {
       enable_terminal = false,
+      auto_start = true,
     },
     keys = {
       { "<leader>a", nil, desc = "AI/Claude Code" },
-      { "<leader>ac", "<cmd>ClaudeCodeCopyCommand<cr>", desc = "Copy Claude Code Command" },
+      {
+        "<leader>ar",
+        function()
+          require("claudecode").start(true)
+        end,
+        desc = "Copy Claude Code Command",
+      },
       { "<leader>as", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
       { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
       {
