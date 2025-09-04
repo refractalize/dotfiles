@@ -305,8 +305,7 @@ return {
       scope = {
         enabled = false,
       },
-      image = {
-      },
+      image = {},
     },
   },
 
@@ -476,6 +475,17 @@ return {
   },
   {
     "refractalize/ignore-lint",
+
+    keys = {
+      {
+        "<leader>xl",
+        function()
+          require("ignore-lint").ignore_lint()
+        end,
+        desc = "Ignore lint for current line",
+        mode = { "n", "v" },
+      },
+    },
   },
   {
     "refractalize/movement-repeat",
@@ -497,5 +507,22 @@ return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
     enabled = false,
+  },
+
+  {
+    "refractalize/caseword.nvim",
+
+    keys = {
+      {
+        "<C-s>",
+        function()
+          require("caseword").join_case()
+        end,
+        desc = "Change case of word under cursor",
+        mode = { "i" }
+      },
+    },
+
+    opts = {},
   },
 }
