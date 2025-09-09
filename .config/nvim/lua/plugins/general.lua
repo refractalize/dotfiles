@@ -500,6 +500,10 @@ return {
 
   {
     "willmcpherson2/gnome.nvim",
+    
+    cond = function()
+      return vim.fn.has("mac") ~= 1
+    end,
 
     opts = {},
   },
