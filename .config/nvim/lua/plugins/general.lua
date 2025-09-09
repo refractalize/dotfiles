@@ -511,6 +511,7 @@ return {
 
   {
     "refractalize/caseword.nvim",
+    dev = true,
 
     keys = {
       {
