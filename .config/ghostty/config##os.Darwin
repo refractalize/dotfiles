@@ -1,5 +1,5 @@
 macos-option-as-alt = true
-# theme = dark:catppuccin-frappe,light:catppuccin-latte
+theme = light:tokyonight-day,dark:tokyonight-storm
 keybind = super+l=goto_split:right
 keybind = super+right=goto_split:right
 keybind = super+left=goto_split:left
@@ -14,3 +14,7 @@ keybind = shift+enter=text:\x1b\r
 keybind = super+shift+left=previous_tab
 keybind = super+shift+right=next_tab
 keybind = super+f=toggle_split_zoom
+keybind = alt+right=unbind
+keybind = alt+left=unbind
+keybind = performable:super+c=copy_to_clipboard
+unfocused-split-opacity = 1.0
