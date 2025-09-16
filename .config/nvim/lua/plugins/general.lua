@@ -516,18 +516,7 @@ return {
   {
     "refractalize/caseword.nvim",
     dev = true,
-
-    keys = {
-      {
-        "<C-s>",
-        function()
-          require("caseword").join_case()
-        end,
-        desc = "Change case of word under cursor",
-        mode = { "i" }
-      },
-    },
-
+    event = "InsertEnter",
     opts = {},
   },
 }

@@ -1,6 +1,8 @@
 macos-option-as-alt = true
-theme = light:tokyonight-day,dark:tokyonight-storm
+theme = light:TokyoNight Day,dark:TokyoNight Storm
+
 keybind = super+l=goto_split:right
+keybind = super+l=goto_split:previous
 keybind = super+right=goto_split:right
 keybind = super+left=goto_split:left
 keybind = super+h=goto_split:left
@@ -17,4 +19,7 @@ keybind = super+f=toggle_split_zoom
 keybind = alt+right=unbind
 keybind = alt+left=unbind
 keybind = performable:super+c=copy_to_clipboard
+keybind = super+shift+equal=increase_font_size:1
 unfocused-split-opacity = 1.0
+split-divider-color = #3760bf
+custom-shader = cursor_blaze.glsl

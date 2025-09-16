@@ -1,19 +1,33 @@
 --- A Neovim plugin to guess the case style of the word under the cursor
 
-local default_delimiters = {
-  python = "_",
-  lua = "_",
-  javascript = "upper_case_next",
-  javascriptreact = "upper_case_next",
-  typescript = "upper_case_next",
-  typescriptreact = "upper_case_next",
-  ruby = "_",
+---@class CaseWordConfigUser
+---@field mapping? string
+---@field mapping_is_delimiter? boolean
+---@field delimiters? table<string, string>
+
+--- @class CaseWordOptions
+--- @field mapping string The key mapping to trigger the case joining (default: "-")
+--- @field mapping_is_delimiter boolean Whether the mapping character is also a delimiter (default: true)
+--- @field delimiters table[string, string] A table mapping filetypes to their preferred delimiters
+local default_options = {
+  mapping = "-",
+  mapping_is_delimiter = true,
+  delimiters = {
+    python = "_",
+    lua = "_",
+    javascript = "upper_case_next",
+    javascriptreact = "upper_case_next",
+    typescript = "upper_case_next",
+    typescriptreact = "upper_case_next",
+    ruby = "_",
+    c = "_",
+  }
 }
 
-local delimiters = vim.deepcopy(default_delimiters)
+local options = vim.deepcopy(default_options)
 
---- @return string | nil The guessed case style or nil if none matched
-local function guess_case()
+--- @return string | nil
+local function current_word()
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   local line = vim.api.nvim_get_current_line()
   
@@ -40,8 +54,13 @@ local function guess_case()
     return nil
   end
   
-  local word = line:sub(start_pos, end_pos)
+  return line:sub(start_pos, end_pos)
+end
 
+--- Guess the case style of a given word
+--- @param word string The word to analyze
+--- @return string | nil The guessed case style or nil if none matched
+local function guess_case(word)
   local has_hyphen = word:find("-") ~= nil
   local has_underscore = word:find("_") ~= nil
   local has_slash = word:find("/") ~= nil
@@ -62,6 +81,10 @@ local function guess_case()
 
   if not has_hyphen and not has_underscore and not has_slash and has_upper and has_lower then
     return "camel_case"
+  end
+
+  if not has_hyphen and not has_underscore and not has_upper and has_lower then
+    return "none"
   end
 end
 
@@ -105,34 +128,59 @@ local function next_char_upper()
   })
 end
 
-local case_delimiter = {
-  snake_case = "_",
-  kebab_case = "-",
-  camel_case = "upper_case_next", -- Special handling for camelCase
-  path_case = "/",
-}
+local function insert_char_at_cursor(char)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { char })
+    vim.api.nvim_win_set_cursor(0, { row, col + #char })
+end
+
+local function replace_char_at_cursor(char)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    if col == 0 then
+      return
+    end
+    vim.api.nvim_buf_set_text(0, row - 1, col - 1, row - 1, col, { char })
+    vim.api.nvim_win_set_cursor(0, { row, col })
+end
 
 local function join_case()
-  local case = guess_case()
+  local word = current_word()
+  if not word then
+    return
+  end
+
+  local case = guess_case(word)
   local lang = get_treesitter_language()
-  local lang_delimiter = lang and delimiters[lang] or nil
-  local word_delimiter = case and case_delimiter[case] or nil
-  local delimiter = word_delimiter or lang_delimiter or nil
+  local lang_delimiter = lang and options.delimiters[lang] or nil
+
+  local case_delimiter = {
+    snake_case = "_",
+    kebab_case = "-",
+    camel_case = "upper_case_next", -- Special handling for camelCase
+    path_case = "/",
+    none = lang_delimiter,
+  }
+
+  local mapping_delimiter = options.mapping_is_delimiter and options.mapping or nil
+  local delimiter = case and case_delimiter[case] or mapping_delimiter
 
   if delimiter == "upper_case_next" then
     next_char_upper()
   elseif delimiter then
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-    vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { delimiter })
-    vim.api.nvim_win_set_cursor(0, { row, col + #delimiter })
+    local last_char = word:sub(-1)
+    if options.mapping_is_delimiter and last_char == delimiter and delimiter ~= options.mapping then
+      replace_char_at_cursor(options.mapping)
+    else
+      insert_char_at_cursor(delimiter)
+    end
   end
 end
 
+--- Setup the caseword plugin
+--- @param opts CaseWordConfigUser | nil User configuration options
 local function setup(opts)
-  opts = opts or {}
-  if opts.delimiters then
-    delimiters = vim.tbl_extend("force", default_delimiters, opts.delimiters)
-  end
+  options = vim.tbl_deep_extend("force", options, opts or {})
+  vim.keymap.set("i", options.mapping, join_case, { noremap = true, silent = true })
 end
 
 return {
