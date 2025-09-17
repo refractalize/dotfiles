@@ -1,6 +1,6 @@
 gtk-tabs-location = hidden
 window-decoration = false
-theme = light:tokyonight-day,dark:tokyonight-storm
+theme = light:TokyoNight Day,dark:TokyoNight Storm
 gtk-single-instance = desktop
 working-directory = inherit
 window-inherit-working-directory = true
