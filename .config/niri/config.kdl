@@ -459,8 +459,10 @@ binds {
     Mod+Down { focus-window-down; }
     Mod+Up { focus-window-up; }
     Mod+Right { focus-column-right; }
-    Mod+Home { focus-column-first; }
-    Mod+End { focus-column-last; }
+    Mod+Home { focus-monitor-left; }
+    Mod+End { focus-monitor-right; }
+    Mod+Prior { focus-workspace-up; }
+    Mod+Next { focus-workspace-down; }
 
     Mod+Alt+Left { move-column-left; }
     Mod+Alt+Right { move-column-right; }

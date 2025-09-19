@@ -115,15 +115,16 @@ local function get_treesitter_language()
   return lang_tree:lang()
 end
 
+local waiting_for_next_char = false
+
 --- Listen for the next character and make it uppercase
 local function next_char_upper()
-  local group = vim.api.nvim_create_augroup("NextCharUpper", { clear = true })
+  waiting_for_next_char = true
   vim.api.nvim_create_autocmd("InsertCharPre", {
-    group = group,
     once = true,
     callback = function()
+      waiting_for_next_char = false
       vim.v.char = string.upper(vim.v.char)
-      vim.api.nvim_del_augroup_by_id(group)
     end,
   })
 end
@@ -144,6 +145,13 @@ local function replace_char_at_cursor(char)
 end
 
 local function join_case()
+  if waiting_for_next_char then
+    if options.mapping_is_delimiter then
+      insert_char_at_cursor(options.mapping)
+    end
+    return
+  end
+
   local word = current_word()
   if not word then
     if options.mapping_is_delimiter then
