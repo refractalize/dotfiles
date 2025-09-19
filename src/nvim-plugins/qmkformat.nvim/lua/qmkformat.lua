@@ -1,6 +1,12 @@
 local ts_utils = require("runtest.languages.utils")
 local kc_no = "XXXXXXX"
 
+local default_config = {}
+local global_config = {
+  keyboard_templates = {
+  },
+}
+
 local function parse_keyboard_template(template)
   local rows = vim.split(template, "\n")
   local keyboard = {}
@@ -75,7 +81,28 @@ local function max_column_width(layout_keys)
     end)
 end
 
+local find_template = function(bufnr)
+  local filepath = vim.api.nvim_buf_get_name(bufnr)
+  if filepath == "" then
+    return nil
+  end
+
+  for _, template_config in pairs(global_config.keyboard_templates) do
+    if vim.fn.match(filepath, vim.fn.glob2regpat(template_config.file_pattern)) ~= -1 then
+      return parse_keyboard_template(template_config.template)
+    end
+  end
+
+  return nil
+end
+
 local function layout_keymaps()
+  local keyboard_template = find_template(0)
+  if not keyboard_template then
+    vim.notify("No keyboard template found for this file", vim.log.levels.ERROR)
+    return
+  end
+
   local query = vim.treesitter.query.parse(
     "c",
     [[
@@ -103,14 +130,6 @@ local function layout_keymaps()
           arguments: (argument_list (_) @argument)) @node
     ]]
   )
-
-  local keyboard_template = parse_keyboard_template([[
-    X X X X X X _ _ X X X X X X
-    X X X X X X _ _ X X X X X X
-    X X X X X X _ _ X X X X X X
-    X X X X X X X X X X X X X X
-    _ _ X X X X X X X X X X _ _
-  ]])
 
   local matches = ts_utils.find_matches(query)
 
@@ -153,6 +172,12 @@ local function layout_keymaps()
   end
 end
 
+local function setup(config)
+  global_config = vim.tbl_deep_extend("force", default_config, config or {})
+  vim.api.nvim_create_user_command("QmkFormat", layout_keymaps, { nargs = 0 })
+end
+
 return {
   layout_keymaps = layout_keymaps,
+  setup = setup,
 }

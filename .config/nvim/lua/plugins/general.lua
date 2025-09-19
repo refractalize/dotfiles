@@ -12,13 +12,16 @@ return {
 
           local paths = vim.fn.split(vim.env.PATH, platform.path_sep)
 
-          local already_in_path = vim.iter(paths):any(function(p)
-            return p == path.bin_prefix()
-          end)
+          -- FIXME: this is broken with the latest moson
 
-          if not already_in_path then
-            vim.env.PATH = vim.env.PATH .. platform.path_sep .. path.bin_prefix()
-          end
+          -- local already_in_path = vim.iter(paths):any(function(p)
+          --   return p == path.bin_prefix()
+          -- end)
+          -- local already_in_path = false
+
+          -- if not already_in_path then
+          --   vim.env.PATH = vim.env.PATH .. platform.path_sep .. path.bin_prefix()
+          -- end
         end,
       })
     end,
@@ -64,7 +67,7 @@ return {
     },
   },
   {
-    "echasnovski/mini.pairs",
+    "nvim-mini/mini.pairs",
     enabled = false,
   },
   {
@@ -215,7 +218,7 @@ return {
   },
 
   {
-    "echasnovski/mini.animate",
+    "nvim-mini/mini.animate",
     enabled = false,
   },
   {
@@ -472,6 +475,35 @@ return {
   },
   {
     "refractalize/qmkformat.nvim",
+
+    cmd = {
+      "QmkFormat",
+    },
+
+    opts = {
+      keyboard_templates = {
+        sofle = {
+          file_pattern = "*sofle*",
+          template = [[
+            X X X X X X _ _ X X X X X X
+            X X X X X X _ _ X X X X X X
+            X X X X X X _ _ X X X X X X
+            X X X X X X X X X X X X X X
+            _ _ X X X X X X X X X X _ _
+          ]],
+        },
+        voyager = {
+          file_pattern = "*voyager*",
+          template = [[
+            X X X X X X _ _ X X X X X X
+            X X X X X X _ _ X X X X X X
+            X X X X X X _ _ X X X X X X
+            X X X X X X _ _ X X X X X X
+            _ _ _ _ X X _ _ X X _ _ _ _
+          ]],
+        },
+      },
+    },
   },
   {
     "refractalize/ignore-lint",
@@ -500,7 +532,7 @@ return {
 
   {
     "willmcpherson2/gnome.nvim",
-    
+
     cond = function()
       return vim.fn.has("mac") ~= 1
     end,

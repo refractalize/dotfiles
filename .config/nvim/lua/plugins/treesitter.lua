@@ -3,13 +3,6 @@ return {
     "nvim-treesitter/nvim-treesitter",
 
     opts = {
-      incremental_selection = {
-        keymaps = {
-          init_selection = ")",
-          node_incremental = ")",
-          node_decremental = "(",
-        },
-      },
       textobjects = {
         swap = {
           enable = true,
@@ -22,6 +15,36 @@ return {
         },
       },
     },
+  },
+  {
+    "shushtain/nvim-treesitter-incremental-selection",
+    keys = {
+      {
+        ")",
+        desc = "Increment selection",
+        function()
+          require("nvim-treesitter-incremental-selection").init_selection()
+        end,
+        mode = "n",
+      },
+      {
+        ")",
+        desc = "Increment selection",
+        function()
+          require("nvim-treesitter-incremental-selection").increment_node()
+        end,
+        mode = "v",
+      },
+      {
+        "(",
+        desc = "Decrement selection",
+        function()
+          require("nvim-treesitter-incremental-selection").decrement_node()
+        end,
+        mode = "v",
+      },
+    },
+    opt = {},
   },
   {
     "michaeljsmith/vim-indent-object", -- treat indented sections of code as vim objects

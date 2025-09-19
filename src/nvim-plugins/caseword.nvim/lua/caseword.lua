@@ -146,6 +146,9 @@ end
 local function join_case()
   local word = current_word()
   if not word then
+    if options.mapping_is_delimiter then
+      insert_char_at_cursor(options.mapping)
+    end
     return
   end
 
