@@ -61,7 +61,7 @@ return {
     },
   },
   {
-    "mpataki/claudecode.nvim",
+    "coder/claudecode.nvim",
     dependencies = {
       "folke/snacks.nvim",
     },
@@ -79,28 +79,17 @@ return {
         },
       },
     },
+    event = "VeryLazy",
     opts = {
-      enable_terminal = false,
+      terminal = {
+        provider = "none",
+      },
       auto_start = true,
     },
     keys = {
       { "<leader>a", nil, desc = "AI/Claude Code" },
-      {
-        "<leader>ar",
-        function()
-          require("claudecode").start(true)
-        end,
-        desc = "Copy Claude Code Command",
-      },
       { "<leader>as", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
       { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
-      {
-        "<leader>as",
-        "<cmd>ClaudeCodeTreeAdd<cr>",
-        desc = "Add file",
-        ft = { "NvimTree", "neo-tree", "oil" },
-      },
-      -- Diff management
       { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
       { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
