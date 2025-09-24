@@ -34,6 +34,34 @@ return {
     },
   },
   {
+    "nvim-lualine/lualine.nvim",
+
+    opts = {
+      winbar = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {
+          { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+          { "filename", path = 1 },
+        },
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {},
+      },
+      inactive_winbar = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {
+          { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+          { "filename", path = 1 },
+        },
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {},
+      },
+    },
+  },
+  {
     "refractalize/auto-save",
     enabled = function()
       return not vim.g.started_by_firenvim
