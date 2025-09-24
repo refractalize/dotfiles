@@ -296,3 +296,25 @@ vim.keymap.set("n", "<leader>cR", function()
     end
   end)
 end)
+
+local last_char = nil
+
+-- Forward mapping - waits for character
+vim.keymap.set('n', '<C-M>s', function()
+  last_char = vim.fn.getcharstr()
+  vim.cmd('normal ]' .. last_char)
+end)
+
+-- Backward mapping - reuses last character
+vim.keymap.set('n', '<C-M>[', function()
+  if last_char then
+    vim.cmd('normal [' .. last_char)
+  end
+end)
+
+-- Backward mapping - reuses last character
+vim.keymap.set('n', '<C-M>]', function()
+  if last_char then
+    vim.cmd('normal ]' .. last_char)
+  end
+end)
