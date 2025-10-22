@@ -6,3 +6,6 @@ Requisite=graphical-session.target
 [Service]
 ExecStart=swayosd-server
 Restart=on-failure
+
+[Install]
+WantedBy=niri.service

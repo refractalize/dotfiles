@@ -20,6 +20,23 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end)
 
+-- Claude Code format copy
+vim.keymap.set("n", "<C-S-c>", function()
+  vim.fn.setreg("+", "@" .. vim.fn.expand("%:."))
+end, { noremap = true, silent = true, desc = "Copy filename in Claude Code format" })
+
+vim.keymap.set("v", "<C-S-c>", function()
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  local filepath = vim.fn.expand("%:.")
+  local line_spec = start_line == end_line and tostring(start_line) or (start_line .. "-" .. end_line)
+  local result = "@" .. filepath .. ":" .. line_spec
+  vim.fn.setreg("+", result)
+end, { noremap = true, silent = true, desc = "Copy filename with line range in Claude Code format" })
+
 vim.keymap.del("v", ">")
 vim.keymap.del("v", "<")
 

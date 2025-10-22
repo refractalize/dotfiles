@@ -572,11 +572,4 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     enabled = false,
   },
-
-  {
-    "refractalize/caseword.nvim",
-    dev = true,
-    event = "InsertEnter",
-    opts = {},
-  },
 }
