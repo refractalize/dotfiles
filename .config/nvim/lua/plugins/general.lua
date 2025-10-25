@@ -536,6 +536,14 @@ return {
   {
     "refractalize/ignore-lint",
 
+    cmd = { "IgnoreLint" },
+
+    config = function()
+      vim.api.nvim_create_user_command("IgnoreLint", function()
+        require("ignore-lint").ignore_lint()
+      end, { desc = "Ignore lint for current line or selection" })
+    end,
+
     keys = {
       {
         "<leader>xl",

@@ -17,7 +17,7 @@ keybind = ctrl+shift+r=reload_config
 keybind = ctrl+shift+c=unbind
 keybind = ctrl+shift+v=unbind
 keybind = shift+enter=text:\n
-keybind = ctrl+f=write_screen_file:paste
+keybind = ctrl+alt+f=write_screen_file:paste
 keybind = ctrl+shift+f=write_screen_file:open
 keybind = ctrl+shift+zero=increase_font_size:1
 keybind = ctrl+shift+equal=increase_font_size:1
