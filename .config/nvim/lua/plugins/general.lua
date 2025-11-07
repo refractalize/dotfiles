@@ -580,4 +580,11 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     enabled = false,
   },
+
+  {
+    "zapling/mason-lock.nvim",
+
+    cmd = { "MasonLock", "MasonLockRestore" },
+    opts = {},
+  },
 }
