@@ -20,12 +20,14 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end)
 
+local command_control = vim.fn.has('mac') == 1 and "D" or "C"
+
 -- Claude Code format copy
-vim.keymap.set("n", "<C-S-c>", function()
+vim.keymap.set("n", "<" .. command_control .. "-S-c>", function()
   vim.fn.setreg("+", "@" .. vim.fn.expand("%:."))
 end, { noremap = true, silent = true, desc = "Copy filename in Claude Code format" })
 
-vim.keymap.set("v", "<C-S-c>", function()
+vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
   local start_line = vim.fn.line("v")
   local end_line = vim.fn.line(".")
   if start_line > end_line then
