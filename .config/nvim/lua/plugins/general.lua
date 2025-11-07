@@ -580,4 +580,27 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     enabled = false,
   },
+
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    event = "VeryLazy",
+    priority = 1000,
+
+    dependencies = {
+      {
+        "neovim/nvim-lspconfig",
+        opts = { diagnostics = { virtual_text = false } },
+      },
+    },
+
+    opts = {
+      options = {
+        show_source = {
+          enabled = true, -- Enable showing source names
+          if_many = false, -- Only show source if multiple sources exist for the same diagnostic
+        },
+        override_open_float = false,
+      },
+    },
+  },
 }
