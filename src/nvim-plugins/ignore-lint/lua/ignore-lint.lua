@@ -109,7 +109,7 @@ end
 
 local function find_linter(diagnostics)
   local sources = vim.tbl_map(function(d)
-    return d.source
+    return d.source:lower()
   end, diagnostics)
   for _, source in ipairs(sources) do
     local linter = languages[source]

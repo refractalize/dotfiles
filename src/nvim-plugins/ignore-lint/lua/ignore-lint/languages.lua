@@ -106,6 +106,37 @@ local languages = {
       end
     end,
   },
+  ruff = {
+    current_line = function(codes, line)
+      if string.match(line, "#%s*ruff:") then
+        -- Parse existing rules from line like "# noqa: rule1, rule2"
+        local existing_rules = {}
+        local rules_match = string.match(line, "#%s*noqa:%s*([^%]]+)")
+        if rules_match then
+          for rule in string.gmatch(rules_match, "([^,%s]+)") do
+            existing_rules[vim.trim(rule)] = true
+          end
+        end
+        
+        -- Add new codes that aren't already present
+        local all_rules = {}
+        for rule, _ in pairs(existing_rules) do
+          table.insert(all_rules, rule)
+        end
+        for _, code in ipairs(codes) do
+          if not existing_rules[code] then
+            table.insert(all_rules, code)
+          end
+        end
+        
+        -- Replace the pyright ignore section
+        local prefix = string.match(line, "^(.-)#%s*pyright:")
+        return prefix .. "# noqa: " .. vim.fn.join(all_rules, ", ")
+      else
+        return line .. "  # noqa: " .. vim.fn.join(codes, ", ")
+      end
+    end,
+  },
 }
 
 return languages
