@@ -9,7 +9,8 @@ return {
     opts = {
       diagnostics = {
         underline = { severity = { min = vim.diagnostic.severity.WARN } },
-        virtual_text = { severity = { min = vim.diagnostic.severity.WARN } },
+        virtual_text = false,
+        -- virtual_text = { severity = { min = vim.diagnostic.severity.WARN } },
         float = {
           source = true,
           prefix = function(diagnostic)
