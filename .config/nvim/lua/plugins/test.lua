@@ -9,6 +9,20 @@ return {
 
     keys = {
       {
+        "]S",
+        function()
+          require("runtest").goto_next_entry(true)
+        end,
+        desc = "Next Entry (Including External Files)",
+      },
+      {
+        "[S",
+        function()
+          require("runtest").goto_previous_entry(true)
+        end,
+        desc = "Previous Entry (Including External Files)",
+      },
+      {
         "<leader>ro",
         function()
           require("runtest").open_output()
@@ -130,6 +144,7 @@ return {
       runners = {
         pytest = {
           args = { ["--log-cli-level"] = "INFO", "-s" },
+          external_file_patterns = { "^\\.venv/" },
         },
       },
     },

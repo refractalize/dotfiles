@@ -184,7 +184,7 @@ vim.keymap.set("n", "]s", function()
   if dap.session() ~= nil then
     dap.up()
   else
-    require("runtest").goto_next_entry()
+    require("runtest").goto_next_entry(false)
   end
 end)
 
@@ -193,7 +193,7 @@ vim.keymap.set("n", "[s", function()
   if dap.session() ~= nil then
     dap.down()
   else
-    require("runtest").goto_previous_entry()
+    require("runtest").goto_previous_entry(false)
   end
 end)
 

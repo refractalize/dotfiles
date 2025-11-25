@@ -36,8 +36,10 @@ end
 local function toggle_environment_variable(name)
   if is_variable_set(name) then
     vim.fn.setenv(name, nil)
+    vim.notify("Environment variable '" .. name .. "' unset", vim.log.levels.INFO)
   else
     vim.fn.setenv(name, config.environment_variables[name] or "true")
+    vim.notify("Environment variable '" .. name .. "' set", vim.log.levels.INFO)
   end
 end
 
