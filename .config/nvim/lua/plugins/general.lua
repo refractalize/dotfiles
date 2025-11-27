@@ -510,6 +510,7 @@ return {
 
     cmd = {
       "QmkFormat",
+      "QmkExportYaml",
     },
 
     opts = {

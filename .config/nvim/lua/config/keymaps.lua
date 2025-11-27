@@ -24,7 +24,7 @@ local command_control = vim.fn.has('mac') == 1 and "D" or "C"
 
 -- Claude Code format copy
 vim.keymap.set("n", "<" .. command_control .. "-S-c>", function()
-  vim.fn.setreg("+", "@" .. vim.fn.expand("%:."))
+  vim.fn.setreg("+", vim.fn.expand("%:."))
 end, { noremap = true, silent = true, desc = "Copy filename in Claude Code format" })
 
 vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
@@ -35,7 +35,7 @@ vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
   end
   local filepath = vim.fn.expand("%:.")
   local line_spec = start_line == end_line and tostring(start_line) or (start_line .. "-" .. end_line)
-  local result = "@" .. filepath .. ":" .. line_spec
+  local result = filepath .. ":" .. line_spec
   vim.fn.setreg("+", result)
 end, { noremap = true, silent = true, desc = "Copy filename with line range in Claude Code format" })
 
