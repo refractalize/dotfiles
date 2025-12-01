@@ -570,6 +570,12 @@ return {
       },
     },
   },
+  {
+    "refractalize/uv-deps.nvim",
+
+    opts = {
+    },
+  },
 
   {
     "willmcpherson2/gnome.nvim",
