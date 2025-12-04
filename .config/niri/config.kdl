@@ -595,9 +595,9 @@ binds {
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
     Mod+1 { maximize-column; }
-    Mod+2 { set-column-width "50%"; }
-    Mod+3 { set-column-width "33.333%"; }
-    Mod+4 { set-column-width "25%"; }
+    Mod+2 { spawn "~/.local/bin/niri-set-widths" "50%" "50%"; }
+    Mod+3 { spawn "~/.local/bin/niri-set-widths" "66.66%" "33.33%"; }
+    Mod+4 { spawn "~/.local/bin/niri-set-widths" "75%" "25%"; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+1 { move-window-to-workspace 1; }

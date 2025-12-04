@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+set -e
+
+WORKSPACE_ID=$(niri msg -j workspaces | jq -r '.[] | select(.is_focused) | .id')
+
+if [[ -z "$WORKSPACE_ID" ]]; then
+  echo "No focused workspace found."
+  exit 1
+fi
+
+WIDTHS=($*)
+WIDTH_INDEX=1
+
+for WINDOW_ID in $(niri msg -j windows | jq -r --argjson ws_id "$WORKSPACE_ID" '[.[] | select(.workspace_id == $ws_id and .layout.pos_in_scrolling_layout[1] == 1)] | sort_by(.layout.pos_in_scrolling_layout)[] | .id'); do
+  local WIDTH=$WIDTHS[$WIDTH_INDEX]
+  WIDTH_INDEX=$((WIDTH_INDEX + 1))
+
+  if [[ -n "$WIDTH" ]]; then
+    niri msg action set-window-width --id $WINDOW_ID $WIDTH
+  fi
+done
