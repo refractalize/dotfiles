@@ -16,6 +16,7 @@
   unpushed = log @{u}..
   unreleased = log $(git describe --abbrev=0)..
   clean-branches = "!git branch --merged | grep  -v '\\*\\|master' | xargs -n 1 git branch -d"
+	wt = worktree
 [push]
   default = simple
   autoSetupRemote = true
