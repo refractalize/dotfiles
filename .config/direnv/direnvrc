@@ -37,3 +37,7 @@ layout_python_venv() {
 
   source $venv_name/bin/activate
 }
+
+if [[ -z $DIRENV_ORIGINAL_PWD ]]; then
+  export DIRENV_ORIGINAL_PWD=$PWD
+fi
