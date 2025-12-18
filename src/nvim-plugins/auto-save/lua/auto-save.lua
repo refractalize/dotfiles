@@ -48,7 +48,7 @@ function setup(options)
     clear = true,
   })
 
-  vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+  vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "TextChangedP" }, {
       callback = function()
         local buf = vim.api.nvim_get_current_buf()
 
