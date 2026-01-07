@@ -197,9 +197,7 @@ vim.keymap.set("n", "[s", function()
   end
 end)
 
--- smoother scrolling
-vim.keymap.set("", "<ScrollWheelUp>", "<C-Y>")
-vim.keymap.set("", "<ScrollWheelDown>", "<C-E>")
+vim.o.mousescroll = 'ver:1,hor:2'
 
 local function open_buffer_in_tab(tabnumber, close, vertical)
   local buf = vim.api.nvim_get_current_buf()

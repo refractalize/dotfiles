@@ -146,6 +146,10 @@ return {
           args = { ["--log-cli-level"] = "INFO", "-s" },
           external_file_patterns = { "^\\.venv/" },
         },
+        cargo = {
+          args = { "--", "--nocapture" },
+          env = { RUST_BACKTRACE = "1" },
+        },
       },
     },
   },
