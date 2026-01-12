@@ -149,19 +149,21 @@ return {
       },
       setup = {
         pylsp = function()
+          --- @param _buf number
           --- @param client vim.lsp.Client
-          LazyVim.lsp.on_attach(function(client, _)
+          Snacks.util.lsp.on({ name = "pylsp" }, function(_buf, client)
             client.server_capabilities.signatureHelpProvider = nil
             client.server_capabilities.hoverProvider = false
             client.server_capabilities.renameProvider = false
-          end, "pylsp")
+          end)
         end,
         vtsls = function()
+          --- @param _buf number
           --- @param client vim.lsp.Client
-          LazyVim.lsp.on_attach(function(client, _)
+          Snacks.util.lsp.on({ name = "vtsls" }, function(_buf, client)
             client.server_capabilities.inlayHintProvider = false
             client.server_capabilities.documentFormattingProvider = false
-          end, "vtsls")
+          end)
         end,
       },
     },

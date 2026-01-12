@@ -233,7 +233,7 @@ layout {
         width 16
         gap 8
         length total-proportion=1.0
-        position "left"
+        position "top"
         place-within-column
         corner-radius 4
         gaps-between-tabs 8
@@ -452,12 +452,13 @@ binds {
     Mod+Space hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
     Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
     Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/vicinae/wm/switch-windows"; }
+    Mod+Shift+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/knoopx/niri/workspaces"; }
     Mod+S hotkey-overlay-title="Cast the current window" { set-dynamic-cast-window;}
     Mod+Ctrl+S hotkey-overlay-title="Cast the current monitor" { set-dynamic-cast-monitor;}
     Mod+Ctrl+SemiColon hotkey-overlay-title="Focus previous workspace" { focus-workspace-previous; }
     Mod+Ctrl+P hotkey-overlay-title="Focus previous monitor" { focus-monitor-previous; }
     Mod+Ctrl+Alt+Shift+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
-    Mod+Ctrl+Alt+Shift+S hotkey-overlay-title="Suspend the system" { spawn "systemctl" "suspend"; }
+    Mod+Ctrl+Alt+Shift+S allow-when-locked=true hotkey-overlay-title="Suspend the system" { spawn "systemctl" "suspend"; }
     Mod+B hotkey-overlay-title="Bluetooth" { spawn "vicinae" "vicinae://extensions/Gelei/bluetooth/devices"; }
     Mod+MouseMiddle hotkey-overlay-title="Overview" { toggle-overview; }
 
@@ -744,6 +745,12 @@ window-rule {
 window-rule {
     match app-id="^Minecraft"
     open-fullscreen true
+    open-focused true
+}
+
+window-rule {
+    match app-id="io.github.dyegoaurelio.simple-wireplumber-gui"
+    open-floating true
     open-focused true
 }
 
