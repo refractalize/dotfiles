@@ -1,30 +1,19 @@
 -- .local/share/nvim/lazy
 return {
   {
-    "direnv/direnv.vim",
-
-    config = function()
-      vim.api.nvim_create_autocmd({ "User" }, {
-        pattern = "DirenvLoaded",
-        callback = function()
-          local path = require("mason-core.path")
-          local platform = require("mason-core.platform")
-
-          local paths = vim.fn.split(vim.env.PATH, platform.path_sep)
-
-          -- FIXME: this is broken with the latest moson
-
-          -- local already_in_path = vim.iter(paths):any(function(p)
-          --   return p == path.bin_prefix()
-          -- end)
-          -- local already_in_path = false
-
-          -- if not already_in_path then
-          --   vim.env.PATH = vim.env.PATH .. platform.path_sep .. path.bin_prefix()
-          -- end
-        end,
-      })
-    end,
+    "NotAShelf/direnv.nvim",
+    config = {
+      statusline = {
+        -- Enable statusline component
+        enabled = true,
+        -- Icon to display in statusline
+        icon = "󱚟",
+      },
+      keybindings = {
+        allow = "<Leader>da",
+        reload = "<Leader>dr",
+      },
+    },
   },
   {
     "folke/trouble.nvim",
@@ -37,6 +26,16 @@ return {
     "nvim-lualine/lualine.nvim",
 
     opts = {
+      sections = {
+        lualine_x = {
+          function()
+            return require("direnv").statusline()
+          end,
+          "encoding",
+          "fileformat",
+          "filetype",
+        },
+      },
       winbar = {
         lualine_a = {},
         lualine_b = {},
@@ -573,8 +572,7 @@ return {
   {
     "refractalize/uv-deps.nvim",
 
-    opts = {
-    },
+    opts = {},
   },
 
   {

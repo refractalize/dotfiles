@@ -8,6 +8,14 @@ return {
         false,
       },
       {
+        "<leader>da",
+        false,
+      },
+      {
+        "<leader>dr",
+        false,
+      },
+      {
         "<leader>dn",
         function()
           require("dap").step_over()
