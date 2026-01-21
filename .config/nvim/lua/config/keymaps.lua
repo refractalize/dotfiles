@@ -9,23 +9,23 @@ vim.keymap.set("n", "gp", "`[v`]")
 -- copy paths to clipboard
 vim.keymap.set("n", "<leader>bcf", function()
   vim.fn.setreg("+", vim.fn.expand("%:."))
-end)
+end, { noremap = true, silent = true, desc = "Copy filename" })
 vim.keymap.set("n", "<leader>bcl", function()
   vim.fn.setreg("+", vim.fn.expand("%:.") .. ":" .. vim.fn.line("."))
-end)
+end, { noremap = true, silent = true, desc = "Copy filename with line number" })
 vim.keymap.set("n", "<leader>bcF", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
-end)
+end, { noremap = true, silent = true, desc = "Copy full file path" })
 vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
-end)
+end, { noremap = true, silent = true, desc = "Copy full file path with line number" })
 
 local command_control = vim.fn.has('mac') == 1 and "D" or "C"
 
 -- Claude Code format copy
 vim.keymap.set("n", "<" .. command_control .. "-S-c>", function()
   vim.fn.setreg("+", vim.fn.expand("%:."))
-end, { noremap = true, silent = true, desc = "Copy filename in Claude Code format" })
+end, { noremap = true, silent = true, desc = "Copy filename" })
 
 vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
   local start_line = vim.fn.line("v")
@@ -37,7 +37,7 @@ vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
   local line_spec = start_line == end_line and tostring(start_line) or (start_line .. "-" .. end_line)
   local result = filepath .. ":" .. line_spec
   vim.fn.setreg("+", result)
-end, { noremap = true, silent = true, desc = "Copy filename with line range in Claude Code format" })
+end, { noremap = true, silent = true, desc = "Copy filename with line range" })
 
 vim.keymap.del("v", ">")
 vim.keymap.del("v", "<")

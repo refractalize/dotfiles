@@ -7,7 +7,7 @@ return {
         -- Enable statusline component
         enabled = true,
         -- Icon to display in statusline
-        icon = "󱚟",
+        icon = "$",
       },
       keybindings = {
         allow = "<Leader>da",
