@@ -240,6 +240,12 @@ layout {
     }
 }
 
+gestures {
+    hot-corners {
+        off
+    }
+}
+
 // Add lines like this to spawn processes at startup.
 // Note that running niri as a session supports xdg-desktop-autostart,
 // which may be more convenient to use.
@@ -704,55 +710,7 @@ workspace "communication" {
     open-on-output "DP-2"
 }
 
-window-rule {
-    match app-id="Slack"
-    open-on-workspace "communication"
-    open-focused true
-}
-
-window-rule {
-    match app-id="discord"
-    open-on-workspace "communication"
-    open-focused true
-}
-
-workspace "music" {
-    open-on-output "DP-2"
-}
-
-window-rule {
-    match app-id="Spotify"
-    open-on-workspace "music"
-    open-focused true
-}
-
-window-rule {
-    match app-id="brave-eikjhbkpemdappjfcmdeeeamdpkgabmk-Default"
-    open-on-workspace "music"
-    open-focused true
-}
-
-workspace "windows" {
-    open-on-output "DP-2"
-}
-
-window-rule {
-    match app-id="virt-manager"
-    open-on-workspace "windows"
-    open-focused true
-}
-
-window-rule {
-    match app-id="^Minecraft"
-    open-fullscreen true
-    open-focused true
-}
-
-window-rule {
-    match app-id="io.github.dyegoaurelio.simple-wireplumber-gui"
-    open-floating true
-    open-focused true
-}
+include "window-rules.kdl"
 
 debug {
     honor-xdg-activation-with-invalid-serial

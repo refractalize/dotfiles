@@ -619,4 +619,53 @@ return {
       },
     },
   },
+  {
+    "MagicDuck/grug-far.nvim",
+
+    keys = {
+      {
+        "<Leader>ss",
+        function()
+          local search = vim.fn.getreg("/")
+
+          if search then
+            search = search:gsub("\\<", "\\b"):gsub("\\>", "\\b")
+          end
+
+          require("grug-far").open({
+            prefills = {
+              search = search,
+            },
+          })
+        end,
+        desc = "Select and open file from grug",
+      },
+    },
+
+    opts = {},
+  },
+  {
+    "stevearc/quicker.nvim",
+    ft = "qf",
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
+    opts = {
+      keys = {
+        {
+          ">",
+          function()
+            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+          end,
+          desc = "Expand quickfix context",
+        },
+        {
+          "<",
+          function()
+            require("quicker").collapse()
+          end,
+          desc = "Collapse quickfix context",
+        },
+      },
+    },
+  },
 }

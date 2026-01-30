@@ -36,3 +36,11 @@ command = "git pr-prompt"
 when="git pr-prompt"
 symbol = " "
 style = "bold blue"
+
+[direnv]
+disabled = false
+symbol = "$"
+allowed_msg = ""
+denied_msg = ""
+loaded_msg = ""
+unloaded_msg = ""

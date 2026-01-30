@@ -20,6 +20,7 @@ if ! zgen saved; then
   zgen load ~/.secrets.zsh
   zgen load ~/.zsh
 
+  zgen load kylesnowschwartz/zsh-ai-cmd . main
   zgen load refractalize/nvimvm . main
 
   zgen save
