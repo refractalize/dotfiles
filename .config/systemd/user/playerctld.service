@@ -1,0 +1,12 @@
+[Unit]
+Description=Playerctl Daemon
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/playerctld
+Slice=background.slice
+TimeoutStopSec=5sec
+Restart=on-failure
+
+[Install]
+WantedBy=niri.service
