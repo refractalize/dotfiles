@@ -2,10 +2,10 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
 
-    enabled = false,
+    enabled = true,
 
     opts = {
-      model = "claude-3.7-sonnet",
+      model = "gpt-5.2-codex",
       auto_insert_mode = false,
       window = {
         width = 0,
@@ -14,7 +14,20 @@ return {
     },
   },
   {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim", branch = "master" },
+    },
+    build = "make tiktoken",
+    opts = {
+      -- See Configuration section for options
+    },
+  },
+  {
     "olimorris/codecompanion.nvim",
+
+    enabled = false,
+
     opts = {
       strategies = {
         chat = {
@@ -96,9 +109,9 @@ return {
   },
   {
     "yetone/avante.nvim",
-    enabled = false,
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     -- ⚠️ must add this setting! ! !
+    enabled = false,
     build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
       or "make",
     event = "VeryLazy",
@@ -122,6 +135,15 @@ return {
             max_tokens = 20480,
           },
         },
+        moonshot = {
+          endpoint = "https://api.moonshot.ai/v1",
+          model = "kimi-k2-0711-preview",
+          timeout = 30000, -- Timeout in milliseconds
+          extra_request_body = {
+            temperature = 0.75,
+            max_tokens = 32768,
+          },
+        },
       },
     },
     dependencies = {
@@ -134,7 +156,7 @@ return {
       "ibhagwan/fzf-lua", -- for file_selector provider fzf
       "stevearc/dressing.nvim", -- for input provider dressing
       "folke/snacks.nvim", -- for input provider snacks
-      "nvim-tree/nvim-web-devicons", -- or nvim-mini/mini.icons
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
       "zbirenbaum/copilot.lua", -- for providers='copilot'
       {
         -- support for image pasting

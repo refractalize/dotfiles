@@ -463,7 +463,7 @@ binds {
     Mod+Ctrl+S hotkey-overlay-title="Cast the current monitor" { set-dynamic-cast-monitor;}
     Mod+Ctrl+SemiColon hotkey-overlay-title="Focus previous workspace" { focus-workspace-previous; }
     Mod+Ctrl+P hotkey-overlay-title="Focus previous monitor" { focus-monitor-previous; }
-    Mod+Ctrl+Alt+Shift+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Mod+Ctrl+Alt+Shift+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Mod+Ctrl+Alt+Shift+S allow-when-locked=true hotkey-overlay-title="Suspend the system" { spawn "systemctl" "suspend"; }
     Mod+B hotkey-overlay-title="Bluetooth" { spawn "vicinae" "vicinae://extensions/Gelei/bluetooth/devices"; }
     Mod+MouseMiddle hotkey-overlay-title="Overview" { toggle-overview; }
@@ -474,10 +474,10 @@ binds {
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "5"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "-5"; }
-    XF86AudioMute        allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "swayosd-client" "--input-volume" "mute-toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "increment" "3"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "decrement" "3"; }
+    XF86AudioMute        allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "mute"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
     XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
     XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
@@ -617,10 +617,10 @@ binds {
     Mod+R hotkey-overlay-title="Switch preset column width" { switch-preset-column-width; }
     Mod+Shift+R hotkey-overlay-title="Switch preset window height" { switch-preset-window-height; }
     Mod+Ctrl+R hotkey-overlay-title="Reset window height" { reset-window-height; }
-    Mod+F hotkey-overlay-title="Maximize column" { maximize-column; }
+    Mod+F hotkey-overlay-title="Maximize column" { maximize-window-to-edges; }
     Mod+Shift+F hotkey-overlay-title="Fullscreen window" { fullscreen-window; }
     Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
-    Mod+Alt+F hotkey-overlay-title="Fullscreen window" { maximize-window-to-edges; }
+    Mod+Alt+F hotkey-overlay-title="Fullscreen window" { maximize-column; }
 
     // Expand the focused column to space not taken up by other fully visible columns.
     // Makes the column "fill the rest of the space".

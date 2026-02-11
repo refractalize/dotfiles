@@ -59,3 +59,9 @@ window-rule {
     open-floating true
     open-focused true
 }
+
+window-rule {
+    match app-id="com.github.wwmm.easyeffects"
+    open-floating true
+    open-focused true
+}

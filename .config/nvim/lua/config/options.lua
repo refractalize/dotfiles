@@ -17,3 +17,4 @@ vim.opt.fillchars:append("foldsep:│")
 vim.opt.splitkeep = "cursor"
 vim.g.lazyvim_python_lsp = "basedpyright"
 vim.opt.winborder = "rounded"
+vim.g.python_recommended_style = 0
