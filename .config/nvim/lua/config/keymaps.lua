@@ -20,9 +20,8 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end, { noremap = true, silent = true, desc = "Copy full file path with line number" })
 
-local command_control = vim.fn.has('mac') == 1 and "D" or "C"
+local command_control = vim.fn.has("mac") == 1 and "D" or "C"
 
--- Claude Code format copy
 vim.keymap.set("n", "<" .. command_control .. "-S-c>", function()
   vim.fn.setreg("+", vim.fn.expand("%:."))
 end, { noremap = true, silent = true, desc = "Copy filename" })
@@ -38,6 +37,32 @@ vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
   local result = filepath .. ":" .. line_spec
   vim.fn.setreg("+", result)
 end, { noremap = true, silent = true, desc = "Copy filename with line range" })
+
+vim.keymap.set("n", "<leader>p", function()
+  local gitbrowse = nil
+
+  Snacks.gitbrowse({
+    open = function(url)
+      gitbrowse = url
+    end,
+    what = "file",
+    notify = false,
+  })
+  local paths = {
+    vim.fn.expand("%:p:h"),
+    vim.fn.expand("%:."),
+    vim.fn.getcwd(),
+    gitbrowse,
+  }
+
+  vim.ui.select(paths, {
+    prompt = "Copy path to clipboard",
+  }, function(selected)
+    if selected then
+      vim.fn.setreg("+", selected)
+    end
+  end)
+end)
 
 vim.keymap.del("v", ">")
 vim.keymap.del("v", "<")
@@ -103,14 +128,14 @@ vim.keymap.set("c", "<M-f>", "<S-Right>")
 vim.keymap.set("c", "<M-BS>", "<C-W>")
 
 -- ghostty copy/paste
-if vim.fn.has('mac') == 1 then
+if vim.fn.has("mac") == 1 then
   -- keybind = performable:super+c=copy_to_clipboard
   vim.keymap.set("v", "<D-c>", '"+y', { noremap = true, silent = true, desc = "Copy visual text to clipboard" })
 else
   -- keybind = performable:ctrl+c=copy_to_clipboard
   vim.keymap.set("v", "<C-c>", '"+y', { noremap = true, silent = true, desc = "Copy visual text to clipboard" })
   -- Allow blockwise visual mode as a replacement for the default <C-v> mapping
-  vim.keymap.set("n", "<C-S-v>", '<C-v>', { noremap = true, silent = true, desc = "Blockwise visual mode" })
+  vim.keymap.set("n", "<C-S-v>", "<C-v>", { noremap = true, silent = true, desc = "Blockwise visual mode" })
 end
 
 Snacks.toggle
@@ -197,12 +222,12 @@ vim.keymap.set("n", "[s", function()
   end
 end)
 
-vim.o.mousescroll = 'ver:1,hor:2'
+vim.o.mousescroll = "ver:1,hor:2"
 
 local function open_buffer_in_tab(tabnumber, close, vertical)
   local buf = vim.api.nvim_get_current_buf()
   local win = vim.api.nvim_get_current_win()
-  
+
   if tabnumber ~= nil then
     local tabpages = vim.api.nvim_list_tabpages()
 
@@ -252,9 +277,15 @@ function lsp_client_root_dirs()
     :map(function(client)
       local dirs = { client.root_dir }
       if client.config.workspace_folders then
-        vim.list_extend(dirs, vim.iter(client.config.workspace_folders):map(function(folder)
-          return vim.uri_to_fname(folder.uri)
-        end):totable())
+        vim.list_extend(
+          dirs,
+          vim
+            .iter(client.config.workspace_folders)
+            :map(function(folder)
+              return vim.uri_to_fname(folder.uri)
+            end)
+            :totable()
+        )
       end
       return dirs
     end)
@@ -317,21 +348,21 @@ end)
 local last_char = nil
 
 -- Forward mapping - waits for character
-vim.keymap.set('n', '<C-N>s', function()
+vim.keymap.set("n", "<C-N>s", function()
   last_char = vim.fn.getcharstr()
-  vim.cmd('normal ]' .. last_char)
+  vim.cmd("normal ]" .. last_char)
 end)
 
 -- Backward mapping - reuses last character
-vim.keymap.set('n', '<C-N>[', function()
+vim.keymap.set("n", "<C-N>[", function()
   if last_char then
-    vim.cmd('normal [' .. last_char)
+    vim.cmd("normal [" .. last_char)
   end
 end)
 
 -- Backward mapping - reuses last character
-vim.keymap.set('n', '<C-N>]', function()
+vim.keymap.set("n", "<C-N>]", function()
   if last_char then
-    vim.cmd('normal ]' .. last_char)
+    vim.cmd("normal ]" .. last_char)
   end
 end)

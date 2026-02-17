@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+
+set -u
+
+STATE_DIR="$HOME/.local/state/screen-recorder"
+STATE_LINK="$STATE_DIR/current-output"
+CONFIG_FILE="$HOME/.config/screen-recorder/config.toml"
+UNIT_NAME="screen-recorder"
+UNIT="${UNIT_NAME}.service"
+STOP_TIMEOUT_SECONDS=120
+POLL_INTERVAL_SECONDS=0.1
+GEOMETRY_COMMAND=""
+RECORDING_COMMAND=""
+COPY_AFTER_CAPTURE=""
+SHOW_AFTER_CAPTURE_COMMAND=""
+
+log() {
+  printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+run() {
+  log "RUN: $*"
+  "$@"
+  rc=$?
+  log "EXIT($rc): $*"
+  return "$rc"
+}
+
+is_active() {
+  systemctl --user is-active --quiet "$UNIT"
+}
+
+load_config() {
+  local parsed
+  if ! parsed="$(python3 - "$CONFIG_FILE" <<'PY'
+import pathlib
+import shlex
+import sys
+import tomllib
+
+config_path = pathlib.Path(sys.argv[1])
+defaults = {
+    "geometry_command": 'slurp -b 00000080 -f "%wx%h+%x+%y"',
+    "recording_command": 'gpu-screen-recorder -w "$geometry" -o "$filename"',
+    "copy_after_capture": True,
+    "show_after_capture_command": "",
+}
+
+if config_path.exists():
+    data = tomllib.loads(config_path.read_text())
+else:
+    data = {}
+
+def get_string(name):
+    value = data.get(name, defaults[name])
+    if not isinstance(value, str):
+        raise TypeError(f"{name} must be a string")
+    return value
+
+def get_bool(name):
+    value = data.get(name, defaults[name])
+    if not isinstance(value, bool):
+        raise TypeError(f"{name} must be a boolean")
+    return value
+
+geometry = get_string("geometry_command")
+recording = get_string("recording_command")
+copy_after = get_bool("copy_after_capture")
+show_after = get_string("show_after_capture_command")
+
+print(f"GEOMETRY_COMMAND={shlex.quote(geometry)}")
+print(f"RECORDING_COMMAND={shlex.quote(recording)}")
+print(f"COPY_AFTER_CAPTURE={'true' if copy_after else 'false'}")
+print(f"SHOW_AFTER_CAPTURE_COMMAND={shlex.quote(show_after)}")
+PY
+  )"; then
+    log "Failed to parse config file: $CONFIG_FILE (using invalid values)"
+    return 1
+  fi
+
+  eval "$parsed"
+  if [[ -f "$CONFIG_FILE" ]]; then
+    log "Loaded config from $CONFIG_FILE"
+  else
+    log "Config file not found, using built-in defaults"
+  fi
+}
+
+wait_until_inactive() {
+  local timeout="$1"
+  local elapsed=0
+
+  while is_active; do
+    if awk "BEGIN{exit !($elapsed >= $timeout)}"; then
+      log "Timed out waiting for $UNIT to stop after ${timeout}s"
+      return 1
+    fi
+    sleep "$POLL_INTERVAL_SECONDS"
+    elapsed=$(awk "BEGIN{print $elapsed + $POLL_INTERVAL_SECONDS}")
+  done
+
+  log "$UNIT is inactive"
+  return 0
+}
+
+save_state() {
+  local filename="$1"
+  mkdir -p "$STATE_DIR"
+  ln -sfn "$filename" "$STATE_LINK"
+}
+
+load_filename_from_state() {
+  if [[ ! -L "$STATE_LINK" ]]; then
+    return 1
+  fi
+
+  readlink -- "$STATE_LINK"
+}
+
+clear_state() {
+  rm -f "$STATE_LINK"
+}
+
+copy_to_clipboard() {
+  local filename="$1"
+
+  if [[ -z "$filename" ]]; then
+    log "No filename provided; skipping clipboard copy"
+    return 0
+  fi
+
+  if [[ ! -f "$filename" ]]; then
+    log "Output file not found; skipping clipboard copy: $filename"
+    return 0
+  fi
+
+  run wl-copy --type video/mp4 < "$filename" || true
+}
+
+show_after_capture() {
+  local filename="$1"
+
+  if [[ -z "$filename" ]]; then
+    log "No filename provided; skipping show-after-capture command"
+    return 0
+  fi
+
+  if [[ ! -e "$filename" ]]; then
+    log "Output path not found; skipping show-after-capture command: $filename"
+    return 0
+  fi
+
+  if [[ -z "$SHOW_AFTER_CAPTURE_COMMAND" ]]; then
+    log "No show_after_capture_command configured; skipping"
+    return 0
+  fi
+
+  run env filename="$filename" bash -lc "$SHOW_AFTER_CAPTURE_COMMAND" || true
+}
+
+notify_finished() {
+  local filename="$1"
+  local message="Recording stopped."
+
+  if [[ -n "$filename" ]]; then
+    message="$filename"
+  fi
+
+  run notify-send -h string:wf-recorder:record "Finished Recording" "$message" || true
+}
+
+notify_saving() {
+  local filename="$1"
+  local message="Saving screen recording"
+
+  if [[ -n "$filename" ]]; then
+    message="Saving screen recording to $filename"
+  fi
+
+  run notify-send -h string:wf-recorder:record "Saving Recording" "$message" || true
+}
+
+start_recording() {
+  local output_template="$1"
+  local filename geometry
+
+  filename="$(date +"$output_template")"
+  mkdir -p "$(dirname "$filename")"
+  mkdir -p "$STATE_DIR"
+
+  geometry="$(bash -lc "$GEOMETRY_COMMAND")"
+  if [[ -z "$geometry" ]]; then
+    log "Geometry command returned empty output"
+    printf 'screen-recorder: no geometry returned by geometry command\n' >&2
+    return 1
+  fi
+
+  run systemd-run --user \
+    --unit="$UNIT_NAME" \
+    --collect \
+    --property=KillSignal=SIGINT \
+    --property=KillMode=control-group \
+    --property=TimeoutStopSec=30 \
+    --property=StandardOutput=journal \
+    --property=StandardError=journal \
+    --setenv=geometry="$geometry" \
+    --setenv=filename="$filename" \
+    bash -lc "$RECORDING_COMMAND" || return 1
+
+  save_state "$filename"
+  log "Started recording to $filename"
+}
+
+stop_recording() {
+  local filename=""
+
+  filename="$(load_filename_from_state 2>/dev/null || true)"
+
+  run systemctl --user kill --signal=SIGINT --kill-whom=main "$UNIT" || true
+  notify_saving "$filename"
+  wait_until_inactive "$STOP_TIMEOUT_SECONDS" || true
+  run systemctl --user reset-failed "$UNIT" || true
+
+  if [[ "$COPY_AFTER_CAPTURE" == "true" ]]; then
+    copy_to_clipboard "$filename"
+  else
+    log "copy_after_capture is false; skipping clipboard copy"
+  fi
+  show_after_capture "$filename"
+  clear_state
+  notify_finished "$filename"
+  log "Stopped recording"
+}
+
+main() {
+  local output_template="${1-}"
+  log "screen-recorder invoked"
+  load_config || return 1
+
+  if is_active || [[ -L "$STATE_LINK" ]]; then
+    stop_recording
+  else
+    if [[ -z "$output_template" ]]; then
+      printf 'usage: %s "<date template path>"\n' "$0" >&2
+      printf 'example: %s "$HOME/Pictures/Screenshots/Screen Recording from %%Y-%%m-%%d %%H-%%M-%%S.mp4"\n' "$0" >&2
+      return 1
+    fi
+    start_recording "$output_template"
+  fi
+}
+
+main "$@"

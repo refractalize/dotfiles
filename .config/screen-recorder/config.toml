@@ -1,0 +1,4 @@
+geometry_command = 'slurp -b 00000080 -f "%wx%h+%x+%y"'
+recording_command = 'gpu-screen-recorder -w "$geometry" -o "$filename"'
+copy_after_capture = true
+show_after_capture_command = 'nautilus --select "$filename"'

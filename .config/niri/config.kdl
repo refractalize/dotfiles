@@ -666,6 +666,7 @@ binds {
     Print hotkey-overlay-title="Screenshot" { screenshot; }
     Ctrl+Print hotkey-overlay-title="Screenshot screen" { screenshot-screen; }
     Alt+Print hotkey-overlay-title="Screenshot window" { screenshot-window; }
+    Shift+Print hotkey-overlay-title="Screen Recording" { spawn-sh ".local/bin/screen-recorder \"$HOME/Pictures/Screenshots/Screen Recording from %Y-%m-%d %H-%M-%S.mp4\""; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
