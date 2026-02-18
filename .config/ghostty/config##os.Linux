@@ -6,8 +6,9 @@ working-directory = inherit
 window-inherit-working-directory = true
 window-inherit-font-size = true
 mouse-scroll-multiplier = 1
+scrollback-limit = 100000000
 
-font-family = iosevka
+font-family = iosevka-etoile
 font-size = 11
 
 keybind = super+shift+t=new_window
@@ -21,4 +22,4 @@ keybind = ctrl+alt+f=write_screen_file:paste
 keybind = ctrl+shift+f=write_screen_file:open
 keybind = ctrl+shift+zero=increase_font_size:1
 keybind = ctrl+shift+equal=increase_font_size:1
-keybind = ctrl+shift+nine=decrease_font_size:1
+keybind = ctrl+shift+_=decrease_font_size:1
