@@ -42,26 +42,28 @@ end
 
 --- @param options {write_delay: number, ignore_files: {[string]: function|string}, ignore_buffer: function|nil}
 function setup(options)
-  options = vim.tbl_deep_extend('force', defaults, options or {})
+  options = vim.tbl_deep_extend("force", defaults, options or {})
 
   vim.api.nvim_create_augroup("AutoSave", {
     clear = true,
   })
 
   vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "TextChangedP" }, {
-      callback = function()
-        local buf = vim.api.nvim_get_current_buf()
+    callback = function()
+      local buf = vim.api.nvim_get_current_buf()
 
-        if not ignore_buffer(options, buf) then
-          delay(function()
-            if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_option(buf, 'modified') then
-              vim.api.nvim_buf_call(buf, function () vim.cmd("silent! lockmarks write") end)
-            end
-          end, options.write_delay)
-        end
-      end,
-      pattern = "*",
-      group = "AutoSave",
+      if not ignore_buffer(options, buf) then
+        delay(function()
+          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_get_option_value("modified", { buf = buf }) then
+            vim.api.nvim_buf_call(buf, function()
+              vim.cmd("silent! lockmarks write")
+            end)
+          end
+        end, options.write_delay)
+      end
+    end,
+    pattern = "*",
+    group = "AutoSave",
   })
 end
 

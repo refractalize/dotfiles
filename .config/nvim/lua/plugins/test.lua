@@ -37,39 +37,46 @@ return {
         desc = "Open Run Output in Split",
       },
       {
-        "<leader>rtt",
+        "<leader>rl",
         function()
-          require("runtest").run_line_tests()
+          require("runtest").run('line')
         end,
         desc = "Run Tests at Line",
       },
       {
-        "<leader>rl",
+        "<leader>rr",
         function()
           require("runtest").run_last()
         end,
         desc = "Run Last Profile",
       },
       {
-        "<leader>rL",
+        "<leader>rR",
         function()
           require("runtest").debug_last()
         end,
         desc = "Debug Last Profile",
       },
       {
-        "<leader>rtf",
+        "<leader>rf",
         function()
-          require("runtest").run_file_tests()
+          require("runtest").run('file')
         end,
         desc = "Run Tests in File",
       },
       {
-        "<leader>rta",
+        "<leader>ra",
         function()
-          require("runtest").run_all_tests()
+          require("runtest").run('all')
         end,
         desc = "Run All Tests",
+      },
+      {
+        "<leader>rp",
+        function()
+          require("runtest").run('project')
+        end,
+        desc = "Run Project Tests",
       },
       {
         "<leader>rgl",
@@ -79,9 +86,9 @@ return {
         desc = "Go to Last Test",
       },
       {
-        "<leader>rtT",
+        "<leader>rL",
         function()
-          require("runtest").debug_line_tests()
+          require("runtest").debug('line')
         end,
         desc = "Debug Tests at Line",
       },
@@ -102,19 +109,26 @@ return {
       {
         "<leader>rb",
         function()
-          require("runtest").run_build()
+          require("runtest").run('build')
         end,
         desc = "Run Build",
       },
       {
+        "<leader>rs",
+        function()
+          require("runtest").select_context()
+        end,
+        desc = "Select Run Context",
+      },
+      {
         "<leader>rc",
         function()
-          require("runtest").run_lint()
+          require("runtest").run('check')
         end,
         desc = "Run Lint",
       },
       {
-        "<leader>rf",
+        "<leader>rz",
         function()
           require("runtest").send_entries_to_fzf()
         end,
@@ -136,6 +150,11 @@ return {
       },
     },
 
+    cmd = {
+      "RunTestAttach",
+      "RunTestCmd",
+    },
+
     ---@module 'runtest'
     ---@type runtest.PartialConfig
     opts = {
@@ -144,11 +163,23 @@ return {
       runners = {
         pytest = {
           args = { ["--log-cli-level"] = "INFO", "-s" },
-          external_file_patterns = { "^\\.venv/" },
+          output_profile = {
+            external_file_patterns = { "^\\.venv/" },
+          },
+        },
+        pyright = {
+          output_profile = {
+            file_patterns = {
+              "\\v^\\s*(\\f+):(\\d+):(\\d+)",
+            },
+          },
         },
         cargo = {
           args = { "--", "--nocapture" },
           env = { RUST_BACKTRACE = "1" },
+        },
+        docker_compose = {
+          name = "docker-compose",
         },
       },
     },

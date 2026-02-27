@@ -24,6 +24,9 @@ return {
       inlay_hints = {
         enabled = false,
       },
+      codelens = {
+        enabled = true,
+      },
       servers = {
         omnisharp = {
           settings = {
@@ -156,6 +159,19 @@ return {
             client.server_capabilities.hoverProvider = false
             client.server_capabilities.renameProvider = false
           end)
+        end,
+        docker_compose_language_service = function()
+          vim.lsp.commands['vscode-containers.compose.up.subset'] = function(command, context)
+            local docker_compose_file_url = command.arguments[1]
+            --- @cast docker_compose_file_url string
+            local docker_compose_file = vim.uri_to_fname(docker_compose_file_url)
+            --- @cast docker_compose_file string
+            local services = command.arguments[3]
+            --- @cast services string[]
+            require('runtest').run_command('docker_compose', {
+              { 'docker', 'compose', '-f', docker_compose_file, 'up', '-d', unpack(services) },
+            })
+          end
         end,
         vtsls = function()
           --- @param _buf number

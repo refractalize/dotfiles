@@ -187,6 +187,30 @@ return {
       keymaps = {
         ["<C-h>"] = false,
         ["<C-l>"] = false,
+        ["<C-S-c>"] = function()
+          local buf_name = vim.api.nvim_buf_get_name(0)
+          local prefix = "oil:///"
+          local abs_path = buf_name
+
+          if buf_name:sub(1, #prefix) == prefix then
+            abs_path = "/" .. buf_name:sub(#prefix + 1)
+          end
+
+          local cwd = vim.uv.cwd()
+          local rel_path = vim.fn.fnamemodify(abs_path, ":.")
+
+          if cwd then
+            local in_cwd = abs_path == cwd or abs_path:sub(1, #cwd + 1) == (cwd .. "/")
+            if in_cwd then
+              rel_path = abs_path:sub(#cwd + 2)
+              if rel_path == "" then
+                rel_path = "."
+              end
+            end
+          end
+
+          vim.fn.setreg("+", rel_path)
+        end,
       },
       view_options = {
         show_hidden = true,
@@ -691,5 +715,9 @@ return {
         },
       },
     },
+  },
+  {
+    "refractalize/log-duration.nvim",
+    opts = {},
   },
 }

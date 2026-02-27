@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+N="${1:-4}"
+
+niri-open-window --app-id com.mitchellh.ghostty --repeat $N ghostty
+
+niri-arrange-workspace

@@ -30,6 +30,14 @@ vim.api.nvim_create_autocmd({ "WinEnter" }, {
     vim.wo.cursorline = true
   end,
 })
+
+vim.filetype.add({
+  filename = {
+    ["docker-compose.yaml"] = "yaml.docker-compose",
+    ["docker-compose.yml"] = "yaml.docker-compose",
+  },
+})
+
 vim.api.nvim_create_autocmd({ "WinLeave" }, {
   group = id,
   callback = function()
