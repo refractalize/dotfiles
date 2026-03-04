@@ -611,11 +611,7 @@ return {
     "refractalize/movement-repeat",
     enabled = false,
 
-    opts = {
-      capture_keys = {
-        ["[q"] = "]q",
-      },
-    },
+    opts = {},
   },
   {
     "refractalize/uv-deps.nvim",

@@ -102,3 +102,27 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
     vim.g.last_global_edit = { buf = vim.fn.bufnr("%"), pos = vim.fn.getpos(".") }
   end,
 })
+
+local function set_title()
+  local function get_title()
+    if vim.fn.exists("*FugitiveHead") == 1 then
+      local branch = vim.fn.FugitiveHead()
+      if branch ~= "" then
+        return "nvim {" .. branch .. "}"
+      end
+    end
+
+    return "nvim (" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. ")"
+  end
+
+  vim.o.titlestring = get_title()
+end
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "FugitiveChanged",
+  callback = function()
+    set_title()
+  end,
+})
+
+set_title()

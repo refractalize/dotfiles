@@ -39,9 +39,17 @@ return {
       {
         "<leader>rl",
         function()
-          require("runtest").run('line')
+          require("runtest").run("line")
         end,
         desc = "Run Tests at Line",
+      },
+      {
+        "<leader>r",
+        function()
+          require("runtest").run("visual")
+        end,
+        desc = "Run Tests in Visual Selection",
+        mode = { "v" },
       },
       {
         "<leader>rr",
@@ -60,21 +68,21 @@ return {
       {
         "<leader>rf",
         function()
-          require("runtest").run('file')
+          require("runtest").run("file")
         end,
         desc = "Run Tests in File",
       },
       {
         "<leader>ra",
         function()
-          require("runtest").run('all')
+          require("runtest").run("all")
         end,
         desc = "Run All Tests",
       },
       {
         "<leader>rp",
         function()
-          require("runtest").run('project')
+          require("runtest").run("project")
         end,
         desc = "Run Project Tests",
       },
@@ -88,7 +96,7 @@ return {
       {
         "<leader>rL",
         function()
-          require("runtest").debug('line')
+          require("runtest").debug("line")
         end,
         desc = "Debug Tests at Line",
       },
@@ -109,7 +117,7 @@ return {
       {
         "<leader>rb",
         function()
-          require("runtest").run('build')
+          require("runtest").run("build")
         end,
         desc = "Run Build",
       },
@@ -123,7 +131,7 @@ return {
       {
         "<leader>rc",
         function()
-          require("runtest").run('check')
+          require("runtest").run("check")
         end,
         desc = "Run Lint",
       },
@@ -180,6 +188,15 @@ return {
         },
         docker_compose = {
           name = "docker-compose",
+        },
+        psql = {
+          output_profile = {
+            output_window = {
+              layout = {
+                vertical = false,
+              },
+            },
+          },
         },
       },
     },

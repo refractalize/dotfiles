@@ -5,6 +5,7 @@
 
 -- highlight last edited text
 vim.keymap.set("n", "gp", "`[v`]")
+vim.keymap.set("i", "<C-p>", "<C-r>0")
 
 -- copy paths to clipboard
 vim.keymap.set("n", "<leader>bcf", function()
