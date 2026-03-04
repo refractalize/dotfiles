@@ -1,0 +1,93 @@
+#!/usr/bin/env zsh
+
+# see: https://git.grothesque.org/zsh_history/about/
+# install: cargo install --git https://git.grothesque.org/zsh_history
+
+install_zsh_history() {
+    local cmd="cargo install --git https://git.grothesque.org/zsh_history"
+    echo "This will run: $cmd"
+    echo -n "Proceed? [y/N] "
+    read -r answer
+    if [[ "$answer" == [yY] ]]; then
+        eval "$cmd"
+    else
+        echo "Aborted."
+    fi
+}
+
+backup_history() {
+    local src="${HISTFILE:-~/.zsh_history}"
+    local dest="${src}.bak.$(date +%Y%m%d%H%M%S)"
+    cp "$src" "$dest"
+    echo "Backed up '$src' to '$dest'"
+}
+
+pull_history() {
+    local remote="$1"
+    if [[ -z "$remote" ]]; then
+        echo "Usage: zsh-history pull <user@host>"
+        return 1
+    fi
+    local remote_histfile="~/.zsh_history"
+    local local_histfile="${HISTFILE:-~/.zsh_history}"
+    local tmp=$(mktemp)
+
+    echo "Fetching history from $remote..."
+    scp "$remote:$remote_histfile" "$tmp" || { echo "Failed to fetch remote history"; rm -f "$tmp"; return 1 }
+
+    backup_history
+
+    echo "Merging..."
+    zsh_history merge "$local_histfile" "$tmp" > "${tmp}.merged" && mv "${tmp}.merged" "$local_histfile"
+    rm -f "$tmp"
+
+    echo "Done. History saved to '$local_histfile'"
+}
+
+push_history() {
+    local remote="$1"
+    if [[ -z "$remote" ]]; then
+        echo "Usage: zsh-history push <user@host>"
+        return 1
+    fi
+    local local_histfile="${HISTFILE:-~/.zsh_history}"
+    local remote_histfile="~/.zsh_history"
+    local tmp=$(mktemp)
+
+    echo "Fetching history from $remote..."
+    scp "$remote:$remote_histfile" "$tmp" || { echo "Failed to fetch remote history"; rm -f "$tmp"; return 1 }
+
+    echo "Merging..."
+    zsh_history merge "$local_histfile" "$tmp" > "${tmp}.merged" || { echo "Failed to merge"; rm -f "$tmp"; return 1 }
+
+    echo "Backing up and pushing to $remote..."
+    ssh "$remote" "cp $remote_histfile ${remote_histfile}.bak.\$(date +%Y%m%d%H%M%S)" || { echo "Failed to backup remote history"; rm -f "$tmp" "${tmp}.merged"; return 1 }
+    scp "${tmp}.merged" "$remote:$remote_histfile" || { echo "Failed to push merged history"; rm -f "$tmp" "${tmp}.merged"; return 1 }
+
+    rm -f "$tmp" "${tmp}.merged"
+    echo "Done. Merged history pushed to $remote"
+}
+
+case "$1" in
+    install)
+        install_zsh_history
+        ;;
+    backup)
+        backup_history
+        ;;
+    pull)
+        pull_history "$2"
+        ;;
+    push)
+        push_history "$2"
+        ;;
+    *)
+        print "Usage: zsh-history <command> [args]"
+        print ""
+        print "Commands:"
+        print "  install                          Install zsh_history via cargo"
+        print "  backup                           Backup current history file"
+        print "  pull <user@host>                 Fetch and merge history from a remote machine"
+        print "  push <user@host>                 Merge and push history to a remote machine"
+        ;;
+esac
