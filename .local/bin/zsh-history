@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+set -e
 
 # see: https://git.grothesque.org/zsh_history/about/
 # install: cargo install --git https://git.grothesque.org/zsh_history
@@ -16,7 +17,7 @@ install_zsh_history() {
 }
 
 backup_history() {
-    local src="${HISTFILE:-~/.zsh_history}"
+    local src="${HISTFILE:-$HOME/.zsh_history}"
     local dest="${src}.bak.$(date +%Y%m%d%H%M%S)"
     cp "$src" "$dest"
     echo "Backed up '$src' to '$dest'"
@@ -29,7 +30,7 @@ pull_history() {
         return 1
     fi
     local remote_histfile="~/.zsh_history"
-    local local_histfile="${HISTFILE:-~/.zsh_history}"
+    local local_histfile="${HISTFILE:-$HOME/.zsh_history}"
     local tmp=$(mktemp)
 
     echo "Fetching history from $remote..."
@@ -38,7 +39,8 @@ pull_history() {
     backup_history
 
     echo "Merging..."
-    zsh_history merge "$local_histfile" "$tmp" > "${tmp}.merged" && mv "${tmp}.merged" "$local_histfile"
+    zsh_history merge "$local_histfile" "$tmp" > "${tmp}.merged"
+    mv "${tmp}.merged" "$local_histfile"
     rm -f "$tmp"
 
     echo "Done. History saved to '$local_histfile'"
@@ -50,7 +52,7 @@ push_history() {
         echo "Usage: zsh-history push <user@host>"
         return 1
     fi
-    local local_histfile="${HISTFILE:-~/.zsh_history}"
+    local local_histfile="${HISTFILE:-$HOME/.zsh_history}"
     local remote_histfile="~/.zsh_history"
     local tmp=$(mktemp)
 
