@@ -175,6 +175,36 @@ return {
             external_file_patterns = { "^\\.venv/" },
           },
         },
+        jq = {
+          select_context = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            local fzf_lua = require("fzf-lua")
+            local path = require "fzf-lua.path"
+            fzf_lua.files({
+              fzf_opts = {
+                ["--no-sort"] = "",
+                ["--multi"] = "",
+              },
+              -- file_icons = true,
+              -- fn_transform = function(x)
+              --   return FzfLua.make_entry.file(x, { file_icons = true, color_icons = true })
+              -- end,
+              actions = {
+                default = function(selected, opts)
+                  local entry = selected[1]
+                  if not entry then
+                    return
+                  end
+                  local file = path.entry_to_file(entry, opts, opts._uri)
+
+                  local context = file.path
+                  require("runtest.buffer_context").set_buffer_context(bufnr, context)
+                end,
+              },
+              previewer = "builtin",
+            })
+          end,
+        },
         pyright = {
           output_profile = {
             file_patterns = {
