@@ -529,39 +529,6 @@ return {
     end,
   },
   {
-    "refractalize/qmkformat.nvim",
-
-    cmd = {
-      "QmkFormat",
-      "QmkExportYaml",
-    },
-
-    opts = {
-      keyboard_templates = {
-        sofle = {
-          file_pattern = "*sofle*",
-          template = [[
-            X X X X X X _ _ X X X X X X
-            X X X X X X _ _ X X X X X X
-            X X X X X X _ _ X X X X X X
-            X X X X X X X X X X X X X X
-            _ _ X X X X X X X X X X _ _
-          ]],
-        },
-        voyager = {
-          file_pattern = "*voyager*",
-          template = [[
-            X X X X X X _ _ X X X X X X
-            X X X X X X _ _ X X X X X X
-            X X X X X X _ _ X X X X X X
-            X X X X X X _ _ X X X X X X
-            _ _ _ _ X X _ _ X X _ _ _ _
-          ]],
-        },
-      },
-    },
-  },
-  {
     "refractalize/ignore-lint",
 
     cmd = { "IgnoreLint" },
@@ -644,17 +611,19 @@ return {
 
     keys = {
       {
-        "<Leader>ss",
+        "<Leader>sr",
         function()
-          local search = vim.fn.getreg("/")
+          local vim_search = vim.fn.getreg("/")
 
-          if search then
-            search = search:gsub("\\<", "\\b"):gsub("\\>", "\\b")
+          if vim_search then
+            search = vim_search:gsub("\\<", "\\b"):gsub("\\>", "\\b")
+            replacement = vim_search:gsub("\\<", ""):gsub("\\>", "")
           end
 
           require("grug-far").open({
             prefills = {
               search = search,
+              replacement = replacement,
             },
           })
         end,

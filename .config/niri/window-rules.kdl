@@ -10,10 +10,6 @@ window-rule {
     open-focused true
 }
 
-workspace "music" {
-    open-on-output "DP-2"
-}
-
 window-rule {
     match app-id="Spotify"
     open-on-workspace "music"
@@ -24,10 +20,6 @@ window-rule {
     match app-id="brave-eikjhbkpemdappjfcmdeeeamdpkgabmk-Default"
     open-on-workspace "music"
     open-focused true
-}
-
-workspace "windows" {
-    open-on-output "DP-2"
 }
 
 window-rule {
@@ -64,4 +56,9 @@ window-rule {
     match app-id="com.github.wwmm.easyeffects"
     open-floating true
     open-focused true
+}
+
+window-rule {
+    match app-id="obsidian"
+    open-on-workspace "notes"
 }

@@ -2,7 +2,7 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
 
-    enabled = true,
+    enabled = false,
 
     opts = {
       model = "gpt-5.2-codex",
@@ -111,7 +111,7 @@ return {
     "yetone/avante.nvim",
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     -- ⚠️ must add this setting! ! !
-    enabled = false,
+    enabled = true,
     build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
       or "make",
     event = "VeryLazy",
@@ -123,28 +123,7 @@ return {
       -- this file can contain specific instructions for your project
       -- instructions_file = "avante.md",
       -- for example
-      provider = "claude",
-      providers = {
-        claude = {
-          endpoint = "https://api.anthropic.com",
-          model = "claude-sonnet-4-20250514",
-          timeout = 30000, -- Timeout in milliseconds
-          api_key_name = "cmd: secret-tool lookup service claude api-type token",
-          extra_request_body = {
-            temperature = 0.75,
-            max_tokens = 20480,
-          },
-        },
-        moonshot = {
-          endpoint = "https://api.moonshot.ai/v1",
-          model = "kimi-k2-0711-preview",
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            temperature = 0.75,
-            max_tokens = 32768,
-          },
-        },
-      },
+      provider = "claude-code",
     },
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -182,6 +161,69 @@ return {
           file_types = { "markdown", "Avante" },
         },
         ft = { "markdown", "Avante" },
+      },
+    },
+  },
+  {
+    "carlos-algms/agentic.nvim",
+
+    enabled = false,
+
+    opts = {
+      -- Available by default: "claude-agent-acp" | "gemini-acp" | "codex-acp" | "opencode-acp" | "cursor-acp" | "auggie-acp" | "mistral-vibe-acp"
+      provider = "claude-agent-acp", -- setting the name here is all you need to get started
+    },
+
+    -- these are just suggested keymaps; customize as desired
+    keys = {
+      {
+        "<leader>aa",
+        function()
+          require("agentic").open()
+        end,
+        mode = { "n", "v", "i" },
+        desc = "Toggle Agentic Chat",
+      },
+      {
+        "<C-'>",
+        function()
+          require("agentic").add_selection_or_file_to_context()
+        end,
+        mode = { "n", "v" },
+        desc = "Add file or selection to Agentic to Context",
+      },
+      {
+        "<C-,>",
+        function()
+          require("agentic").new_session()
+        end,
+        mode = { "n", "v", "i" },
+        desc = "New Agentic Session",
+      },
+      {
+        "<A-i>r", -- ai Restore
+        function()
+          require("agentic").restore_session()
+        end,
+        desc = "Agentic Restore session",
+        silent = true,
+        mode = { "n", "v", "i" },
+      },
+      {
+        "<leader>ad", -- ai Diagnostics
+        function()
+          require("agentic").add_current_line_diagnostics()
+        end,
+        desc = "Add current line diagnostic to Agentic",
+        mode = { "n" },
+      },
+      {
+        "<leader>aD", -- ai all Diagnostics
+        function()
+          require("agentic").add_buffer_diagnostics()
+        end,
+        desc = "Add all buffer diagnostics to Agentic",
+        mode = { "n" },
       },
     },
   },

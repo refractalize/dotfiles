@@ -35,7 +35,48 @@ return {
       -- require("dap.ext.vscode").json_decode = require("json5").parse
     end,
   },
+  {
+    "rcarriga/nvim-dap-ui",
+    enabled = false,
+  },
+  {
+    {
+      "igorlfs/nvim-dap-view",
+      -- let the plugin lazy load itself
+      lazy = false,
+      ---@module 'dap-view'
+      ---@type dapview.Config
+      opts = {
+        auto_toggle = true,
+        winbar = {
+          controls = {
+            enabled = true,
+          },
+        },
+        windows = {
+          size = 0.25,
+          position = "left",
+        },
+      },
+      specs = {
+        {
+          "nvim-lualine/lualine.nvim",
 
+          opts = {
+            options = {
+              disabled_filetypes = {
+                winbar = {
+                  "dap-view",
+                  "dap-view-term",
+                  "dap-view-help",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   {
     "Cliffback/netcoredbg-macOS-arm64.nvim",
     dependencies = { "mfussenegger/nvim-dap" },

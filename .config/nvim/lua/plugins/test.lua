@@ -122,6 +122,13 @@ return {
         desc = "Run Build",
       },
       {
+        "<leader>re",
+        function()
+          require("runtest").edit_context()
+        end,
+        desc = "Edit Run Context",
+      },
+      {
         "<leader>rs",
         function()
           require("runtest").select_context()

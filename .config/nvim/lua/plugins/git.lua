@@ -12,10 +12,26 @@ return {
       },
       {
         "<M-D>",
-        "<Cmd>Gdiffsplit! origin/main...<CR>",
+        "<Cmd>Gdiffsplit! origin/main<CR>",
         desc = "Show diffs with master",
       },
     },
+
+    init = function()
+      local function set_title_with_branch()
+        local branch = vim.fn.exists("*FugitiveHead") == 1 and vim.fn.FugitiveHead() or ""
+        vim.o.titlestring = "nvim [" .. branch .. "]"
+      end
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "FugitiveChanged",
+        callback = function()
+          set_title_with_branch()
+        end,
+      })
+
+      set_title_with_branch()
+    end,
   },
   "cedarbaum/fugitive-azure-devops.vim",
   {
@@ -33,6 +49,23 @@ return {
       "DiffviewOpen",
       "DiffviewRefresh",
       "DiffviewToggleFiles",
+    },
+
+    keys = {
+      {
+        "<Leader>gg",
+        function()
+          require("diffview").open({})
+        end,
+        desc = "Show diffview",
+      },
+      {
+        "<Leader>gm",
+        function()
+          require("diffview").open({'origin/main...'})
+        end,
+        desc = "Show diffview",
+      },
     },
 
     config = function()
@@ -76,5 +109,7 @@ return {
   },
   {
     "NeogitOrg/neogit",
+
+    enabled = false,
   },
 }

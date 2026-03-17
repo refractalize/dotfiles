@@ -392,7 +392,7 @@ window-rule {
 
 recent-windows {
     // off
-    debounce-ms 750
+    debounce-ms 2000
 
     open-delay-ms 250
 
@@ -419,6 +419,10 @@ recent-windows {
         Mod+grave       { next-window     filter="app-id"; }
         Mod+Shift+grave { previous-window filter="app-id"; }
     }
+}
+
+overview {
+    zoom 0.75
 }
 
 // Example: enable rounded corners for all windows.
@@ -592,10 +596,12 @@ binds {
     //
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
-    Mod+1 { maximize-column; }
-    Mod+2 { spawn "~/.local/bin/niri-set-widths" "50%" "50%"; }
-    Mod+3 { spawn "~/.local/bin/niri-set-widths" "66.66%" "33.33%"; }
-    Mod+4 { spawn "~/.local/bin/niri-set-widths" "75%" "25%"; }
+    Mod+1 { focus-workspace "web"; }
+    Mod+2 { focus-workspace "communication"; }
+    Mod+3 { focus-workspace "windows"; }
+    Mod+Shift+1 { focus-workspace "music"; }
+    Mod+Shift+2 { focus-workspace "notes"; }
+    Mod+Alt+N { focus-workspace "notes"; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+1 { move-window-to-workspace 1; }
@@ -687,7 +693,8 @@ binds {
     Mod+Shift+P hotkey-overlay-title="Power off monitors" { power-off-monitors; }
     Mod+Alt+M hotkey-overlay-title="Focus music workspace" { focus-workspace "music"; }
     Mod+Alt+T hotkey-overlay-title="Focus communication workspace" { focus-workspace "communication"; }
-    Mod+Alt+W hotkey-overlay-title="Focus web workspace" { focus-workspace "web"; }
+    Mod+Alt+B hotkey-overlay-title="Focus web workspace" { focus-workspace "web"; }
+    Mod+Alt+W hotkey-overlay-title="Focus web workspace" { focus-workspace "windows"; }
     Mod+Alt+C hotkey-overlay-title="Focus config workspace" { focus-workspace "config"; }
     Mod+SemiColon hotkey-overlay-title="Focus previous window" { focus-window-previous; }
 }
@@ -708,6 +715,18 @@ workspace "web" {
 }
 
 workspace "communication" {
+    open-on-output "DP-2"
+}
+
+workspace "notes" {
+    open-on-output "DP-2"
+}
+
+workspace "music" {
+    open-on-output "DP-2"
+}
+
+workspace "windows" {
     open-on-output "DP-2"
 }
 
