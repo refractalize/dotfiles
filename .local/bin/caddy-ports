@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Manage port allocations for Caddy proxy backends."""
+
+import json
+import sys
+from pathlib import Path
+
+
+def load(file: Path) -> dict[str, int]:
+    if not file.exists():
+        return {}
+    return json.loads(file.read_text())
+
+
+def save(file: Path, allocations: dict[str, int]) -> None:
+    file.write_text(json.dumps(allocations, indent=2) + "\n")
+
+
+def cmd_allocate(file: Path, hostname: str, min_port: int) -> None:
+    allocations = load(file)
+
+    if hostname in allocations:
+        print(allocations[hostname])
+        return
+
+    taken = set(allocations.values())
+    port = min_port
+    while port in taken:
+        port += 1
+
+    allocations[hostname] = port
+    save(file, allocations)
+    print(port)
+
+
+def cmd_remove(file: Path, hostname: str) -> None:
+    allocations = load(file)
+    if hostname not in allocations:
+        print(f"No allocation found for '{hostname}'.", file=sys.stderr)
+        sys.exit(1)
+    del allocations[hostname]
+    save(file, allocations)
+
+
+def usage() -> None:
+    print("Usage:")
+    print("  caddy-ports allocate -f FILE HOSTNAME MIN_PORT")
+    print("  caddy-ports remove -f FILE HOSTNAME")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+
+    match args:
+        case ["allocate", "-f", file, hostname, min_port]:
+            cmd_allocate(Path(file), hostname, int(min_port))
+        case ["remove", "-f", file, hostname]:
+            cmd_remove(Path(file), hostname)
+        case _:
+            usage()

@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Manage Caddy reverse proxy backends via the admin API."""
+
+import json
+import sys
+import urllib.error
+import urllib.request
+from typing import Any
+
+CADDY_API = "http://localhost:2019"
+SERVER_NAME = "proxy"
+
+
+def api(method: str, path: str, body: Any = None) -> tuple[int, Any]:
+    url = CADDY_API + path
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method)
+    if data is not None:
+        req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req) as resp:
+            raw = resp.read()
+            return resp.status, json.loads(raw) if raw else None
+    except urllib.error.HTTPError as e:
+        raw = e.read()
+        return e.code, json.loads(raw) if raw else None
+
+
+def cmd_init() -> None:
+    status, _ = api("GET", f"/config/apps/http/servers/{SERVER_NAME}")
+    if status == 200:
+        print(f"Server '{SERVER_NAME}' already exists, nothing to do.")
+        return
+    config: dict[str, Any] = {
+        "listen": ["localhost:80"],
+        "routes": [],
+    }
+    status, body = api("PUT", f"/config/apps/http/servers/{SERVER_NAME}", config)
+    if status in (200, 201):
+        print(f"Initialised server '{SERVER_NAME}' on localhost:80.")
+    else:
+        print(f"Error: {status} {body}", file=sys.stderr)
+        sys.exit(1)
+
+
+def cmd_add(hostname: str, port: str) -> None:
+    # Remove existing rule for this hostname (ignore if absent)
+    api("DELETE", f"/id/{hostname}")
+
+    route: dict[str, Any] = {
+        "@id": hostname,
+        "match": [{"host": [f"{hostname}.localhost"]}],
+        "handle": [
+            {
+                "handler": "reverse_proxy",
+                "upstreams": [{"dial": f"localhost:{port}"}],
+            }
+        ],
+    }
+    status, body = api("POST", f"/config/apps/http/servers/{SERVER_NAME}/routes", route)
+    if status in (200, 201):
+        print(f"Added proxy: {hostname}.localhost -> localhost:{port}")
+    else:
+        print(f"Error: {status} {body}", file=sys.stderr)
+        sys.exit(1)
+
+
+def cmd_list(as_json: bool) -> None:
+    status, body = api("GET", f"/config/apps/http/servers/{SERVER_NAME}/routes")
+    if status != 200:
+        print(f"Error: {status} {body}", file=sys.stderr)
+        sys.exit(1)
+
+    routes: list[dict[str, Any]] = body or []
+    entries: list[dict[str, str]] = []
+    for route in routes:
+        try:
+            host = route["match"][0]["host"][0].removesuffix(".localhost")
+            port = route["handle"][0]["upstreams"][0]["dial"].removeprefix("localhost:")
+            entries.append({"hostname": host, "port": port})
+        except (KeyError, IndexError):
+            continue
+
+    if as_json:
+        print(json.dumps(entries, indent=2))
+    else:
+        print(f"{'Hostname':<30} {'Port'}")
+        print(f"{'-' * 30} {'-' * 5}")
+        for e in entries:
+            print(f"{e['hostname']:<30} {e['port']}")
+
+
+def cmd_remove(hostname: str) -> None:
+    status, body = api("DELETE", f"/id/{hostname}")
+    if status == 200:
+        print(f"Removed proxy for '{hostname}'.")
+    elif status == 404:
+        print(f"No proxy found for '{hostname}'.", file=sys.stderr)
+        sys.exit(1)
+    else:
+        print(f"Error: {status} {body}", file=sys.stderr)
+        sys.exit(1)
+
+
+def usage() -> None:
+    print("Usage:")
+    print("  caddy-proxy init")
+    print("  caddy-proxy add HOSTNAME PORT")
+    print("  caddy-proxy remove HOSTNAME")
+    print("  caddy-proxy list [--json]")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    if not args:
+        usage()
+
+    match args:
+        case ["init"]:
+            cmd_init()
+        case ["add", hostname, port]:
+            cmd_add(hostname, port)
+        case ["remove", hostname]:
+            cmd_remove(hostname)
+        case ["list"]:
+            cmd_list(as_json=False)
+        case ["list", "--json"]:
+            cmd_list(as_json=True)
+        case _:
+            usage()
