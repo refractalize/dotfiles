@@ -24,9 +24,9 @@ return {
       inlay_hints = {
         enabled = false,
       },
-      codelens = {
-        enabled = true,
-      },
+      -- codelens = {
+      --   enabled = true,
+      -- },
       servers = {
         omnisharp = {
           settings = {

@@ -15,7 +15,6 @@ if ! zgen saved; then
   zgen load lincheney/fzf-tab-completion zsh
   zgen load zsh-users/zsh-autosuggestions
   zgen load zdharma/fast-syntax-highlighting . main
-  zgen load lukechilds/zsh-nvm
 
   zgen load ~/.secrets.zsh
   zgen load ~/.zsh

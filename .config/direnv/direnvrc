@@ -37,7 +37,3 @@ layout_python_venv() {
 
   source $venv_name/bin/activate
 }
-
-if [[ -z $DIRENV_GIT_ROOT ]]; then
-  export DIRENV_GIT_ROOT="$(git rev-parse --show-toplevel)"
-fi

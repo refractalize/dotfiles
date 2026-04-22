@@ -367,3 +367,6 @@ vim.keymap.set("n", "<C-N>]", function()
     vim.cmd("normal ]" .. last_char)
   end
 end)
+
+vim.cmd("packadd nvim.undotree")
+vim.keymap.set("n", "<leader>u", require("undotree").open)

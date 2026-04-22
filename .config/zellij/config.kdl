@@ -165,13 +165,13 @@ keybinds clear-defaults=true {
         bind "Ctrl =" { Resize "Increase"; }
         bind "Ctrl [" { PreviousSwapLayout; }
         bind "Ctrl ]" { NextSwapLayout; }
-        bind "Ctrl f" { ToggleFloatingPanes; }
+        // bind "Ctrl f" { ToggleFloatingPanes; }
         bind "Ctrl h" { MoveFocusOrTab "left"; }
         bind "Ctrl i" { MoveTab "left"; }
         bind "Ctrl j" { MoveFocus "down"; }
         bind "Ctrl k" { MoveFocus "up"; }
         bind "Ctrl l" { MoveFocusOrTab "right"; }
-        // bind "Ctrl n" { NewPane; }
+        bind "Ctrl Enter" { NewPane; }
         bind "Ctrl o" { MoveTab "right"; }
         // bind "Ctrl p" { TogglePaneInGroup; }
         bind "Ctrl Shift p" { ToggleGroupMarking; }

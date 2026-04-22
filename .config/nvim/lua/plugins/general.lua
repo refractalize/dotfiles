@@ -14,6 +14,20 @@ return {
         reload = "<Leader>dr",
       },
     },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "DirenvLoaded",
+        callback = function()
+          -- from https://github.com/mason-org/mason.nvim/blob/main/lua/mason/init.lua
+          local InstallLocation = require("mason-core.installer.InstallLocation")
+          local Registry = require("mason-registry")
+          local settings = require("mason.settings")
+
+          local global_location = InstallLocation.global()
+          global_location:set_env({ PATH = settings.current.PATH })
+        end,
+      })
+    end,
   },
   {
     "folke/trouble.nvim",
@@ -300,7 +314,11 @@ return {
       end, { nargs = 0 })
 
       vim.api.nvim_create_autocmd({ "BufRead" }, {
-        pattern = { "*.tty", "*.log" },
+        pattern = {
+          "*.tty",
+          "*.log",
+          "/tmp/*/screen.txt",
+        },
 
         callback = function()
           if vim.api.nvim_buf_line_count(0) <= 5000 then
@@ -339,16 +357,34 @@ return {
       dashboard = {
         sections = {
           { section = "header" },
+          -- {
+          --   icon = " ",
+          --   key = "s",
+          --   desc = "Restore Session",
+          --   action = function()
+          --     require("inter-session").load()
+          --   end,
+          --   padding = 1,
+          -- },
+          -- { section = "keys", gap = 1, padding = 1 },
+          { icon = " ", key = "s", desc = "Restore Session", section = "session" },
           {
-            icon = " ",
-            key = "s",
-            desc = "Restore Session",
+            icon = " ",
+            title = "Git Status",
+            section = "terminal",
+            key = "g",
             action = function()
-              require("inter-session").load()
+              vim.cmd("G")
             end,
+            enabled = function()
+              return Snacks.git.get_root() ~= nil
+            end,
+            cmd = "git status --short --branch --renames",
+            height = 5,
             padding = 1,
+            ttl = 5 * 60,
+            indent = 3,
           },
-          { section = "keys", gap = 1, padding = 1 },
           { section = "startup" },
         },
       },
@@ -469,17 +505,22 @@ return {
     "luukvbaal/statuscol.nvim",
     opts = {},
   },
-  {
-    "folke/persistence.nvim",
-    enabled = false,
-  },
-  {
-    "refractalize/inter-session",
-
-    opts = {
-      load_session = false,
-    },
-  },
+  -- {
+  --   "folke/persistence.nvim",
+  --   enabled = false,
+  -- },
+  -- {
+  --   "nvim-mini/mini.sessions",
+  --   version = false,
+  --   opts = {},
+  -- },
+  -- {
+  --   "refractalize/inter-session",
+  --
+  --   opts = {
+  --     load_session = false,
+  --   },
+  -- },
   "tpope/vim-eunuch",
   {
     "ravitemer/mcphub.nvim",

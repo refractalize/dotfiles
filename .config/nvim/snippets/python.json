@@ -15,5 +15,15 @@
       "def test_$1():",
       "\t$0"
     ]
+  },
+  "sql": {
+    "prefix": [
+      "sql"
+    ],
+    "body": [
+      "# FIXME: remove this",
+      "with open(\"debug.sql\", \"w\") as f:",
+      "\tf.write(str($1.compile(compile_kwargs={\"literal_binds\": True})))"
+    ]
   }
 }

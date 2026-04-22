@@ -529,7 +529,7 @@ inactive_text_alpha 1.0
 #: Fade the text in inactive windows by the specified amount (a number
 #: between zero and one, with zero being fully faded).
 
-hide_window_decorations no
+hide_window_decorations yes
 
 #: Hide the window decorations (title-bar and window borders) with
 #: yes. On macOS, titlebar-only can be used to only hide the titlebar.
@@ -1111,11 +1111,9 @@ map ctrl+shift+f         show_scrollback
 #: Window management {{{
 
 # map kitty_mod+enter new_window
-map super+shift+n combine : goto_layout tall : launch --cwd=current --copy-colors distrobox enter
 map super+n combine : goto_layout tall : launch --cwd=current --copy-colors
 # map kitty_mod+shift+enter launch --cwd=current --location=vsplit
 # map kitty_mod+t launch --type=tab --cwd=/Volumes/dev --location=last
-map super+shift+t launch --type=tab --location=after distrobox enter
 map super+t launch --type=tab --location=after
 map ctrl+shift+super+t detach_tab ask
 map ctrl+shift+super+n detach_window ask
@@ -1145,7 +1143,7 @@ map ctrl+shift+super+n detach_window ask
 
 #: For more details, see launch.
 
-map ctrl+shift+super+n launch --type=os-window --cwd=current
+map super+ctrl+t launch --type=os-window --cwd=current
 map ctrl+super+n launch --type=os-window --cwd=current
 map ctrl+shift+s launch --type=os-window --cwd=current
 map kitty_mod+super+; nth_os_window -1
@@ -1392,6 +1390,7 @@ map super+shift+f launch --cwd=current --stdin-source=@screen_scrollback --stdin
 # map kitty_mod+s launch --cwd=current --stdin-source=@screen_scrollback --stdin-add-formatting --type=overlay save-kitty-output
 map super+r load_config_file
 map ctrl+shift+r load_config_file
+map kitty_mod+d debug_config
 # map kitty_mod+alt+k scroll_to_prompt -1
 # map kitty_mod+alt+j scroll_to_prompt 1
 map kitty_mod+o launch --type=background --cwd=current nvrtab --window-id @active-kitty-window-id @selection
@@ -1451,9 +1450,10 @@ mouse_map left click ungrabbed mouse_handle_click selection prompt
 mouse_map kitty_mod+left release grabbed,ungrabbed mouse_handle_click link
 mouse_map kitty_mod+left triplepress ungrabbed mouse_selection line_from_point
 
+map --when-focus-on var:nvim ctrl+shift+c no_op
 map --when-focus-on var:nvim ctrl+c no_op
-map --when-focus-on var:nvim ctrl+shift+v no_op
-map ctrl+c copy_or_interrupt
+# map --when-focus-on var:nvim ctrl+shift+v no_op
+# map ctrl+c copy_and_clear_or_interrupt
 map ctrl+v paste_from_clipboard
 
 map kitty_mod+alt+i launch --type=overlay show-window-info @active-kitty-window-id

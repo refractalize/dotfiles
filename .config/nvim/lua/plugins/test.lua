@@ -7,6 +7,8 @@ return {
       "mfussenegger/nvim-dap-python",
     },
 
+    lazy = false,
+
     keys = {
       {
         "]S",
@@ -175,6 +177,7 @@ return {
     opts = {
       open_output_on_failure = true,
       close_output_on_success = true,
+      codelens = true,
       runners = {
         pytest = {
           args = { ["--log-cli-level"] = "INFO", "-s" },
@@ -186,7 +189,7 @@ return {
           select_context = function()
             local bufnr = vim.api.nvim_get_current_buf()
             local fzf_lua = require("fzf-lua")
-            local path = require "fzf-lua.path"
+            local path = require("fzf-lua.path")
             fzf_lua.files({
               fzf_opts = {
                 ["--no-sort"] = "",

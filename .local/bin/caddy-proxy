@@ -32,12 +32,15 @@ def cmd_init() -> None:
         print(f"Server '{SERVER_NAME}' already exists, nothing to do.")
         return
     config: dict[str, Any] = {
-        "listen": ["localhost:80"],
+        "listen": [
+          "localhost:80",
+          "localhost:443",
+        ],
         "routes": [],
     }
     status, body = api("PUT", f"/config/apps/http/servers/{SERVER_NAME}", config)
     if status in (200, 201):
-        print(f"Initialised server '{SERVER_NAME}' on localhost:80.")
+      print(f"Initialised server '{SERVER_NAME}' on localhost:80 and localhost:433.")
     else:
         print(f"Error: {status} {body}", file=sys.stderr)
         sys.exit(1)
@@ -102,11 +105,21 @@ def cmd_remove(hostname: str) -> None:
         sys.exit(1)
 
 
+def cmd_clear() -> None:
+    status, body = api("DELETE", "/config/")
+    if status == 200:
+        print("Cleared all Caddy config.")
+    else:
+        print(f"Error: {status} {body}", file=sys.stderr)
+        sys.exit(1)
+
+
 def usage() -> None:
     print("Usage:")
     print("  caddy-proxy init")
     print("  caddy-proxy add HOSTNAME PORT")
     print("  caddy-proxy remove HOSTNAME")
+    print("  caddy-proxy clear")
     print("  caddy-proxy list [--json]")
     sys.exit(1)
 
@@ -123,6 +136,8 @@ if __name__ == "__main__":
             cmd_add(hostname, port)
         case ["remove", hostname]:
             cmd_remove(hostname)
+        case ["clear"]:
+            cmd_clear()
         case ["list"]:
             cmd_list(as_json=False)
         case ["list", "--json"]:
