@@ -63,6 +63,13 @@ return {
           codecompanion = { "codecompanion" },
         },
       },
+      keymap = {
+        ["<C-space>"] = {
+          function(cmp)
+            cmp.show_and_insert_or_accept_single({ providers = { "snippets" } })
+          end,
+        },
+      },
     },
   },
   {
