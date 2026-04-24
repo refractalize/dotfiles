@@ -268,8 +268,8 @@ vim.keymap.set("n", "<M-T>", function()
   open_buffer_in_tab(count, true, true)
 end)
 
-vim.keymap.set("n", "<leader>lr", "<Cmd>LspRestart<CR>")
-vim.keymap.set("n", "<leader>li", "<Cmd>LspInfo<CR>")
+vim.keymap.set("n", "<leader>lr", "<Cmd>lsp restart<CR>")
+vim.keymap.set("n", "<leader>li", "<Cmd>checkhealth vim.lsp<CR>")
 
 function lsp_client_root_dirs()
   local lsp_clients = vim.lsp.get_clients({ bufnr = 0 })

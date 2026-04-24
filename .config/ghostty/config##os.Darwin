@@ -22,4 +22,4 @@ keybind = performable:super+c=copy_to_clipboard
 keybind = super+shift+equal=increase_font_size:1
 unfocused-split-opacity = 1.0
 split-divider-color = #3760bf
-custom-shader = cursor_blaze.glsl
+# custom-shader = cursor_blaze.glsl
