@@ -62,6 +62,20 @@ return {
         per_filetype = {
           codecompanion = { "codecompanion" },
         },
+        providers = {
+          buffer = {
+            module = "blink.cmp.sources.buffer",
+            score_offset = -3,
+            opts = {
+              -- default to all visible buffers
+              get_bufnrs = function()
+                return vim.tbl_filter(function(bufnr)
+                  return vim.bo[bufnr].buftype == ""
+                end, vim.api.nvim_list_bufs())
+              end,
+            },
+          },
+        },
       },
       keymap = {
         ["<C-space>"] = {
