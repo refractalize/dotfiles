@@ -175,8 +175,6 @@ return {
     ---@module 'runtest'
     ---@type runtest.PartialConfig
     opts = {
-      open_output_on_failure = true,
-      close_output_on_success = true,
       codelens = true,
       runners = {
         pytest = {
@@ -234,6 +232,7 @@ return {
             output_window = {
               layout = {
                 vertical = false,
+                focus = false,
               },
             },
           },

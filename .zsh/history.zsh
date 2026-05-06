@@ -4,6 +4,7 @@ export SAVEHIST=1000000000
 setopt sharehistory
 setopt appendhistory
 setopt incappendhistory
+unsetopt hist_save_by_copy
 
 # only browse local history with ^N ^P
 function up-line-or-history-local () {

@@ -354,13 +354,13 @@ window-rule {
 
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.
-window-rule {
-    // This regular expression is intentionally made as specific as possible,
-    // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
+// window-rule {
+//     // This regular expression is intentionally made as specific as possible,
+//     // since this is the default config, and we want no false positives.
+//     // You can get away with just app-id="wezterm" if you want.
+//     match app-id=r#"^org\.wezfurlong\.wezterm$"#
+//     default-column-width {}
+// }
 
 // Open the Firefox picture-in-picture player as floating by default.
 window-rule {
@@ -461,7 +461,7 @@ binds {
     // Mod+N hotkey-overlay-title="Open a Browser: Brave" { spawn "flatpak" "run" "com.brave.Browser"; }
     Mod+Space hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
     Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
-    Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/vicinae/wm/switch-windows"; }
+    Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/wm/switch-windows"; }
     Mod+Shift+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/knoopx/niri/workspaces"; }
     Mod+S hotkey-overlay-title="Cast the current window" { set-dynamic-cast-window;}
     Mod+Ctrl+S hotkey-overlay-title="Cast the current monitor" { set-dynamic-cast-monitor;}
@@ -469,7 +469,7 @@ binds {
     Mod+Ctrl+P hotkey-overlay-title="Focus previous monitor" { focus-monitor-previous; }
     Mod+Ctrl+Alt+Shift+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Mod+Ctrl+Alt+Shift+S allow-when-locked=true hotkey-overlay-title="Suspend the system" { spawn "systemctl" "suspend"; }
-    Mod+B hotkey-overlay-title="Bluetooth" { spawn "vicinae" "vicinae://extensions/Gelei/bluetooth/devices"; }
+    Mod+B hotkey-overlay-title="Bluetooth" { spawn "vicinae" "vicinae://launch/@Gelei/store.vicinae.bluetooth/devices"; }
     Mod+MouseMiddle hotkey-overlay-title="Overview" { toggle-overview; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.

@@ -1,7 +1,5 @@
 if [[ $OSTYPE == darwin* ]]; then
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-else
-  [ -f /usr/share/zsh/site-functions/fzf ] && source /usr/share/zsh/site-functions/fzf
 fi
 export FZF_COMPLETION_OPTS='--no-sort --exact --multi'
 mkdir -p $HOME/.fzf-history

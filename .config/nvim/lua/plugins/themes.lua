@@ -22,7 +22,7 @@ return {
     lazy = true,
 
     opts = {
-      style = "storm",
+      style = "night",
       on_highlights = function(hi, c)
         local util = require("tokyonight.util")
         hi.DiagnosticUnnecessary =

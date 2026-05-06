@@ -87,6 +87,12 @@ window-rule {
 }
 
 window-rule {
+    match app-id="io.github.celluloid_player.Celluloid"
+    open-floating true
+    open-focused true
+}
+
+window-rule {
     match app-id="obsidian"
     open-on-workspace "notes"
 }
