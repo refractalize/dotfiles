@@ -404,8 +404,8 @@ return {
   },
 
   {
-    "refractalize/treesj",
-    branch = "support-for-csharp",
+    "wansmer/treesj",
+    -- branch = "support-for-csharp",
     keys = {
       {
         "<Leader>j",
