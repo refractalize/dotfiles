@@ -1,0 +1,6 @@
+[submodule "src/nvim-plugins/runtest.nvim"]
+	path = src/nvim-plugins/runtest.nvim
+	url = https://github.com/refractalize/runtest.nvim.git
+[submodule "src/nvim-plugins/oil-git-status.nvim"]
+	path = src/nvim-plugins/oil-git-status.nvim
+	url = https://github.com/refractalize/oil-git-status.nvim.git
