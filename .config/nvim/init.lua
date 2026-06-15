@@ -1,2 +1,4 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
-require("config.lazy")
+if vim.uv.fs_stat("/run/.containerenv") or vim.env.NVIM_LAZY == "true" then
+  require("config.lazy")
+end

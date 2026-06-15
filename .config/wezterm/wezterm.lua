@@ -19,12 +19,31 @@ config.window_padding = {
   bottom = 8,
 }
 
+-- config.disable_default_key_bindings = true
+
 config.keys = {
   {
     key = "t",
     mods = "SUPER|SHIFT",
     action = wezterm.action.SpawnCommandInNewWindow({ args = { wezterm.home_dir .. "/.local/bin/dev-container" } }),
   },
+  {
+    key = "+",
+    mods = "CTRL",
+    action = wezterm.action.IncreaseFontSize,
+  },
+  {
+    key = "-",
+    mods = "CTRL",
+    action = wezterm.action.DecreaseFontSize,
+  },
+
+  {
+    key = "r",
+    mods = "CTRL|SHIFT",
+    action = wezterm.action.ReloadConfiguration,
+  },
+
   -- Copy selection if any, otherwise pass Ctrl-C to process
   {
     key = "c",
