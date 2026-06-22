@@ -78,7 +78,7 @@ return {
         },
       },
       keymap = {
-        ["<C-space>"] = {
+        ["<C-S>"] = {
           function(cmp)
             cmp.show_and_insert_or_accept_single({ providers = { "snippets" } })
           end,
