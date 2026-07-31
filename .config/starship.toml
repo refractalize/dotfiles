@@ -38,9 +38,14 @@ symbol = " "
 style = "bold blue"
 
 [direnv]
-disabled = false
+disabled = true
 symbol = "$"
 allowed_msg = ""
 denied_msg = ""
 loaded_msg = ""
 unloaded_msg = ""
+
+[mise]
+disabled = false
+healthy_symbol = ""
+unhealthy_symbol = ""

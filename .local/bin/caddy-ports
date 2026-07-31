@@ -16,20 +16,18 @@ def save(file: Path, allocations: dict[str, int]) -> None:
     file.write_text(json.dumps(allocations, indent=2) + "\n")
 
 
-def cmd_allocate(file: Path, hostname: str, min_port: int) -> None:
+def cmd_allocate(file: Path, hostname: str, base_port: int, port_interval: int) -> None:
     allocations = load(file)
 
-    if hostname in allocations:
-        print(allocations[hostname])
-        return
+    if hostname not in allocations:
+        taken = set(allocations.values())
+        index = 0
+        while index in taken:
+            index += 1
+        allocations[hostname] = index
+        save(file, allocations)
 
-    taken = set(allocations.values())
-    port = min_port
-    while port in taken:
-        port += 1
-
-    allocations[hostname] = port
-    save(file, allocations)
+    port = (allocations[hostname] * port_interval) + base_port
     print(port)
 
 
@@ -44,7 +42,7 @@ def cmd_remove(file: Path, hostname: str) -> None:
 
 def usage() -> None:
     print("Usage:")
-    print("  caddy-ports allocate -f FILE HOSTNAME MIN_PORT")
+    print("  caddy-ports allocate -f FILE HOSTNAME BASE_PORT PORT_INTERVAL")
     print("  caddy-ports remove -f FILE HOSTNAME")
     sys.exit(1)
 
@@ -53,8 +51,8 @@ if __name__ == "__main__":
     args = sys.argv[1:]
 
     match args:
-        case ["allocate", "-f", file, hostname, min_port]:
-            cmd_allocate(Path(file), hostname, int(min_port))
+        case ["allocate", "-f", file, hostname, base_port, port_interval]:
+            cmd_allocate(Path(file), hostname, int(base_port), int(port_interval))
         case ["remove", "-f", file, hostname]:
             cmd_remove(Path(file), hostname)
         case _:

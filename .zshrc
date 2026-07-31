@@ -10,7 +10,7 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/git
   zgen oh-my-zsh plugins/fzf
   zgen oh-my-zsh plugins/web-search
-  zgen load joshuarubin/zsh-direnv
+  # zgen load joshuarubin/zsh-direnv
 
   zgen load lincheney/fzf-tab-completion zsh
   zgen load zsh-users/zsh-autosuggestions
