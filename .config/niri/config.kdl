@@ -437,8 +437,11 @@ hotkey-overlay {
 }
 
 binds {
-   Mod+V hotkey-overlay-title="Clipboard Manager" {
+   Mod+Alt+V allow-inhibiting=false {
       spawn "vicinae" "vicinae://launch/clipboard/history"
+   }
+   Mod+Alt+S allow-inhibiting=false {
+      spawn "vicinae" "vicinae://launch/core/search-emojis"
    }
 
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
@@ -457,14 +460,16 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     // Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty" "--single-instance"; }
-    Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty" "+new-window"; }
+    Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn-sh "$HOME/.local/bin/niri-worktrees-open-terminal"; }
     Mod+Ctrl+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty" "-e" "zsh"; }
     // Mod+T hotkey-overlay-title="Open a Terminal: wezterm" { spawn-sh "wezterm start -- $HOME/.local/bin/dev-container"; }
     Mod+M hotkey-overlay-title="Arrange workspace" { spawn-sh "$HOME/.local/bin/niri-arrange-workspace"; }
     // Mod+N hotkey-overlay-title="Open a Browser: Brave" { spawn "flatpak" "run" "com.brave.Browser"; }
-    Mod+Space hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
-    Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
-    Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@knoopx/niri/workspaces"; }
+    Mod+Space allow-inhibiting=false hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
+    // Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
+    Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/worktrees"; }
+    Mod+P hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/pull-requests"; }
+    Mod+N { spawn "vicinae" "vicinae://launch/browser-extension/browse-tabs"; }
     Mod+Shift+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/knoopx/niri/workspaces"; }
     Mod+S hotkey-overlay-title="Cast the current window" { set-dynamic-cast-window;}
     Mod+Ctrl+S hotkey-overlay-title="Cast the current monitor" { set-dynamic-cast-monitor;}
@@ -481,73 +486,47 @@ binds {
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "increment" "3"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "decrement" "3"; }
-    XF86AudioMute        allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "mute"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
-    XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
-    XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
-    XF86AudioForward     allow-when-locked=true { spawn "playerctl" "position" "10+"; }
-    XF86AudioRewind     allow-when-locked=true { spawn "playerctl" "position" "10-"; }
+    XF86AudioRaiseVolume allow-inhibiting=false allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "increment" "3"; }
+    XF86AudioLowerVolume allow-inhibiting=false allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "decrement" "3"; }
+    XF86AudioMute allow-inhibiting=false allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "mute"; }
+    XF86AudioMicMute allow-inhibiting=false allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
+    XF86AudioPlay allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioForward allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "10+"; }
+    XF86AudioRewind allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "10-"; }
 
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,
     // or do a four-finger swipe up on a touchpad.
-    Mod+O repeat=false { toggle-overview; }
+    // Mod+O repeat=false { toggle-overview; }
 
     Mod+Q { close-window; }
 
-    Mod+Left { focus-column-left; }
-    Mod+H { focus-column-left; }
-    Mod+Down { focus-window-down; }
-    Mod+J { focus-window-down; }
-    Mod+Up { focus-window-up; }
-    Mod+K { focus-window-up; }
-    Mod+Right { focus-column-right; }
-    Mod+L { focus-column-right; }
-    Mod+Home { focus-monitor-left; }
-    Mod+End { focus-monitor-right; }
-    Mod+Prior { focus-workspace-up; }
-    Mod+Next { focus-workspace-down; }
+    Mod+Left allow-inhibiting=false { focus-column-left; }
+    Mod+Down allow-inhibiting=false { focus-window-down; }
+    Mod+Up allow-inhibiting=false { focus-window-up; }
+    Mod+Right allow-inhibiting=false { focus-column-right; }
 
-    Mod+Alt+Left { move-column-left; }
-    Mod+Alt+H { move-column-left; }
-    Mod+Alt+Right { move-column-right; }
-    Mod+Alt+L { move-column-right; }
-    Mod+Alt+Up { move-window-up; }
-    Mod+Alt+K { move-window-up; }
-    Mod+Alt+Down { move-window-down; }
-    Mod+Alt+J { move-window-down; }
-    Mod+Alt+Home { move-column-to-first; }
-    Mod+Alt+End { move-column-to-last; }
+    Mod+Ctrl+Left allow-inhibiting=false { move-column-left; }
+    Mod+Ctrl+Right allow-inhibiting=false { move-column-right; }
+    Mod+Ctrl+Up allow-inhibiting=false { move-window-up; }
+    Mod+Ctrl+Down allow-inhibiting=false { move-window-down; }
 
-    Mod+Shift+Alt+Left { move-column-to-monitor-left; }
-    Mod+Shift+Alt+H { move-column-to-monitor-left; }
-    Mod+Shift+Alt+Right { move-column-to-monitor-right; }
-    Mod+Shift+Alt+L { move-column-to-monitor-right; }
-    Mod+Shift+Alt+Down { move-column-to-workspace-down; }
-    Mod+Shift+Alt+J { move-column-to-workspace-down; }
-    Mod+Shift+Alt+Up { move-column-to-workspace-up; }
-    Mod+Shift+Alt+K { move-column-to-workspace-up; }
+    Mod+Shift+Left allow-inhibiting=false { move-column-to-monitor-left; }
+    Mod+Shift+Right allow-inhibiting=false { move-column-to-monitor-right; }
+    Mod+Shift+Down allow-inhibiting=false { move-column-to-workspace-down; }
+    Mod+Shift+Up allow-inhibiting=false { move-column-to-workspace-up; }
 
-    Mod+Shift+Left { focus-monitor-left; }
-    Mod+Shift+H { focus-monitor-left; }
-    Mod+Shift+Right { focus-monitor-right; }
-    Mod+Shift+L { focus-monitor-right; }
-    Mod+Shift+Down { focus-workspace-down; }
-    Mod+Shift+J { focus-workspace-down; }
-    Mod+Shift+Up { focus-workspace-up; }
-    Mod+Shift+K { focus-workspace-up; }
+    Mod+Alt+Left allow-inhibiting=false { focus-monitor-left; }
+    Mod+Alt+Right allow-inhibiting=false { focus-monitor-right; }
+    Mod+Alt+Down allow-inhibiting=false { focus-workspace-down; }
+    Mod+Alt+Up allow-inhibiting=false { focus-workspace-up; }
 
-    Mod+Ctrl+Alt+Left { move-workspace-to-monitor-left; }
-    Mod+Ctrl+Alt+H { move-workspace-to-monitor-left; }
-    Mod+Ctrl+Alt+Right { move-workspace-to-monitor-right; }
-    Mod+Ctrl+Alt+L { move-workspace-to-monitor-right; }
-    Mod+Ctrl+Alt+Down { move-workspace-down; }
-    Mod+Ctrl+Alt+J { move-workspace-down; }
-    Mod+Ctrl+Alt+Up { move-workspace-up; }
-    Mod+Ctrl+Alt+K { move-workspace-up; }
+    Mod+Ctrl+Alt+Left allow-inhibiting=false { move-workspace-to-monitor-left; }
+    Mod+Ctrl+Alt+Right allow-inhibiting=false { move-workspace-to-monitor-right; }
+    Mod+Ctrl+Alt+Down allow-inhibiting=false { move-workspace-down; }
+    Mod+Ctrl+Alt+Up allow-inhibiting=false { move-workspace-up; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
@@ -599,12 +578,17 @@ binds {
     //
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
-    Mod+1 { focus-workspace "web"; }
-    Mod+2 { focus-workspace "communication"; }
-    Mod+3 { focus-workspace "windows"; }
-    Mod+Shift+1 { focus-workspace "music"; }
-    Mod+Shift+2 { focus-workspace "notes"; }
-    Mod+Alt+N { focus-workspace "notes"; }
+    Mod+Alt+0 allow-inhibiting=false { focus-workspace "config"; }
+    Mod+Alt+1 allow-inhibiting=false { focus-workspace "web"; }
+    Mod+Alt+2 allow-inhibiting=false { focus-workspace "communication"; }
+    Mod+Alt+3 allow-inhibiting=false { focus-workspace "windows"; }
+    Mod+Alt+4 allow-inhibiting=false { focus-workspace "music"; }
+    Mod+Alt+5 allow-inhibiting=false { focus-workspace "notes"; }
+    Mod+Alt+N allow-inhibiting=false { focus-workspace "notes"; }
+    Mod+Alt+M allow-inhibiting=false { focus-workspace "music"; }
+    Mod+Alt+T allow-inhibiting=false { focus-workspace "communication"; }
+    Mod+Alt+B allow-inhibiting=false { focus-workspace "web"; }
+    Mod+Alt+W allow-inhibiting=false { focus-workspace "windows"; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+1 { move-window-to-workspace 1; }
@@ -615,8 +599,8 @@ binds {
     // The following binds move the focused window in and out of a column.
     // If the window is alone, they will consume it into the nearby column to the side.
     // If the window is already in a column, they will expel it out.
-    Mod+BracketLeft  hotkey-overlay-title="Consume or expel window left" { consume-or-expel-window-left; }
-    Mod+BracketRight hotkey-overlay-title="Consume or expel window right" { consume-or-expel-window-right; }
+    Mod+Ctrl+Shift+Left  hotkey-overlay-title="Consume or expel window left" { consume-or-expel-window-left; }
+    Mod+Ctrl+Shift+Right hotkey-overlay-title="Consume or expel window right" { consume-or-expel-window-right; }
 
     // Consume one window from the right to the bottom of the focused column.
     Mod+Comma  hotkey-overlay-title="Consume window into column" { consume-window-into-column; }
@@ -635,7 +619,7 @@ binds {
     // Makes the column "fill the rest of the space".
     Mod+Ctrl+F hotkey-overlay-title="Expand column to available width" { expand-column-to-available-width; }
 
-    Mod+C hotkey-overlay-title="Center column" { center-column; }
+    // Mod+C hotkey-overlay-title="Center column" { center-column; }
 
     // Center all fully visible columns on screen.
     Mod+Ctrl+C hotkey-overlay-title="Center visible columns" { center-visible-columns; }
@@ -657,7 +641,7 @@ binds {
 
     // Move the focused window between the floating and the tiling layout.
     Mod+Shift+V hotkey-overlay-title="Toggle window floating" { toggle-window-floating; }
-    Mod+Alt+V hotkey-overlay-title="Switch focus between floating and tiling" { switch-focus-between-floating-and-tiling; }
+    Mod+Ctrl+V hotkey-overlay-title="Switch focus between floating and tiling" { switch-focus-between-floating-and-tiling; }
 
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
@@ -673,9 +657,10 @@ binds {
     // Mod+Shift+Space hotkey-overlay-title="Switch to previous layout" { switch-layout "prev"; }
 
     Print hotkey-overlay-title="Screenshot" { screenshot show-pointer=false; }
+    Mod+Print hotkey-overlay-title="Edit Screenshot" { spawn-sh "wl-paste | swappy -f -"; }
     Ctrl+Print hotkey-overlay-title="Screenshot screen" { screenshot-screen show-pointer=false; }
     Alt+Print hotkey-overlay-title="Screenshot window" { screenshot-window show-pointer=false; }
-    Shift+Print hotkey-overlay-title="Screen Recording" { spawn-sh ".local/bin/screen-recorder \"$HOME/Pictures/Screenshots/Screen Recording from %Y-%m-%d %H-%M-%S.mp4\""; }
+    Shift+Print hotkey-overlay-title="Screen Recording" { spawn-sh "$HOME/.local/bin/screen-recorder \"$HOME/Pictures/Screenshots/Screen Recording from %Y-%m-%d %H-%M-%S.mp4\""; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
@@ -688,17 +673,12 @@ binds {
     Mod+Escape allow-inhibiting=false hotkey-overlay-title="Toggle keyboard shortcuts inhibit" { toggle-keyboard-shortcuts-inhibit; }
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
-    Mod+Shift+E hotkey-overlay-title="Quit (with confirmation)" { quit; }
+    // Mod+Shift+E hotkey-overlay-title="Quit (with confirmation)" { quit; }
     Ctrl+Alt+Delete hotkey-overlay-title="Quit (with confirmation)" { quit; }
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P hotkey-overlay-title="Power off monitors" { power-off-monitors; }
-    Mod+Alt+M hotkey-overlay-title="Focus music workspace" { focus-workspace "music"; }
-    Mod+Alt+T hotkey-overlay-title="Focus communication workspace" { focus-workspace "communication"; }
-    Mod+Alt+B hotkey-overlay-title="Focus web workspace" { focus-workspace "web"; }
-    Mod+Alt+W hotkey-overlay-title="Focus web workspace" { focus-workspace "windows"; }
-    Mod+Alt+C hotkey-overlay-title="Focus config workspace" { focus-workspace "config"; }
     Mod+SemiColon hotkey-overlay-title="Focus previous window" { focus-window-previous; }
 }
 

@@ -24,8 +24,13 @@ config.window_padding = {
 config.keys = {
   {
     key = "t",
+    mods = "SUPER|SHIFT|CTRL",
+    action = wezterm.action.SpawnWindow,
+  },
+  {
+    key = "t",
     mods = "SUPER|SHIFT",
-    action = wezterm.action.SpawnCommandInNewWindow({ args = { wezterm.home_dir .. "/.local/bin/dev-container" } }),
+    action = wezterm.action.SpawnCommandInNewWindow({ args = { wezterm.home_dir .. "/.local/bin/enclo", "enter" } }),
   },
   {
     key = "+",
@@ -65,5 +70,12 @@ config.keys = {
     action = wezterm.action.PasteFrom("Clipboard"),
   },
 }
+
+wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
+  local title = tab.active_pane.title
+  local window_id = tab.window_id
+
+  return string.format('%s [%s]', title, window_id)
+end)
 
 return config

@@ -21,12 +21,6 @@ window-rule {
 }
 
 window-rule {
-    match app-id="brave-browser"
-    open-on-workspace "web"
-    open-focused true
-}
-
-window-rule {
     match app-id="Slack"
     open-on-workspace "communication"
     open-focused true
@@ -39,7 +33,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id="Spotify"
+    match app-id="spotify"
     open-on-workspace "music"
     open-focused true
 }

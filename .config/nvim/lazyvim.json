@@ -1,27 +1,7 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.ai.copilot",
-    "lazyvim.plugins.extras.ai.copilot-chat",
-    "lazyvim.plugins.extras.coding.blink",
-    "lazyvim.plugins.extras.coding.luasnip",
-    "lazyvim.plugins.extras.coding.mini-surround",
-    "lazyvim.plugins.extras.coding.yanky",
-    "lazyvim.plugins.extras.dap.core",
-    "lazyvim.plugins.extras.editor.dial",
-    "lazyvim.plugins.extras.editor.fzf",
-    "lazyvim.plugins.extras.formatting.prettier",
-    "lazyvim.plugins.extras.lang.clangd",
-    "lazyvim.plugins.extras.lang.docker",
-    "lazyvim.plugins.extras.lang.dotnet",
-    "lazyvim.plugins.extras.lang.json",
-    "lazyvim.plugins.extras.lang.markdown",
-    "lazyvim.plugins.extras.lang.python",
-    "lazyvim.plugins.extras.lang.toml",
-    "lazyvim.plugins.extras.lang.typescript",
-    "lazyvim.plugins.extras.lang.yaml",
-    "lazyvim.plugins.extras.util.dot"
+
   ],
-  "install_version": 7,
   "news": {
     "NEWS.md": "11866"
   },

@@ -65,8 +65,8 @@ vim.keymap.set("n", "<leader>p", function()
   end)
 end)
 
-vim.keymap.del("v", ">")
-vim.keymap.del("v", "<")
+pcall(function() vim.keymap.del("v", ">") end)
+pcall(function() vim.keymap.del("v", "<") end)
 
 require("refractalize.search")
 

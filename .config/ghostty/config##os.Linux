@@ -8,8 +8,10 @@ window-inherit-font-size = true
 mouse-scroll-multiplier = 1
 scrollback-limit = 100000000
 
-font-family = iosevka-etoile
-font-size = 11
+font-family = Iosevka Light
+font-size = 15
+
+notify-on-command-finish = unfocused
 
 command = $HOME/.local/bin/enclo enter
 keybind = super+shift+t=new_window
