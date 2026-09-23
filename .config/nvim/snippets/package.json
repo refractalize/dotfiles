@@ -59,6 +59,13 @@
           "python"
         ],
         "path": "./python.json"
+      },
+      {
+        "language": [
+          "zsh",
+          "sh"
+        ],
+        "path": "./sh.json"
       }
     ]
   }

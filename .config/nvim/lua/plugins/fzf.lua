@@ -58,6 +58,35 @@ return {
         desc = "Direnv envrcs",
       },
       {
+        "<Leader>fm",
+        function()
+          local fzf_lua = require("fzf-lua")
+
+          local env_files = {}
+          local dir = vim.fn.getcwd()
+
+          while true do
+            vim.list_extend(env_files, vim.fn.glob(dir .. "/mise{,.*}.toml", false, true))
+
+            local parent = vim.fs.dirname(dir)
+            if parent == dir then
+              break
+            end
+
+            dir = parent
+          end
+
+          fzf_lua.fzf_exec(env_files, {
+            fn_transform = function(x)
+              return fzf_lua.make_entry.file(x, { file_icons = true, color_icons = true })
+            end,
+            actions = fzf_lua.config.globals.actions.files,
+            previewer = "builtin",
+          })
+        end,
+        desc = "Mise files",
+      },
+      {
         "<c-x><c-h>",
         function()
           local cmd =
@@ -161,7 +190,7 @@ return {
     opts = {
       fzf_mru = {
         RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
-      }
+      },
     },
   },
 }

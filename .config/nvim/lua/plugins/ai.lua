@@ -26,51 +26,35 @@ return {
   {
     "olimorris/codecompanion.nvim",
 
-    enabled = false,
+    enabled = true,
 
     opts = {
       strategies = {
         chat = {
-          adapter = "anthropic",
+          adapter = "codex",
         },
         inline = {
-          adapter = "anthropic",
+          adapter = "copilot",
         },
         cmd = {
-          adapter = "anthropic",
+          adapter = "codex",
         },
       },
       adapters = {
-        anthropic = function()
-          return require("codecompanion.adapters").extend("anthropic", {
-            env = {
-              api_key = "cmd: secret-tool lookup service claude api-type token",
-            },
-          })
-        end,
-      },
-      display = {
-        chat = {
-          window = {
-            width = "auto",
-          },
-        },
-      },
-      extensions = {
-        mcphub = {
-          callback = "mcphub.extensions.codecompanion",
-          opts = {
-            show_result_in_chat = true, -- Show mcp tool results in chat
-            make_vars = true, -- Convert resources to #variables
-            make_slash_commands = true, -- Add prompts as /slash commands
-          },
+        acp = {
+          codex = function()
+            return require("codecompanion.adapters").extend("codex", {
+              defaults = {
+                auth_method = "chat-gpt", -- "api-key"|"chat-gpt"
+              },
+            })
+          end,
         },
       },
     },
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "ravitemer/mcphub.nvim",
     },
   },
   {
@@ -111,7 +95,7 @@ return {
     "yetone/avante.nvim",
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     -- ⚠️ must add this setting! ! !
-    enabled = true,
+    enabled = false,
     build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
       or "make",
     event = "VeryLazy",

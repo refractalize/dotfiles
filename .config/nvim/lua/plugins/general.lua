@@ -704,4 +704,37 @@ return {
     "refractalize/log-duration.nvim",
     opts = {},
   },
+  {
+    "refractalize/copy-file-paths.nvim",
+    opts = {},
+    keys = {
+      {
+        "<leader>p",
+        function()
+          require("copy-file-paths").select_paths()
+        end,
+        mode = { "n", "x" },
+        desc = "Copy file path",
+      },
+      {
+        "<" .. (vim.fn.has("mac") == 1 and "D" or "C") .. "-S-c>",
+        function()
+          vim.fn.setreg("+", require("copy-file-paths").get_relative_path())
+        end,
+        mode = { "n", "x" },
+        desc = "Copy filename",
+      },
+      {
+        "<M-c>",
+        function()
+          local url = require("copy-file-paths").get_url()
+          if url then
+            vim.fn.setreg("+", url)
+          end
+        end,
+        mode = { "n", "x" },
+        desc = "Copy GitHub URL",
+      },
+    },
+  },
 }

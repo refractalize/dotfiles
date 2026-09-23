@@ -21,50 +21,6 @@ vim.keymap.set("n", "<leader>bcL", function()
   vim.fn.setreg("+", vim.fn.expand("%:p") .. ":" .. vim.fn.line("."))
 end, { noremap = true, silent = true, desc = "Copy full file path with line number" })
 
-local command_control = vim.fn.has("mac") == 1 and "D" or "C"
-
-vim.keymap.set("n", "<" .. command_control .. "-S-c>", function()
-  vim.fn.setreg("+", vim.fn.expand("%:."))
-end, { noremap = true, silent = true, desc = "Copy filename" })
-
-vim.keymap.set("v", "<" .. command_control .. "-S-c>", function()
-  local start_line = vim.fn.line("v")
-  local end_line = vim.fn.line(".")
-  if start_line > end_line then
-    start_line, end_line = end_line, start_line
-  end
-  local filepath = vim.fn.expand("%:.")
-  local line_spec = start_line == end_line and tostring(start_line) or (start_line .. "-" .. end_line)
-  local result = filepath .. ":" .. line_spec
-  vim.fn.setreg("+", result)
-end, { noremap = true, silent = true, desc = "Copy filename with line range" })
-
-vim.keymap.set("n", "<leader>p", function()
-  local gitbrowse = nil
-
-  Snacks.gitbrowse({
-    open = function(url)
-      gitbrowse = url
-    end,
-    what = "file",
-    notify = false,
-  })
-  local paths = {
-    vim.fn.expand("%:p:h"),
-    vim.fn.expand("%:."),
-    vim.fn.getcwd(),
-    gitbrowse,
-  }
-
-  vim.ui.select(paths, {
-    prompt = "Copy path to clipboard",
-  }, function(selected)
-    if selected then
-      vim.fn.setreg("+", selected)
-    end
-  end)
-end)
-
 pcall(function() vim.keymap.del("v", ">") end)
 pcall(function() vim.keymap.del("v", "<") end)
 
