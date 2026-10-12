@@ -1,0 +1,15 @@
+[tools]
+duckdb = "1.5.6"
+node = "latest"
+npm = "latest"
+uv = "latest"
+
+[settings]
+minimum_release_age = "7d"
+
+[settings.status]
+show_env = true
+
+[env]
+# Use the rootless Podman socket for Docker CLI and Compose commands.
+DOCKER_HOST = "{{ env.CONTAINER_HOST }}"
