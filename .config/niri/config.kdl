@@ -467,10 +467,9 @@ binds {
     // Mod+N hotkey-overlay-title="Open a Browser: Brave" { spawn "flatpak" "run" "com.brave.Browser"; }
     Mod+Space allow-inhibiting=false hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
     // Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
-    Mod+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/worktrees"; }
-    Mod+P hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/pull-requests"; }
-    Mod+N { spawn "vicinae" "vicinae://launch/browser-extension/browse-tabs"; }
-    Mod+Shift+W hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://extensions/knoopx/niri/workspaces"; }
+    Mod+W allow-inhibiting=false hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/worktrees"; }
+    Mod+P allow-inhibiting=false hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/pull-requests"; }
+    Mod+N allow-inhibiting=false { spawn "vicinae" "vicinae://launch/browser-extension/browse-tabs"; }
     Mod+S hotkey-overlay-title="Cast the current window" { set-dynamic-cast-window;}
     Mod+Ctrl+S hotkey-overlay-title="Cast the current monitor" { set-dynamic-cast-monitor;}
     Mod+Ctrl+SemiColon hotkey-overlay-title="Focus previous workspace" { focus-workspace-previous; }
@@ -478,6 +477,8 @@ binds {
     Mod+Ctrl+Alt+Shift+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Mod+Ctrl+Alt+Shift+S allow-when-locked=true hotkey-overlay-title="Suspend the system" { spawn "systemctl" "suspend"; }
     Mod+B hotkey-overlay-title="Bluetooth" { spawn "vicinae" "vicinae://launch/@Gelei/store.vicinae.bluetooth/devices"; }
+    Mod+C { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/create-branch"; }
+    Mod+Shift+W { spawn "skwd-wall-v2"; }
     Mod+MouseMiddle hotkey-overlay-title="Overview" { toggle-overview; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
@@ -508,25 +509,28 @@ binds {
     Mod+Up allow-inhibiting=false { focus-window-up; }
     Mod+Right allow-inhibiting=false { focus-column-right; }
 
-    Mod+Ctrl+Left allow-inhibiting=false { move-column-left; }
-    Mod+Ctrl+Right allow-inhibiting=false { move-column-right; }
-    Mod+Ctrl+Up allow-inhibiting=false { move-window-up; }
-    Mod+Ctrl+Down allow-inhibiting=false { move-window-down; }
+    Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-left; }
+    Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-right; }
+    Mod+Ctrl+Down allow-inhibiting=false { focus-workspace-down; }
+    Mod+Ctrl+Up allow-inhibiting=false { focus-workspace-up; }
+
+    Mod+Alt+Left allow-inhibiting=false { move-column-left; }
+    Mod+Alt+Right allow-inhibiting=false { move-column-right; }
+    Mod+Alt+Up allow-inhibiting=false { move-window-up; }
+    Mod+Alt+Down allow-inhibiting=false { move-window-down; }
 
     Mod+Shift+Left allow-inhibiting=false { move-column-to-monitor-left; }
     Mod+Shift+Right allow-inhibiting=false { move-column-to-monitor-right; }
     Mod+Shift+Down allow-inhibiting=false { move-column-to-workspace-down; }
     Mod+Shift+Up allow-inhibiting=false { move-column-to-workspace-up; }
 
-    Mod+Alt+Left allow-inhibiting=false { focus-monitor-left; }
-    Mod+Alt+Right allow-inhibiting=false { focus-monitor-right; }
-    Mod+Alt+Down allow-inhibiting=false { focus-workspace-down; }
-    Mod+Alt+Up allow-inhibiting=false { focus-workspace-up; }
-
     Mod+Ctrl+Alt+Left allow-inhibiting=false { move-workspace-to-monitor-left; }
     Mod+Ctrl+Alt+Right allow-inhibiting=false { move-workspace-to-monitor-right; }
     Mod+Ctrl+Alt+Down allow-inhibiting=false { move-workspace-down; }
     Mod+Ctrl+Alt+Up allow-inhibiting=false { move-workspace-up; }
+
+    Mod+Alt+Shift+Left  hotkey-overlay-title="Consume or expel window left" { consume-or-expel-window-left; }
+    Mod+Alt+Shift+Right hotkey-overlay-title="Consume or expel window right" { consume-or-expel-window-right; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
@@ -595,12 +599,6 @@ binds {
 
     // Switches focus between the current and the previous workspace.
     // Mod+Tab { focus-workspace-previous; }
-
-    // The following binds move the focused window in and out of a column.
-    // If the window is alone, they will consume it into the nearby column to the side.
-    // If the window is already in a column, they will expel it out.
-    Mod+Ctrl+Shift+Left  hotkey-overlay-title="Consume or expel window left" { consume-or-expel-window-left; }
-    Mod+Ctrl+Shift+Right hotkey-overlay-title="Consume or expel window right" { consume-or-expel-window-right; }
 
     // Consume one window from the right to the bottom of the focused column.
     Mod+Comma  hotkey-overlay-title="Consume window into column" { consume-window-into-column; }

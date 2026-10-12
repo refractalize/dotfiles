@@ -1,0 +1,75 @@
+FROM fedora:44
+
+# ── System packages ────────────────────────────────────────────────────────────
+RUN dnf upgrade -y && dnf install -y \
+    dnf-plugins-core
+
+RUN dnf copr enable -y atim/starship && \
+    dnf copr enable -y scottames/ghostty && \
+    dnf copr enable -y jdxcode/mise && \
+    dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release && \
+    dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo && \
+    dnf config-manager addrepo --from-repofile=https://rpm.releases.hashicorp.com/fedora/hashicorp.repo && \
+    dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo && \
+    dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/home:TheLocehiliosan:yadm/Fedora_43/home:TheLocehiliosan:yadm.repo && \
+    rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+    dnf install -y fedora-workstation-repositories dnf5-plugins && \
+    dnf config-manager setopt google-chrome.enabled=1 && \
+    echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo
+
+RUN dnf install -y \
+    glibc-langpack-en \
+    ca-certificates \
+    zsh \
+    postgresql \
+    git git-delta \
+    uv \
+    pass \
+    fzf \
+    nvim \
+    awscli2 \
+    direnv \
+    rust \
+    cargo \
+    eza \
+    jq \
+    fd \
+    starship \
+    ghostty \
+    docker-ce-cli \
+    podman-remote \
+    terraform \
+    gh \
+    yadm \
+    mise \
+    caddy \
+    code \
+    zed \
+    restic \
+    procps \
+    perl-FindBin \
+    perl-open \
+    perl-autodie \
+    visidata \
+    ImageMagick \
+    entr \
+    cmake \
+    clang-devel \
+    ninja-build \
+    openssl-devel \
+    rustfmt \
+    sqlite \
+    google-chrome-stable \
+    && dnf clean all
+
+RUN CARGO_INSTALL_ROOT=/usr/local \
+    cargo install --git https://git.grothesque.org/zsh_history
+
+# ChatGPT desktop app: https://learn.chatgpt.com/docs/linux/linux-app
+RUN arch="$(rpm --eval '%{_arch}')" && \
+    case "$arch" in \
+        x86_64|aarch64) ;; \
+        *) echo "Unsupported ChatGPT architecture: $arch" >&2; exit 1 ;; \
+    esac && \
+    dnf install -y "https://persistent.oaistatic.com/codex-app-prod/linux/rpm/latest/chatgpt.${arch}.rpm" && \
+    dnf clean all
