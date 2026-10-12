@@ -72,7 +72,6 @@ return {
       require("diffview").setup({
         default_args = {
           DiffviewOpen = {
-            "--untracked-files=no",
             "--imply-local",
           },
         },
