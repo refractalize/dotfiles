@@ -19,7 +19,6 @@ RUN dnf copr enable -y atim/starship && \
 
 RUN dnf install -y \
     glibc-langpack-en \
-    ca-certificates \
     zsh \
     postgresql \
     git git-delta \

@@ -1,0 +1,15 @@
+monorepo_root = true
+
+[monorepo]
+config_roots = [".config/enclo"]
+
+[tools]
+node = "latest"
+npm = "latest"
+uv = "latest"
+
+[settings]
+minimum_release_age = "7d"
+
+[settings.status]
+show_env = true
