@@ -69,6 +69,48 @@ config.keys = {
     mods = "CTRL",
     action = wezterm.action.PasteFrom("Clipboard"),
   },
+
+  -- Split vertically (new pane to the right)
+  {
+    key = 'Enter',
+    mods = 'SUPER',
+    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+  },
+
+  -- Split horizontally (new pane below)
+  {
+    key = 'Enter',
+    mods = 'SUPER|SHIFT',
+    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+  },
+
+  -- Move focus left
+  {
+    key = 'h',
+    mods = 'SUPER',
+    action = wezterm.action.ActivatePaneDirection 'Left',
+  },
+
+  -- Move focus right
+  {
+    key = 'l',
+    mods = 'SUPER',
+    action = wezterm.action.ActivatePaneDirection 'Right',
+  },
+
+  -- Move focus up
+  {
+    key = 'k',
+    mods = 'SUPER',
+    action = wezterm.action.ActivatePaneDirection 'Up',
+  },
+
+  -- Move focus down
+  {
+    key = 'j',
+    mods = 'SUPER',
+    action = wezterm.action.ActivatePaneDirection 'Down',
+  },
 }
 
 wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)

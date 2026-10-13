@@ -26,21 +26,23 @@ def api(method: str, path: str, body: Any = None) -> tuple[int, Any]:
         return e.code, json.loads(raw) if raw else None
 
 
-def cmd_init() -> None:
+def cmd_init(use_high_ports: bool = False) -> None:
     status, _ = api("GET", f"/config/apps/http/servers/{SERVER_NAME}")
     if status == 200:
         print(f"Server '{SERVER_NAME}' already exists, nothing to do.")
         return
+    http_port = "11080" if use_high_ports else "80"
+    https_port = "11443" if use_high_ports else "443"
     config: dict[str, Any] = {
         "listen": [
-          "localhost:80",
-          "localhost:443",
+          f"localhost:{http_port}",
+          f"localhost:{https_port}",
         ],
         "routes": [],
     }
     status, body = api("PUT", f"/config/apps/http/servers/{SERVER_NAME}", config)
     if status in (200, 201):
-      print(f"Initialised server '{SERVER_NAME}' on localhost:80 and localhost:433.")
+      print(f"Initialised server '{SERVER_NAME}' on localhost:{http_port} and localhost:{https_port}.")
     else:
         print(f"Error: {status} {body}", file=sys.stderr)
         sys.exit(1)
@@ -116,7 +118,7 @@ def cmd_clear() -> None:
 
 def usage() -> None:
     print("Usage:")
-    print("  caddy-proxy init")
+    print("  caddy-proxy init [--high-ports]")
     print("  caddy-proxy add HOSTNAME PORT")
     print("  caddy-proxy remove HOSTNAME")
     print("  caddy-proxy clear")
@@ -132,6 +134,8 @@ if __name__ == "__main__":
     match args:
         case ["init"]:
             cmd_init()
+        case ["init", "--high-ports"]:
+            cmd_init(use_high_ports=True)
         case ["add", hostname, port]:
             cmd_add(hostname, port)
         case ["remove", hostname]:
