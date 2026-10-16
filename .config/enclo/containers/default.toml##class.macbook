@@ -1,0 +1,45 @@
+[container]
+image = "localhost/dev-container:latest"
+network = "host"
+tz = "local"
+userns = "keep-id"
+keep_groups = true
+security_label_disable = true
+exec_shell = "zsh"
+pids_limit = 8192
+volumes = [
+  "%h/dev-home:%h",
+  "%h/dev:%h/dev",
+  "%h/qmk_firmware:%h/qmk_firmware",
+  "/etc/pki/ca-trust/source/anchors/Caddy_Local_Authority_-_2026_ECC_Root_164358512508116820409856370516717197254.pem:/etc/pki/ca-trust/source/anchors/Caddy_Local_Authority_-_2026_ECC_Root_164358512508116820409856370516717197254.pem:ro",
+]
+
+[modules]
+
+[modules.podman_socket]
+enabled = true
+
+[modules.docker_socket]
+enabled = false
+
+[modules.dbus_proxy]
+enabled = true
+allowed_interfaces = ["org.freedesktop.portal.Desktop"]
+
+[modules.ssh_agent]
+enabled = true
+
+[modules.secrets]
+enabled = true
+
+[modules.aws_credentials]
+enabled = true
+
+[modules.xdg_open]
+enabled = true
+
+[modules.drm]
+enabled = true
+
+[modules.wayland]
+enabled = true

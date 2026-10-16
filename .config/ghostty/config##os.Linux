@@ -9,7 +9,7 @@ mouse-scroll-multiplier = 1
 scrollback-limit = 100000000
 
 font-family = Iosevka Light
-font-size = 15
+font-size = 12
 
 notify-on-command-finish = unfocused
 

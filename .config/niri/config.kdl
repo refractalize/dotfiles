@@ -14,6 +14,7 @@ input {
             // For example:
             // layout "us,ru"
             // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
+	    options "caps:escape"
         }
 
         repeat-rate 70
@@ -115,6 +116,10 @@ output "DP-2" {
     scale 1
     // half screen
     // mode "1920x1080@60.000"
+}
+
+output "eDP-1" {
+    scale 1.5
 }
 
 // Settings that influence how windows are positioned and sized.
@@ -505,14 +510,28 @@ binds {
     Mod+Q { close-window; }
 
     Mod+Left allow-inhibiting=false { focus-column-left; }
-    Mod+Down allow-inhibiting=false { focus-window-down; }
-    Mod+Up allow-inhibiting=false { focus-window-up; }
+    Mod+H allow-inhibiting=false { focus-column-left; }
+
     Mod+Right allow-inhibiting=false { focus-column-right; }
+    Mod+L allow-inhibiting=false { focus-column-right; }
+
+    Mod+Down allow-inhibiting=false { focus-window-down; }
+    Mod+J allow-inhibiting=false { focus-window-down; }
+
+    Mod+Up allow-inhibiting=false { focus-window-up; }
+    Mod+K allow-inhibiting=false { focus-window-up; }
 
     Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-left; }
+    Mod+Ctrl+H allow-inhibiting=false { focus-monitor-left; }
+
     Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-right; }
+    Mod+Ctrl+L allow-inhibiting=false { focus-monitor-right; }
+
     Mod+Ctrl+Down allow-inhibiting=false { focus-workspace-down; }
+    Mod+Ctrl+J allow-inhibiting=false { focus-workspace-down; }
+
     Mod+Ctrl+Up allow-inhibiting=false { focus-workspace-up; }
+    Mod+Ctrl+K allow-inhibiting=false { focus-workspace-up; }
 
     Mod+Alt+Left allow-inhibiting=false { move-column-left; }
     Mod+Alt+Right allow-inhibiting=false { move-column-right; }
@@ -655,6 +674,7 @@ binds {
     // Mod+Shift+Space hotkey-overlay-title="Switch to previous layout" { switch-layout "prev"; }
 
     Print hotkey-overlay-title="Screenshot" { screenshot show-pointer=false; }
+    Mod+Shift+P hotkey-overlay-title="Screenshot" { screenshot show-pointer=false; }
     Mod+Print hotkey-overlay-title="Edit Screenshot" { spawn-sh "wl-paste | swappy -f -"; }
     Ctrl+Print hotkey-overlay-title="Screenshot screen" { screenshot-screen show-pointer=false; }
     Alt+Print hotkey-overlay-title="Screenshot window" { screenshot-window show-pointer=false; }
@@ -676,7 +696,6 @@ binds {
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
-    Mod+Shift+P hotkey-overlay-title="Power off monitors" { power-off-monitors; }
     Mod+SemiColon hotkey-overlay-title="Focus previous window" { focus-window-previous; }
 }
 
