@@ -1,0 +1,2 @@
+[tasks.build]
+run = "podman build -t dev-container --no-cache -f Containerfile.dev < /dev/null"
