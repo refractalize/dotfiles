@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+WORKTREE=$($HOME/.local/bin/niri-worktrees get-worktree)
+
+if [[ -n $WORKTREE ]]
+then
+  ghostty +new-window --working-directory=$WORKTREE
+else
+  ghostty +new-window
+fi
