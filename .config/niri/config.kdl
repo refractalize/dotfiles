@@ -118,8 +118,17 @@ output "DP-2" {
     // mode "1920x1080@60.000"
 }
 
+output "HDMI-A-1" {
+    mode "3840x2160@60.000"
+    scale 1
+    position x=0 y=0
+}
+
 output "eDP-1" {
+    mode "3024x1890@120.000"
     scale 1.5
+    // Logical width is 2016; center below the 3840-wide HDMI output.
+    position x=912 y=2160
 }
 
 // Settings that influence how windows are positioned and sized.
@@ -521,11 +530,11 @@ binds {
     Mod+Up allow-inhibiting=false { focus-window-up; }
     Mod+K allow-inhibiting=false { focus-window-up; }
 
-    Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-left; }
-    Mod+Ctrl+H allow-inhibiting=false { focus-monitor-left; }
+    Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-up; }
+    Mod+Ctrl+H allow-inhibiting=false { focus-monitor-up; }
 
-    Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-right; }
-    Mod+Ctrl+L allow-inhibiting=false { focus-monitor-right; }
+    Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-down; }
+    Mod+Ctrl+L allow-inhibiting=false { focus-monitor-down; }
 
     Mod+Ctrl+Down allow-inhibiting=false { focus-workspace-down; }
     Mod+Ctrl+J allow-inhibiting=false { focus-workspace-down; }
@@ -735,3 +744,6 @@ include "window-rules.kdl"
 debug {
     honor-xdg-activation-with-invalid-serial
 }
+
+// DMS Include Configs
+include "dms/input.kdl"

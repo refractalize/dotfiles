@@ -14,7 +14,6 @@ RUN dnf copr enable -y atim/starship && \
     dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/home:TheLocehiliosan:yadm/Fedora_43/home:TheLocehiliosan:yadm.repo && \
     rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     dnf install -y fedora-workstation-repositories dnf5-plugins && \
-    dnf config-manager setopt google-chrome.enabled=1 && \
     echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo
 
 RUN dnf install -y \
@@ -58,7 +57,6 @@ RUN dnf install -y \
     openssl-devel \
     rustfmt \
     sqlite \
-    google-chrome-stable \
     && dnf clean all
 
 RUN CARGO_INSTALL_ROOT=/usr/local \

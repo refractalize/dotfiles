@@ -8,10 +8,8 @@ security_label_disable = true
 exec_shell = "zsh"
 pids_limit = 8192
 volumes = [
-  "%h/dev-home:%h",
+  "dev-home:%h",
   "%h/dev:%h/dev",
-  "%h/qmk_firmware:%h/qmk_firmware",
-  "/etc/pki/ca-trust/source/anchors/Caddy_Local_Authority_-_2026_ECC_Root_164358512508116820409856370516717197254.pem:/etc/pki/ca-trust/source/anchors/Caddy_Local_Authority_-_2026_ECC_Root_164358512508116820409856370516717197254.pem:ro",
 ]
 
 [modules]

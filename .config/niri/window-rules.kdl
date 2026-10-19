@@ -96,3 +96,8 @@ window-rule {
     match app-id="obsidian"
     open-on-workspace "notes"
 }
+
+window-rule {
+    match app-id="org.remmina.Remmina"
+    open-on-workspace "windows"
+}
