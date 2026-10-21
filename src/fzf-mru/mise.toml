@@ -1,0 +1,7 @@
+[tasks.build]
+description = "Build the release binary"
+run = "cargo build --release --locked"
+
+[tasks.install]
+description = "Install fzf-mru into Cargo's bin directory"
+run = "cargo install --path . --locked"
