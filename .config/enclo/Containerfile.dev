@@ -8,6 +8,7 @@ RUN dnf copr enable -y atim/starship && \
     dnf copr enable -y scottames/ghostty && \
     dnf copr enable -y jdxcode/mise && \
     dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release && \
+    dnf config-manager setopt 'terra*.priority=200' 'terra*.excludepkgs=ghostty*' && \
     dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo && \
     dnf config-manager addrepo --from-repofile=https://rpm.releases.hashicorp.com/fedora/hashicorp.repo && \
     dnf config-manager addrepo --from-repofile=https://cli.github.com/packages/rpm/gh-cli.repo && \
@@ -16,7 +17,9 @@ RUN dnf copr enable -y atim/starship && \
     dnf install -y fedora-workstation-repositories dnf5-plugins && \
     echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo
 
-RUN dnf install -y \
+# Terra's Ghostty subpackages overlap with files bundled in Scottames' package.
+RUN dnf install -y --from-repo='copr:copr.fedorainfracloud.org:scottames:ghostty' ghostty && \
+    dnf install -y \
     glibc-langpack-en \
     zsh \
     postgresql \
@@ -26,6 +29,7 @@ RUN dnf install -y \
     fzf \
     nvim \
     awscli2 \
+    https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm \
     direnv \
     rust \
     cargo \
@@ -33,7 +37,6 @@ RUN dnf install -y \
     jq \
     fd \
     starship \
-    ghostty \
     docker-ce-cli \
     podman-remote \
     terraform \

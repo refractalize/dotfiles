@@ -457,6 +457,7 @@ binds {
    Mod+Alt+S allow-inhibiting=false {
       spawn "vicinae" "vicinae://launch/core/search-emojis"
    }
+   Mod+Alt+Space { switch-layout "next"; }
 
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
@@ -481,7 +482,7 @@ binds {
     // Mod+N hotkey-overlay-title="Open a Browser: Brave" { spawn "flatpak" "run" "com.brave.Browser"; }
     Mod+Space allow-inhibiting=false hotkey-overlay-title="Run Laucher" { spawn "vicinae" "open"; }
     // Mod+E hotkey-overlay-title="Run an Application: Files" { spawn "nautilus" "--new-window"; }
-    Mod+W allow-inhibiting=false hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/worktrees"; }
+    Mod+W allow-inhibiting=false hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/directories"; }
     Mod+P allow-inhibiting=false hotkey-overlay-title="Run an Application: switcher" { spawn "vicinae" "vicinae://launch/@timmacfarlane/niri-worktrees/pull-requests"; }
     Mod+N allow-inhibiting=false { spawn "vicinae" "vicinae://launch/browser-extension/browse-tabs"; }
     Mod+S hotkey-overlay-title="Cast the current window" { set-dynamic-cast-window;}
@@ -508,8 +509,8 @@ binds {
     XF86AudioPlay allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "play-pause"; }
     XF86AudioNext allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "previous"; }
-    XF86AudioForward allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "10+"; }
-    XF86AudioRewind allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "10-"; }
+    XF86AudioForward allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "30+"; }
+    XF86AudioRewind allow-inhibiting=false allow-when-locked=true { spawn "playerctl" "position" "30-"; }
 
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-WORKTREE=$($HOME/.local/bin/niri-worktrees get-worktree)
+WORKTREE=$($HOME/.local/bin/niri-worktrees get-directory)
 
 if [[ -n $WORKTREE ]]
 then
