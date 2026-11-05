@@ -531,11 +531,11 @@ binds {
     Mod+Up allow-inhibiting=false { focus-window-up; }
     Mod+K allow-inhibiting=false { focus-window-up; }
 
-    Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-up; }
-    Mod+Ctrl+H allow-inhibiting=false { focus-monitor-up; }
+    Mod+Ctrl+Left allow-inhibiting=false { focus-monitor-next; }
+    Mod+Ctrl+H allow-inhibiting=false { focus-monitor-next; }
 
-    Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-down; }
-    Mod+Ctrl+L allow-inhibiting=false { focus-monitor-down; }
+    Mod+Ctrl+Right allow-inhibiting=false { focus-monitor-next; }
+    Mod+Ctrl+L allow-inhibiting=false { focus-monitor-next; }
 
     Mod+Ctrl+Down allow-inhibiting=false { focus-workspace-down; }
     Mod+Ctrl+J allow-inhibiting=false { focus-workspace-down; }
@@ -548,13 +548,13 @@ binds {
     Mod+Alt+Up allow-inhibiting=false { move-window-up; }
     Mod+Alt+Down allow-inhibiting=false { move-window-down; }
 
-    Mod+Shift+Left allow-inhibiting=false { move-column-to-monitor-left; }
-    Mod+Shift+Right allow-inhibiting=false { move-column-to-monitor-right; }
+    Mod+Shift+Left allow-inhibiting=false { move-column-to-monitor-next; }
+    Mod+Shift+Right allow-inhibiting=false { move-column-to-monitor-next; }
     Mod+Shift+Down allow-inhibiting=false { move-column-to-workspace-down; }
     Mod+Shift+Up allow-inhibiting=false { move-column-to-workspace-up; }
 
-    Mod+Ctrl+Alt+Left allow-inhibiting=false { move-workspace-to-monitor-left; }
-    Mod+Ctrl+Alt+Right allow-inhibiting=false { move-workspace-to-monitor-right; }
+    Mod+Ctrl+Alt+Left allow-inhibiting=false { move-workspace-to-monitor-next; }
+    Mod+Ctrl+Alt+Right allow-inhibiting=false { move-workspace-to-monitor-next; }
     Mod+Ctrl+Alt+Down allow-inhibiting=false { move-workspace-down; }
     Mod+Ctrl+Alt+Up allow-inhibiting=false { move-workspace-up; }
 
@@ -748,3 +748,5 @@ debug {
 
 // DMS Include Configs
 include "dms/input.kdl"
+include "dms/layout.kdl"
+include "dms/windowrules.kdl"

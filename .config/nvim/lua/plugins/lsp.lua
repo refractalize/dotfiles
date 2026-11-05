@@ -1,7 +1,7 @@
 return {
   {
     "omnisharp-extended-lsp.nvim",
-    enabled = true,
+    enabled = false,
   },
   {
     "neovim/nvim-lspconfig",

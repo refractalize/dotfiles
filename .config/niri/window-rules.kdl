@@ -33,6 +33,12 @@ window-rule {
 }
 
 window-rule {
+    match app-id="vesktop"
+    open-on-workspace "communication"
+    open-focused true
+}
+
+window-rule {
     match app-id="spotify"
     open-on-workspace "music"
     open-focused true
@@ -99,5 +105,10 @@ window-rule {
 
 window-rule {
     match app-id="org.remmina.Remmina"
+    open-on-workspace "windows"
+}
+
+window-rule {
+    match app-id="xfreerdp"
     open-on-workspace "windows"
 }
