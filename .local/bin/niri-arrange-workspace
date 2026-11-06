@@ -1,0 +1,34 @@
+#!/usr/bin/env zsh
+
+set -e
+
+WORKSPACE_ID=$(niri msg -j workspaces | jq -r '.[] | select(.is_focused) | .id')
+
+if [[ -z "$WORKSPACE_ID" ]]; then
+  echo "No focused workspace found."
+  exit 1
+fi
+
+FOCUSED_WINDOW_ID=$(niri msg -j windows | jq -r '.[] | select(.is_focused) | .id')
+
+WINDOW_INDEX=0
+SECOND_WINDOW_ID=""
+
+for WINDOW_ID in $(niri msg -j windows | jq -r --argjson ws_id "$WORKSPACE_ID" '[.[] | select(.workspace_id == $ws_id and .layout.pos_in_scrolling_layout[0] >= 1)] | sort_by(.layout.pos_in_scrolling_layout)[] | .id'); do
+  if [[ $WINDOW_INDEX -eq 1 ]]; then
+    SECOND_WINDOW_ID=$WINDOW_ID
+    niri msg action focus-window --id "$WINDOW_ID"
+  elif [[ $WINDOW_INDEX -gt 1 ]]; then
+    niri msg action consume-window-into-column
+  fi
+
+  WINDOW_INDEX=$((WINDOW_INDEX + 1))
+done
+
+if [[ -n "$SECOND_WINDOW_ID" ]]; then
+  niri msg action set-column-display tabbed
+fi
+
+if [[ -n "$FOCUSED_WINDOW_ID" ]]; then
+  niri msg action focus-window --id "$FOCUSED_WINDOW_ID"
+fi
